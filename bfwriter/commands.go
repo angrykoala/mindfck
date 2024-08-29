@@ -5,10 +5,14 @@ package bfwriter
 
 // Registry cells
 const (
-	TEMP1 = 0
+	TEMP0 = 0
+	TEMP1 = 1
+	TEMP2 = 2
 	NIL   = 6 // Always 0
 	MAIN  = 7
 )
+
+// TODO: registry lock
 
 type CommandHandler struct {
 	writer *writer
@@ -33,6 +37,11 @@ func (c *CommandHandler) goTo(cell int) {
 	c.movePointer(diff)
 }
 
+func (c *CommandHandler) Set(cell int, value int) {
+	c.Reset(cell)
+	c.Add(cell, value)
+}
+
 func (c *CommandHandler) Add(cell int, count int) {
 	c.goTo(cell)
 	if count > 0 {
@@ -54,23 +63,24 @@ func (c *CommandHandler) Sub(cell int, count int) {
 
 func (c *CommandHandler) Inc(cell int) {
 	c.goTo(cell)
-	c.inc()
+	c.writer.Command(BFInc)
 }
 
 func (c *CommandHandler) Dec(cell int) {
 	c.goTo(cell)
-	c.dec()
+	c.writer.Command(BFDec)
 }
 
 // Resets cell to 0
 func (c *CommandHandler) Reset(cell int) {
 	c.loop(cell, func() {
-		c.dec()
+		c.writer.Command(BFDec)
 	})
 }
 
 // Move the value of current cell to target cell (counting from current cell)
 func (c *CommandHandler) Shift(from int, to int) {
+	c.Reset(to)
 	c.loop(from, func() {
 		c.Inc(to)
 		c.Dec(from)
@@ -79,47 +89,69 @@ func (c *CommandHandler) Shift(from int, to int) {
 
 // Copy current cell into to, using temp cell, ends in origin and resets temp
 func (c *CommandHandler) Copy(from int, to int) {
+	if from == TEMP0 || to == TEMP0 {
+		panic("Invalid COPY, using copy registers")
+	}
 	// Reset temp and to
-	c.Reset(TEMP1)
+	c.Reset(TEMP0)
 	c.Reset(to)
 
 	c.loop(from, func() {
 		c.Inc(to)
-		c.Inc(TEMP1)
+		c.Inc(TEMP0)
 		c.Dec(from)
 	})
 
-	c.Shift(TEMP1, from)
+	c.Shift(TEMP0, from)
 }
 
-// Adds cell a to b
-func (c *CommandHandler) AddCell(a int, b int) {
-	c.Reset(TEMP1)
+// Compares a and b, result is a boolean in res
+func (c *CommandHandler) Equals(x int, y int, res int) {
+	c.Copy(x, TEMP1)
+	c.SubCell(y, TEMP1)
+
+	c.Set(res, 1)
+
+	c.If(TEMP1, func() {
+		c.Set(res, 0)
+	})
+}
+
+// Adds cell a to b, b is modified
+func (c *CommandHandler) AddTo(a int, b int) {
+	c.Reset(TEMP0)
 
 	c.loop(a, func() {
-		c.Inc(TEMP1)
+		c.Inc(TEMP0)
 		c.Inc(b)
 		c.Dec(a)
 	})
 
-	c.Shift(TEMP1, a)
+	c.Shift(TEMP0, a)
 }
 
-// temp0[-]
-// y[x-temp0+y-]
-// temp0[y+temp0-]
-
-// Substracts cell a to b
+// Substracts cell a to b, b is modified
 func (c *CommandHandler) SubCell(a int, b int) {
-	c.Reset(TEMP1)
+	c.Reset(TEMP0)
 
 	c.loop(a, func() {
-		c.Inc(TEMP1)
+		c.Inc(TEMP0)
 		c.Dec(b)
 		c.Dec(a)
 	})
 
-	c.Shift(TEMP1, a)
+	c.Shift(TEMP0, a)
+}
+
+// Multiply cell a and b
+func (c *CommandHandler) MultCell(a int, b int, res int) {
+	c.Copy(a, TEMP1)
+	c.Reset(res)
+
+	c.loop(TEMP1, func() {
+		c.AddTo(b, res)
+		c.Dec(TEMP1)
+	})
 }
 
 // Runs code inside if the current cell is truthy
@@ -150,13 +182,6 @@ func (c *CommandHandler) loop(condCell int, code func()) {
 	code()
 	c.goTo(condCell)
 	c.endLoop()
-}
-
-func (c *CommandHandler) inc() {
-	c.writer.Command(BFInc)
-}
-func (c *CommandHandler) dec() {
-	c.writer.Command(BFDec)
 }
 
 func (c *CommandHandler) beginLoop() {

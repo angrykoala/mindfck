@@ -18,12 +18,9 @@ func main() {
 	// cmd.Copy(-2, -9)
 	// cmd.Comment("Copy")
 
-	cmd.Add(10, 10)
-	cmd.Add(11, 11)
-	cmd.SubCell(10, 11)
-	// cmd.If(4, func() {
-	// 	cmd.Copy(11, 10)
-	// })
+	cmd.Add(8, 4)
+	cmd.Add(9, 3)
+	cmd.MultCell(8, 9, 10)
 
 	cmd.Print()
 }
