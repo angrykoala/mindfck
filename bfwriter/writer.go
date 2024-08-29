@@ -18,22 +18,28 @@ const (
 	BFLoopEnd    BFCommand = "]"
 )
 
-type Writer struct {
+type writer struct {
 	sb *strings.Builder
 }
 
-func NewWriter() *Writer {
+func NewWriter() *writer {
 	var sb strings.Builder
-	var writer Writer
-	writer.sb = &sb
+	var wrt writer
+	wrt.sb = &sb
 
-	return &writer
+	return &wrt
 }
 
-func (writer Writer) AddCommand(command BFCommand) {
-	writer.sb.WriteString(string(command))
+func (wrt *writer) Command(command BFCommand) {
+	wrt.sb.WriteString(string(command))
 }
 
-func (writer Writer) Print() {
-	fmt.Println(writer.sb.String())
+func (wrt *writer) Comment(comment string) {
+	wrt.sb.WriteString("  ")
+	wrt.sb.WriteString(comment)
+	wrt.sb.WriteString("\n")
+}
+
+func (wrt *writer) Print() {
+	fmt.Println(wrt.sb.String())
 }

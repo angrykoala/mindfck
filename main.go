@@ -1,15 +1,17 @@
 package main
 
-import (
-	"mindfck/bfwriter"
-)
+import "mindfck/bfwriter"
 
 func main() {
-	writer := bfwriter.NewWriter()
+	cmd := bfwriter.NewCommandHandler()
 
-	writer.AddCommand(bfwriter.BFDec)
-	writer.AddCommand(bfwriter.BFDec)
-	writer.Print()
+	cmd.Add(10)
+	cmd.Shift(10)
+	cmd.MovePointer(10)
+	cmd.Comment("Move Pointer")
+	cmd.Copy(-2, -9)
+	cmd.Comment("Copy")
+	cmd.Print()
 }
 
 // var sb strings.Builder
