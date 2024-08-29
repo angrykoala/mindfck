@@ -3,9 +3,17 @@ package bfwriter
 // Based on https://esolangs.org/wiki/Brainfuck_algorithms
 // and https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
 
+// Registry cells
+const (
+	TEMP1 = 0
+	NIL   = 6 // Always 0
+	MAIN  = 7
+)
+
 type CommandHandler struct {
-	writer          *writer
-	lastPointerMove int
+	writer *writer
+
+	pointer int
 }
 
 func NewCommandHandler() *CommandHandler {
@@ -16,14 +24,17 @@ func NewCommandHandler() *CommandHandler {
 	return &cmd
 }
 
-func (c *CommandHandler) Inc() {
-	c.writer.Command(BFInc)
-}
-func (c *CommandHandler) Dec() {
-	c.writer.Command(BFDec)
+// Move pointer to position (static)
+func (c *CommandHandler) goTo(cell int) {
+	// if pos < MAIN {
+	// 	panic("Out of bounds")
+	// }
+	var diff = cell - c.pointer
+	c.movePointer(diff)
 }
 
-func (c *CommandHandler) Add(count int) {
+func (c *CommandHandler) Add(cell int, count int) {
+	c.goTo(cell)
 	if count > 0 {
 		for i := 0; i < count; i++ {
 			c.writer.Command(BFInc)
@@ -37,26 +48,128 @@ func (c *CommandHandler) Add(count int) {
 	}
 }
 
-func (c *CommandHandler) BeginLoop() {
-	c.writer.Command(BFLoopBegin)
+func (c *CommandHandler) Sub(cell int, count int) {
+	c.Add(cell, -1)
 }
 
-func (c *CommandHandler) EndLoop() {
-	c.writer.Command(BFLoopEnd)
+func (c *CommandHandler) Inc(cell int) {
+	c.goTo(cell)
+	c.inc()
+}
+
+func (c *CommandHandler) Dec(cell int) {
+	c.goTo(cell)
+	c.dec()
 }
 
 // Resets cell to 0
-// Based on https://esolangs.org/wiki/Brainfuck_algorithms#x_=_0
-func (c *CommandHandler) Reset() {
-	c.BeginLoop()
-	c.Dec()
-	c.EndLoop()
+func (c *CommandHandler) Reset(cell int) {
+	c.loop(cell, func() {
+		c.dec()
+	})
+}
 
+// Move the value of current cell to target cell (counting from current cell)
+func (c *CommandHandler) Shift(from int, to int) {
+	c.loop(from, func() {
+		c.Inc(to)
+		c.Dec(from)
+	})
+}
+
+// Copy current cell into to, using temp cell, ends in origin and resets temp
+func (c *CommandHandler) Copy(from int, to int) {
+	// Reset temp and to
+	c.Reset(TEMP1)
+	c.Reset(to)
+
+	c.loop(from, func() {
+		c.Inc(to)
+		c.Inc(TEMP1)
+		c.Dec(from)
+	})
+
+	c.Shift(TEMP1, from)
+}
+
+// Adds cell a to b
+func (c *CommandHandler) AddCell(a int, b int) {
+	c.Reset(TEMP1)
+
+	c.loop(a, func() {
+		c.Inc(TEMP1)
+		c.Inc(b)
+		c.Dec(a)
+	})
+
+	c.Shift(TEMP1, a)
+}
+
+// temp0[-]
+// y[x-temp0+y-]
+// temp0[y+temp0-]
+
+// Substracts cell a to b
+func (c *CommandHandler) SubCell(a int, b int) {
+	c.Reset(TEMP1)
+
+	c.loop(a, func() {
+		c.Inc(TEMP1)
+		c.Dec(b)
+		c.Dec(a)
+	})
+
+	c.Shift(TEMP1, a)
+}
+
+// Runs code inside if the current cell is truthy
+// Accepts a code function using the command handler
+// The resulting function must end in the same position as it begins!
+func (c *CommandHandler) If(cond int, code func()) {
+	c.goTo(cond)
+	c.beginLoop()
+	code()
+	c.goTo(NIL)
+	c.endLoop()
+}
+
+func (c *CommandHandler) Comment(comment string) {
+	c.writer.Comment(comment)
+}
+
+func (c *CommandHandler) Print() {
+	c.writer.Print()
+}
+
+// Core functionality
+
+// Loops, ensuring that the loop begins and ends in condCell
+func (c *CommandHandler) loop(condCell int, code func()) {
+	c.goTo(condCell)
+	c.beginLoop()
+	code()
+	c.goTo(condCell)
+	c.endLoop()
+}
+
+func (c *CommandHandler) inc() {
+	c.writer.Command(BFInc)
+}
+func (c *CommandHandler) dec() {
+	c.writer.Command(BFDec)
+}
+
+func (c *CommandHandler) beginLoop() {
+	c.writer.Command(BFLoopBegin)
+}
+
+func (c *CommandHandler) endLoop() {
+	c.writer.Command(BFLoopEnd)
 }
 
 // Move pointer n positions, left or right
-func (c *CommandHandler) MovePointer(pos int) {
-	c.lastPointerMove = pos
+func (c *CommandHandler) movePointer(pos int) {
+	c.pointer += pos
 	if pos > 0 {
 		for i := 0; i < pos; i++ {
 			c.writer.Command(BFIncPointer)
@@ -68,99 +181,4 @@ func (c *CommandHandler) MovePointer(pos int) {
 			c.writer.Command(BFDecPointer)
 		}
 	}
-}
-
-// Move to previous pointer
-func (c *CommandHandler) pop() {
-	if c.lastPointerMove == 0 {
-		panic("Cannot Pop, no last Pointer moved")
-	}
-	c.MovePointer(-c.lastPointerMove)
-	c.lastPointerMove = 0
-}
-
-// Move the value of current cell to target cell (counting from current cell)
-// Ends in origin
-// Based on https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
-func (c *CommandHandler) Shift(to int) {
-	c.BeginLoop()
-	c.MovePointer(to)
-	c.Inc()
-	c.pop()
-	c.Dec()
-	c.EndLoop()
-}
-
-// Copy current cell into to, using temp cell, ends in origin and resets temp
-func (c *CommandHandler) Copy(to int, temp int) {
-	// Reset temp and to
-	c.MovePointer(temp)
-	c.Reset()
-	c.pop()
-	c.MovePointer(to)
-	c.Reset()
-	c.pop()
-
-	// Copy origin to to and temp
-	c.BeginLoop()
-	c.MovePointer(to)
-	c.Inc()
-	c.pop()
-	c.MovePointer(temp)
-	c.Inc()
-	c.pop()
-	c.Dec()
-	c.EndLoop()
-
-	// Shift temp to origin
-	c.MovePointer(temp)
-	c.Shift(-temp)
-}
-
-// Adds cell to current cell, using temp
-func (c *CommandHandler) AddCell(y int, temp int) {
-	// Reset temp and to
-	c.MovePointer(temp)
-	c.Reset()
-	c.pop()
-
-	c.MovePointer(y)
-	// Increment x and temp with y
-	c.BeginLoop() // Loop begins at y
-	c.pop()
-	c.Inc()
-	c.MovePointer(temp)
-	c.Inc()
-	c.pop()
-	c.MovePointer(y)
-	c.Dec()
-	c.EndLoop()
-
-	// Move temp to y
-	c.pop()
-	c.MovePointer(temp)
-	c.Shift(y - temp)
-}
-
-// Rus code inside if the current cell is truthy
-// Accepts a code function using the command handler
-// The resulting function must end in the same position as it begins!
-func (c *CommandHandler) If(temp int, code func()) {
-	c.MovePointer(temp)
-	c.Reset()
-	c.pop()
-
-	c.BeginLoop()
-	code()
-	c.MovePointer(temp)
-	c.EndLoop()
-	c.pop()
-}
-
-func (c *CommandHandler) Comment(comment string) {
-	c.writer.Comment(comment)
-}
-
-func (c *CommandHandler) Print() {
-	c.writer.Print()
 }
