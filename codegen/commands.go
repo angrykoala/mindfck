@@ -15,7 +15,7 @@ const (
 	REG1 = 4
 	REG2 = 5
 
-	NIL  = 6 // Always 0
+	NIL  = "NIL" // Always 0
 	MAIN = 7
 )
 
@@ -30,69 +30,51 @@ type CommandHandler struct {
 func New() *CommandHandler {
 	cmd := CommandHandler{
 		writer: newWriter(),
-		env:    env.New(),
+		env:    env.New(0),
 	}
+
+	cmd.env.ReserveMemory(NIL)
 
 	return &cmd
 }
 
-// Move pointer to position (static)
-func (c *CommandHandler) goTo(cell int) {
-	// if pos < MAIN {
-	// 	panic("Out of bounds")
-	// }
-	var diff = cell - c.pointer
-	c.movePointer(diff)
+func (c *CommandHandler) Declare(label string) string {
+	return c.env.ReserveMemory(label)
 }
 
-func (c *CommandHandler) Out(cell int) {
-	c.goTo(cell)
+func (c *CommandHandler) Out(label string) {
+	c.goTo(label)
 	c.writer.command(BFOut)
 }
 
-func (c *CommandHandler) Set(cell int, value int) {
-	c.Reset(cell)
-	c.Add(cell, value)
+func (c *CommandHandler) Set(label string, value int) {
+	c.Reset(label)
+	c.add(label, value)
 }
 
-func (c *CommandHandler) Add(cell int, count int) {
-	c.goTo(cell)
-	if count > 0 {
-		for i := 0; i < count; i++ {
-			c.writer.command(BFInc)
-		}
-	}
-
-	if count < 0 {
-		for i := 0; i > count; i-- {
-			c.writer.command(BFDec)
-		}
-	}
+func (c *CommandHandler) Sub(label string, count int) {
+	c.add(label, -1)
 }
 
-func (c *CommandHandler) Sub(cell int, count int) {
-	c.Add(cell, -1)
-}
-
-func (c *CommandHandler) Inc(cell int) {
-	c.goTo(cell)
+func (c *CommandHandler) Inc(label string) {
+	c.goTo(label)
 	c.writer.command(BFInc)
 }
 
-func (c *CommandHandler) Dec(cell int) {
-	c.goTo(cell)
+func (c *CommandHandler) Dec(label string) {
+	c.goTo(label)
 	c.writer.command(BFDec)
 }
 
 // Resets cell to 0
-func (c *CommandHandler) Reset(cell int) {
-	c.Loop(cell, func() {
+func (c *CommandHandler) Reset(label string) {
+	c.Loop(label, func() {
 		c.writer.command(BFDec)
 	})
 }
 
 // Move the value of current cell to target cell (counting from current cell)
-func (c *CommandHandler) Shift(from int, to int) {
+func (c *CommandHandler) Move(from string, to string) {
 	c.Reset(to)
 	c.Loop(from, func() {
 		c.Inc(to)
@@ -101,36 +83,40 @@ func (c *CommandHandler) Shift(from int, to int) {
 }
 
 // Copy current cell into to, using temp cell, ends in origin and resets temp
-func (c *CommandHandler) Copy(from int, to int) {
-	if from == TEMP0 || to == TEMP0 {
-		panic("Invalid COPY, using copy registers")
-	}
+func (c *CommandHandler) Copy(from string, to string) {
+	temp0 := c.env.ReserveMemory("_temp0")
+	temp1 := c.env.ReserveMemory("_temp1")
+	defer c.env.ReleaseMemory(temp0)
+	defer c.env.ReleaseMemory(temp1)
+
 	// Reset temp and to
-	c.Reset(TEMP0)
+	c.Reset(temp0)
 	c.Reset(to)
 
 	c.Loop(from, func() {
 		c.Inc(to)
-		c.Inc(TEMP0)
+		c.Inc(temp0)
 		c.Dec(from)
 	})
 
-	c.Shift(TEMP0, from)
+	c.Move(temp0, from)
 }
 
 // Compares a and b, result is a boolean in res
-func (c *CommandHandler) Equals(x int, y int, res int) {
-	c.Copy(x, TEMP1)
-	c.SubCell(y, TEMP1)
+func (c *CommandHandler) Equals(x string, y string, res string) {
+	temp := c.env.ReserveMemory("_temp2")
+	defer c.env.ReleaseMemory(temp)
+	c.Copy(x, temp)
+	c.SubCell(y, temp)
 
 	c.Set(res, 1)
 
-	c.If(TEMP1, func() {
+	c.If(temp, func() {
 		c.Set(res, 0)
 	})
 }
 
-func (c *CommandHandler) And(x int, y int, res int) {
+func (c *CommandHandler) And(x string, y string, res string) {
 	c.Reset(res)
 	c.If(x, func() {
 		c.If(y, func() {
@@ -139,7 +125,7 @@ func (c *CommandHandler) And(x int, y int, res int) {
 	})
 }
 
-func (c *CommandHandler) Or(x int, y int, res int) {
+func (c *CommandHandler) Or(x string, y string, res string) {
 	c.Reset(res)
 	c.If(x, func() {
 		c.Set(res, 1)
@@ -151,55 +137,51 @@ func (c *CommandHandler) Or(x int, y int, res int) {
 }
 
 // Boolean NOT
-func (c *CommandHandler) Not(x int, res int) {
+func (c *CommandHandler) Not(x string, res string) {
 	c.Set(res, 1)
 	c.If(x, func() {
 		c.Dec(res)
 	})
-
 }
 
-// Adds cell a to b, b is modified
-func (c *CommandHandler) AddTo(a int, b int) {
-	c.Reset(TEMP0)
-
-	c.Loop(a, func() {
-		c.Inc(TEMP0)
-		c.Inc(b)
-		c.Dec(a)
-	})
-
-	c.Shift(TEMP0, a)
+// Boolean NOT
+func (c *CommandHandler) Add(a string, b string, res string) {
+	c.Copy(a, res)
+	c.addTo(b, res)
 }
 
 // Substracts cell a to b, b is modified
-func (c *CommandHandler) SubCell(a int, b int) {
-	c.Reset(TEMP0)
+func (c *CommandHandler) SubCell(a string, b string) {
+	temp := c.env.ReserveMemory("_temp3")
+	defer c.env.ReleaseMemory(temp)
+	c.Reset(temp)
 
 	c.Loop(a, func() {
-		c.Inc(TEMP0)
+		c.Inc(temp)
 		c.Dec(b)
 		c.Dec(a)
 	})
 
-	c.Shift(TEMP0, a)
+	c.Move(temp, a)
 }
 
 // Multiply cell a and b
-func (c *CommandHandler) MultCell(a int, b int, res int) {
-	c.Copy(a, TEMP1)
+func (c *CommandHandler) Mult(a string, b string, res string) {
+	temp := c.env.ReserveMemory("_temp4")
+	defer c.env.ReleaseMemory(temp)
+	c.Copy(a, temp)
 	c.Reset(res)
 
-	c.Loop(TEMP1, func() {
-		c.AddTo(b, res)
-		c.Dec(TEMP1)
+	c.Loop(temp, func() {
+		c.addTo(b, res)
+		c.Dec(temp)
 	})
 }
 
 // Runs code inside if the current cell is truthy
 // Accepts a code function using the command handler
 // The resulting function must end in the same position as it begins!
-func (c *CommandHandler) If(cond int, code func()) {
+func (c *CommandHandler) If(cond string, code func()) {
 	c.goTo(cond)
 	c.beginLoop()
 	code()
@@ -208,7 +190,7 @@ func (c *CommandHandler) If(cond int, code func()) {
 }
 
 // Loops, ensuring that the loop begins and ends in condCell
-func (c *CommandHandler) Loop(condCell int, code func()) {
+func (c *CommandHandler) Loop(condCell string, code func()) {
 	c.goTo(condCell)
 	c.beginLoop()
 	code()
@@ -248,4 +230,45 @@ func (c *CommandHandler) movePointer(pos int) {
 			c.writer.command(BFDecPointer)
 		}
 	}
+}
+
+func (c *CommandHandler) getPos(label string) int {
+	return c.env.GetPosition(label)
+}
+
+// Move pointer to position (static)
+func (c *CommandHandler) goTo(label string) {
+	cell := c.getPos(label)
+	var diff = cell - c.pointer
+	c.movePointer(diff)
+}
+
+func (c *CommandHandler) add(label string, count int) {
+	c.goTo(label)
+	if count > 0 {
+		for i := 0; i < count; i++ {
+			c.writer.command(BFInc)
+		}
+	}
+
+	if count < 0 {
+		for i := 0; i > count; i-- {
+			c.writer.command(BFDec)
+		}
+	}
+}
+
+// Adds cell a to b, b is modified
+func (c *CommandHandler) addTo(a string, b string) {
+	temp0 := c.env.ReserveMemory("_temp0")
+	defer c.env.ReleaseMemory(temp0)
+	c.Reset(temp0)
+
+	c.Loop(a, func() {
+		c.Inc(temp0)
+		c.Inc(b)
+		c.Dec(a)
+	})
+
+	c.Move(temp0, a)
 }

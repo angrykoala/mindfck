@@ -5,9 +5,6 @@ import (
 	"mindfck/common"
 )
 
-// Same as codegen.Main
-const RESERVED_MEMORY = 7
-
 type MindfuckEnv struct {
 	variables      map[string]int
 	reservedMemory common.ItemSet
@@ -15,16 +12,16 @@ type MindfuckEnv struct {
 	memoryBegin    int
 }
 
-func New() *MindfuckEnv {
+func New(begin int) *MindfuckEnv {
 	return &MindfuckEnv{
 		variables:      make(map[string]int),
 		reservedMemory: common.ItemSet{},
 		freedMemory:    []int{},
-		memoryBegin:    RESERVED_MEMORY + 1,
+		memoryBegin:    begin,
 	}
 }
 
-func (env *MindfuckEnv) ReserveMemory(label string) int {
+func (env *MindfuckEnv) ReserveMemory(label string) string {
 	_, hasLabel := env.variables[label]
 
 	if hasLabel {
@@ -44,7 +41,15 @@ func (env *MindfuckEnv) ReserveMemory(label string) int {
 	env.variables[label] = varPos
 	env.reservedMemory.Add(varPos)
 
-	return varPos
+	return label
+}
+
+func (env *MindfuckEnv) ReleaseMemory(label string) {
+	pos := env.GetPosition(label)
+
+	env.reservedMemory.Delete(pos)
+	env.freedMemory = append(env.freedMemory, pos)
+	delete(env.variables, label)
 }
 
 func (env *MindfuckEnv) GetPosition(label string) int {

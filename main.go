@@ -2,28 +2,19 @@ package main
 
 import (
 	"mindfck/codegen"
-	"mindfck/env"
 )
 
 func main() {
 	cmd := codegen.New()
-	varEnv := env.New()
 
-	varEnv.ReserveMemory("var1")
-	varEnv.ReserveMemory("var2")
+	var1 := cmd.Declare("var1")
+	var2 := cmd.Declare("var2")
+	var3 := cmd.Declare("var3")
 
-	// cmd.Copy(-2, -9)
-	// cmd.Comment("Copy")
+	cmd.Set(var1, 65)
+	cmd.Set(var2, 3)
 
-	cmd.Set(varEnv.GetPosition("var1"), 4)
-	cmd.Set(varEnv.GetPosition("var2"), 3)
-
-	cmd.AddTo(varEnv.GetPosition("var1"), varEnv.GetPosition("var2"))
-	cmd.Out(varEnv.GetPosition("var2"))
+	cmd.Add(var1, var2, var3)
+	cmd.Out(var3)
 	cmd.Print()
-
-	// interpreter := bfinterpreter.New()
-	// interpreter.Run("++>++.>>++++")
-	// fmt.Println(interpreter.Output)
-	// fmt.Println(interpreter.Memory)
 }
