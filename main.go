@@ -1,6 +1,10 @@
 package main
 
-import "mindfck/codegen"
+import (
+	"fmt"
+	"mindfck/bfinterpreter"
+	"mindfck/codegen"
+)
 
 func main() {
 	cmd := codegen.New()
@@ -22,4 +26,9 @@ func main() {
 	// cmd.Add(9, 3)
 	cmd.Or(8, 9, 10)
 	cmd.Print()
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run("++>++.>>++++")
+	fmt.Println(interpreter.Output)
+	fmt.Println(interpreter.Memory)
 }
