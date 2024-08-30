@@ -1,7 +1,6 @@
 package codegen
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -44,6 +43,6 @@ func (wrt *writer) comment(comment string) {
 	wrt.sb.WriteString("\n")
 }
 
-func (wrt *writer) print() {
-	fmt.Println(wrt.sb.String())
+func (wrt *writer) print() string {
+	return wrt.sb.String()
 }

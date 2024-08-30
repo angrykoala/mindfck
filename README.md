@@ -11,3 +11,4 @@ Resources:
 -   https://esolangs.org/wiki/Brainfuck_algorithms
 -   https://www.nayuki.io/page/brainfuck-interpreter-javascript
 -   https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
+-   https://github.com/samuel-pratt/brainfuck-go

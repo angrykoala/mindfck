@@ -13,8 +13,8 @@ func New() *Interpreter {
 }
 
 func (interpreter *Interpreter) Run(code string) {
-	for _, v := range []byte(code) {
-		switch v {
+	for i := 0; i < len(code); i++ {
+		switch code[i] {
 		case '+':
 			interpreter.Memory[interpreter.memPtr] += 1
 		case '-':
@@ -29,13 +29,40 @@ func (interpreter *Interpreter) Run(code string) {
 			if interpreter.memPtr < 0 {
 				panic("Kaboom")
 			}
-		// case '[':
-		// interpreter.memPtr -= 1
-		// case ']':
-		// interpreter.memPtr -= 1
+		case '[':
+			if interpreter.currentValue() == 0 {
+				var skips int = 1
+				for skips != 0 {
+					i = i + 1
+					if code[i] == '[' {
+						skips = skips + 1
+					}
+					if code[i] == ']' {
+						skips = skips - 1
+					}
+				}
+			}
+
+		case ']':
+			if interpreter.currentValue() != 0 {
+				var skips int = 1
+				for skips != 0 {
+					i = i - 1
+					if code[i] == ']' {
+						skips = skips + 1
+					}
+					if code[i] == '[' {
+						skips = skips - 1
+					}
+				}
+			}
 		case '.':
 			var value = interpreter.Memory[interpreter.memPtr]
 			interpreter.Output = append(interpreter.Output, value)
 		}
 	}
+}
+
+func (interpreter *Interpreter) currentValue() byte {
+	return interpreter.Memory[interpreter.memPtr]
 }

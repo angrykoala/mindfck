@@ -208,8 +208,8 @@ func (c *CommandHandler) Comment(comment string) {
 	c.writer.comment(comment)
 }
 
-func (c *CommandHandler) Compile() {
-	c.writer.print()
+func (c *CommandHandler) Compile() string {
+	return c.writer.print()
 }
 
 // Core functionality

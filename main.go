@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"mindfck/bfinterpreter"
 	"mindfck/codegen"
 )
 
@@ -16,5 +18,12 @@ func main() {
 
 	cmd.Add(var1, var2, var3)
 	cmd.PrintNumber(var3)
-	cmd.Compile()
+	code := cmd.Compile()
+
+	fmt.Println(code)
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	fmt.Println(string(interpreter.Output))
+	fmt.Println(interpreter.Memory)
 }
