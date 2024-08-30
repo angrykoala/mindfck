@@ -1,5 +1,7 @@
 package codegen
 
+import "mindfck/env"
+
 // Based on https://esolangs.org/wiki/Brainfuck_algorithms
 // and https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
 
@@ -20,14 +22,15 @@ const (
 // TODO: registry lock
 
 type CommandHandler struct {
-	writer *writer
-
+	writer  *writer
+	env     *env.MindfuckEnv
 	pointer int
 }
 
 func New() *CommandHandler {
 	cmd := CommandHandler{
 		writer: newWriter(),
+		env:    env.New(),
 	}
 
 	return &cmd
@@ -40,6 +43,11 @@ func (c *CommandHandler) goTo(cell int) {
 	// }
 	var diff = cell - c.pointer
 	c.movePointer(diff)
+}
+
+func (c *CommandHandler) Out(cell int) {
+	c.goTo(cell)
+	c.writer.command(BFOut)
 }
 
 func (c *CommandHandler) Set(cell int, value int) {
