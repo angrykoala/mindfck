@@ -8,8 +8,13 @@ const (
 	TEMP0 = 0
 	TEMP1 = 1
 	TEMP2 = 2
-	NIL   = 6 // Always 0
-	MAIN  = 7
+
+	REG0 = 3
+	REG1 = 4
+	REG2 = 5
+
+	NIL  = 6 // Always 0
+	MAIN = 7
 )
 
 // TODO: registry lock
@@ -124,6 +129,15 @@ func (c *CommandHandler) And(x int, y int, res int) {
 			c.Set(res, 1)
 		})
 	})
+}
+
+// Boolean NOT
+func (c *CommandHandler) Not(x int, res int) {
+	c.Set(res, 1)
+	c.If(x, func() {
+		c.Dec(res)
+	})
+
 }
 
 // Adds cell a to b, b is modified

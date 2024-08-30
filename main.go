@@ -21,7 +21,7 @@ func main() {
 	cmd.Add(8, 4)
 	cmd.Add(9, 3)
 	cmd.And(8, 9, 10)
-
+	cmd.Not(11, 12)
 	cmd.Print()
 }
 
