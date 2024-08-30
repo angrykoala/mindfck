@@ -73,7 +73,7 @@ func (c *CommandHandler) Dec(cell int) {
 
 // Resets cell to 0
 func (c *CommandHandler) Reset(cell int) {
-	c.loop(cell, func() {
+	c.Loop(cell, func() {
 		c.writer.Command(BFDec)
 	})
 }
@@ -81,7 +81,7 @@ func (c *CommandHandler) Reset(cell int) {
 // Move the value of current cell to target cell (counting from current cell)
 func (c *CommandHandler) Shift(from int, to int) {
 	c.Reset(to)
-	c.loop(from, func() {
+	c.Loop(from, func() {
 		c.Inc(to)
 		c.Dec(from)
 	})
@@ -96,7 +96,7 @@ func (c *CommandHandler) Copy(from int, to int) {
 	c.Reset(TEMP0)
 	c.Reset(to)
 
-	c.loop(from, func() {
+	c.Loop(from, func() {
 		c.Inc(to)
 		c.Inc(TEMP0)
 		c.Dec(from)
@@ -117,11 +117,20 @@ func (c *CommandHandler) Equals(x int, y int, res int) {
 	})
 }
 
+func (c *CommandHandler) And(x int, y int, res int) {
+	c.Reset(res)
+	c.If(x, func() {
+		c.If(y, func() {
+			c.Set(res, 1)
+		})
+	})
+}
+
 // Adds cell a to b, b is modified
 func (c *CommandHandler) AddTo(a int, b int) {
 	c.Reset(TEMP0)
 
-	c.loop(a, func() {
+	c.Loop(a, func() {
 		c.Inc(TEMP0)
 		c.Inc(b)
 		c.Dec(a)
@@ -134,7 +143,7 @@ func (c *CommandHandler) AddTo(a int, b int) {
 func (c *CommandHandler) SubCell(a int, b int) {
 	c.Reset(TEMP0)
 
-	c.loop(a, func() {
+	c.Loop(a, func() {
 		c.Inc(TEMP0)
 		c.Dec(b)
 		c.Dec(a)
@@ -148,7 +157,7 @@ func (c *CommandHandler) MultCell(a int, b int, res int) {
 	c.Copy(a, TEMP1)
 	c.Reset(res)
 
-	c.loop(TEMP1, func() {
+	c.Loop(TEMP1, func() {
 		c.AddTo(b, res)
 		c.Dec(TEMP1)
 	})
@@ -165,6 +174,15 @@ func (c *CommandHandler) If(cond int, code func()) {
 	c.endLoop()
 }
 
+// Loops, ensuring that the loop begins and ends in condCell
+func (c *CommandHandler) Loop(condCell int, code func()) {
+	c.goTo(condCell)
+	c.beginLoop()
+	code()
+	c.goTo(condCell)
+	c.endLoop()
+}
+
 func (c *CommandHandler) Comment(comment string) {
 	c.writer.Comment(comment)
 }
@@ -174,15 +192,6 @@ func (c *CommandHandler) Print() {
 }
 
 // Core functionality
-
-// Loops, ensuring that the loop begins and ends in condCell
-func (c *CommandHandler) loop(condCell int, code func()) {
-	c.goTo(condCell)
-	c.beginLoop()
-	code()
-	c.goTo(condCell)
-	c.endLoop()
-}
 
 func (c *CommandHandler) beginLoop() {
 	c.writer.Command(BFLoopBegin)

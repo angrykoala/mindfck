@@ -20,7 +20,7 @@ func main() {
 
 	cmd.Add(8, 4)
 	cmd.Add(9, 3)
-	cmd.MultCell(8, 9, 10)
+	cmd.And(8, 9, 10)
 
 	cmd.Print()
 }
