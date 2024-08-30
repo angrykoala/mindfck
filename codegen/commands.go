@@ -1,4 +1,4 @@
-package bfwriter
+package codegen
 
 // Based on https://esolangs.org/wiki/Brainfuck_algorithms
 // and https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
@@ -25,9 +25,9 @@ type CommandHandler struct {
 	pointer int
 }
 
-func NewCommandHandler() *CommandHandler {
+func New() *CommandHandler {
 	cmd := CommandHandler{
-		writer: NewWriter(),
+		writer: newWriter(),
 	}
 
 	return &cmd
@@ -51,13 +51,13 @@ func (c *CommandHandler) Add(cell int, count int) {
 	c.goTo(cell)
 	if count > 0 {
 		for i := 0; i < count; i++ {
-			c.writer.Command(BFInc)
+			c.writer.command(BFInc)
 		}
 	}
 
 	if count < 0 {
 		for i := 0; i > count; i-- {
-			c.writer.Command(BFDec)
+			c.writer.command(BFDec)
 		}
 	}
 }
@@ -68,18 +68,18 @@ func (c *CommandHandler) Sub(cell int, count int) {
 
 func (c *CommandHandler) Inc(cell int) {
 	c.goTo(cell)
-	c.writer.Command(BFInc)
+	c.writer.command(BFInc)
 }
 
 func (c *CommandHandler) Dec(cell int) {
 	c.goTo(cell)
-	c.writer.Command(BFDec)
+	c.writer.command(BFDec)
 }
 
 // Resets cell to 0
 func (c *CommandHandler) Reset(cell int) {
 	c.Loop(cell, func() {
-		c.writer.Command(BFDec)
+		c.writer.command(BFDec)
 	})
 }
 
@@ -198,21 +198,21 @@ func (c *CommandHandler) Loop(condCell int, code func()) {
 }
 
 func (c *CommandHandler) Comment(comment string) {
-	c.writer.Comment(comment)
+	c.writer.comment(comment)
 }
 
 func (c *CommandHandler) Print() {
-	c.writer.Print()
+	c.writer.print()
 }
 
 // Core functionality
 
 func (c *CommandHandler) beginLoop() {
-	c.writer.Command(BFLoopBegin)
+	c.writer.command(BFLoopBegin)
 }
 
 func (c *CommandHandler) endLoop() {
-	c.writer.Command(BFLoopEnd)
+	c.writer.command(BFLoopEnd)
 }
 
 // Move pointer n positions, left or right
@@ -220,13 +220,13 @@ func (c *CommandHandler) movePointer(pos int) {
 	c.pointer += pos
 	if pos > 0 {
 		for i := 0; i < pos; i++ {
-			c.writer.Command(BFIncPointer)
+			c.writer.command(BFIncPointer)
 		}
 	}
 
 	if pos < 0 {
 		for i := 0; i > pos; i-- {
-			c.writer.Command(BFDecPointer)
+			c.writer.command(BFDecPointer)
 		}
 	}
 }

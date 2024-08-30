@@ -1,9 +1,9 @@
 package main
 
-import "mindfck/bfwriter"
+import "mindfck/codegen"
 
 func main() {
-	cmd := bfwriter.NewCommandHandler()
+	cmd := codegen.New()
 
 	// cmd.MovePointer(2)
 	// cmd.Add(10)
@@ -24,11 +24,3 @@ func main() {
 	cmd.Not(11, 12)
 	cmd.Print()
 }
-
-// var sb strings.Builder
-
-// for i := 0; i < 1000; i++ {
-//     sb.WriteString("a")
-// }
-
-// fmt.Println(sb.String())

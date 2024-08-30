@@ -1,4 +1,4 @@
-package bfwriter
+package codegen
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ type writer struct {
 	sb *strings.Builder
 }
 
-func NewWriter() *writer {
+func newWriter() *writer {
 	var sb strings.Builder
 	var wrt writer
 	wrt.sb = &sb
@@ -30,16 +30,16 @@ func NewWriter() *writer {
 	return &wrt
 }
 
-func (wrt *writer) Command(command BFCommand) {
+func (wrt *writer) command(command BFCommand) {
 	wrt.sb.WriteString(string(command))
 }
 
-func (wrt *writer) Comment(comment string) {
+func (wrt *writer) comment(comment string) {
 	wrt.sb.WriteString("  ")
 	wrt.sb.WriteString(comment)
 	wrt.sb.WriteString("\n")
 }
 
-func (wrt *writer) Print() {
+func (wrt *writer) print() {
 	fmt.Println(wrt.sb.String())
 }
