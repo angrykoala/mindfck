@@ -131,6 +131,17 @@ func (c *CommandHandler) And(x int, y int, res int) {
 	})
 }
 
+func (c *CommandHandler) Or(x int, y int, res int) {
+	c.Reset(res)
+	c.If(x, func() {
+		c.Set(res, 1)
+	})
+
+	c.If(y, func() {
+		c.Set(res, 1)
+	})
+}
+
 // Boolean NOT
 func (c *CommandHandler) Not(x int, res int) {
 	c.Set(res, 1)
