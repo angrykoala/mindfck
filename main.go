@@ -15,6 +15,6 @@ func main() {
 	cmd.Set(var2, 3)
 
 	cmd.Add(var1, var2, var3)
-	cmd.Out(var3)
-	cmd.Print()
+	cmd.PrintNumber(var3)
+	cmd.Compile()
 }

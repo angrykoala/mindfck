@@ -34,6 +34,10 @@ func (wrt *writer) command(command BFCommand) {
 	wrt.sb.WriteString(string(command))
 }
 
+func (wrt *writer) write(code string) {
+	wrt.sb.WriteString(code)
+}
+
 func (wrt *writer) comment(comment string) {
 	wrt.sb.WriteString("  ")
 	wrt.sb.WriteString(comment)

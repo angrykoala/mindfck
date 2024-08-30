@@ -42,9 +42,15 @@ func (c *CommandHandler) Declare(label string) string {
 	return c.env.ReserveMemory(label)
 }
 
-func (c *CommandHandler) Out(label string) {
+func (c *CommandHandler) Print(label string) {
 	c.goTo(label)
 	c.writer.command(BFOut)
+}
+
+func (c *CommandHandler) PrintNumber(label string) {
+	c.goTo(label)
+
+	c.writer.write("x >>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<")
 }
 
 func (c *CommandHandler) Set(label string, value int) {
@@ -202,7 +208,7 @@ func (c *CommandHandler) Comment(comment string) {
 	c.writer.comment(comment)
 }
 
-func (c *CommandHandler) Print() {
+func (c *CommandHandler) Compile() {
 	c.writer.print()
 }
 
