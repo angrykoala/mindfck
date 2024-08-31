@@ -1,4 +1,4 @@
-package common
+package utils
 
 // Based on https://flaviocopes.com/golang-data-structure-set/
 

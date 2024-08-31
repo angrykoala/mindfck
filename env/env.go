@@ -2,12 +2,11 @@ package env
 
 import (
 	"fmt"
-	"mindfck/common"
 )
 
 type MindfuckEnv struct {
 	variables      map[string]int
-	reservedMemory common.ItemSet
+	reservedMemory utils.ItemSet
 	freedMemory    []int
 	memoryBegin    int
 }
@@ -15,7 +14,7 @@ type MindfuckEnv struct {
 func New(begin int) *MindfuckEnv {
 	return &MindfuckEnv{
 		variables:      make(map[string]int),
-		reservedMemory: common.ItemSet{},
+		reservedMemory: utils.ItemSet{},
 		freedMemory:    []int{},
 		memoryBegin:    begin,
 	}
