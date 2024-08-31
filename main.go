@@ -4,19 +4,27 @@ import (
 	"fmt"
 	"mindfck/bfinterpreter"
 	"mindfck/codegen"
+	"mindfck/parser"
+	"mindfck/parser/tokens"
 )
 
 func main() {
-	code()
-	// tokens, err := parser.Tokenizer(`
-	// byte a
-	// a = 3 + 2
-	// `)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	// code()
+	tokens, err := tokens.Tokenizer(`
+	byte a
+	a = 3 + 2
+	`)
+	if err != nil {
+		panic(err)
+	}
 
-	// fmt.Println(tokens)
+	ast, err := parser.Parse(tokens)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(tokens)
+	fmt.Println(ast)
 }
 
 func code() string {
@@ -29,11 +37,9 @@ func code() string {
 	cmd.Set(var2, 50)
 
 	cmd.Add(var1, var2, var1)
-
 	var3 := cmd.Declare("var3")
 
 	cmd.Copy(var1, var3)
-
 	cmd.Print(var3)
 
 	code := cmd.Compile()

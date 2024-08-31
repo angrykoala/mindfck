@@ -1,26 +1,10 @@
-package parser
+package tokens
 
 import (
 	"fmt"
 	"mindfck/utils"
 	"strings"
 )
-
-type TokenType int
-
-const (
-	UNKNOWN TokenType = iota
-	BYTE
-	EQUALS
-	PLUS
-	IDENTIFIER
-	NUMBER
-)
-
-type Token struct {
-	Kind TokenType
-	Txt  string
-}
 
 type StmtTokens []Token
 
@@ -65,7 +49,7 @@ func tokenizeStmt(rawStmt string) (StmtTokens, error) {
 	return tokens, nil
 }
 
-func getTokenKind(tkn string) TokenType {
+func getTokenKind(tkn string) TokenKind {
 	if tkn == "byte" {
 		return BYTE
 	}

@@ -1,8 +1,8 @@
-package ast
+package mfast
 
 import (
 	"mindfck/codegen"
-	"mindfck/parser"
+	"mindfck/parser/tokens"
 )
 
 type Expr interface {
@@ -18,7 +18,11 @@ func (lit *Literal) EvalExpr(cmd codegen.CommandHandler) string {
 }
 
 type BinaryExpr struct {
-	operator parser.TokenType // Using TokenType to simplify
-	left     Expr
-	right    Expr
+	Operator tokens.TokenKind // Using TokenKind to simplify
+	Left     Expr
+	Right    Expr
+}
+
+func (lit *BinaryExpr) EvalExpr(cmd codegen.CommandHandler) string {
+	return "caca"
 }
