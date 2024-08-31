@@ -1,25 +1,14 @@
-package main
+package tests
 
 import (
-	"fmt"
 	"mindfck/bfinterpreter"
 	"mindfck/codegen"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func main() {
-	code()
-	// tokens, err := parser.Tokenizer(`
-	// byte a
-	// a = 3 + 2
-	// `)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// fmt.Println(tokens)
-}
-
-func code() string {
+func TestGeneratedAndRun(t *testing.T) {
 	cmd := codegen.New()
 
 	var1 := cmd.Declare("var1")
@@ -29,18 +18,16 @@ func code() string {
 	cmd.Set(var2, 50)
 
 	cmd.Add(var1, var2, var1)
-
 	var3 := cmd.Declare("var3")
 
 	cmd.Copy(var1, var3)
-
 	cmd.Print(var3)
 
 	code := cmd.Compile()
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	fmt.Println(string(interpreter.Output))
-	fmt.Println(interpreter.Memory)
-	return code
+
+	assert.Equal(t, string(interpreter.Output), "F")
+	assert.Equal(t, interpreter.Memory, []byte{0, 70, 50, 0, 70, 0})
 }

@@ -12,6 +12,7 @@ const (
 	UNKNOWN TokenType = iota
 	BYTE
 	EQUALS
+	PLUS
 	IDENTIFIER
 	NUMBER
 )
@@ -21,14 +22,32 @@ type Token struct {
 	Txt  string
 }
 
-type stmt []Token
+type StmtTokens []Token
 
-func Tokenizer(rawStmt string) (stmt, error) {
+func Tokenizer(code string) ([]StmtTokens, error) {
 
-	tokensTxt := strings.FieldsFunc(rawStmt, func(c rune) bool {
-		return c == ' '
+	stmtTxt := strings.FieldsFunc(code, func(c rune) bool {
+		return c == '\n'
 	})
 
+	tokens := []StmtTokens{}
+	for _, rawToken := range stmtTxt {
+		stmt, err := tokenizeStmt(rawToken)
+		if err != nil {
+			return nil, err
+		}
+		if len(stmt) > 0 {
+			tokens = append(tokens, stmt)
+		}
+	}
+
+	return tokens, nil
+}
+
+func tokenizeStmt(rawStmt string) (StmtTokens, error) {
+	tokensTxt := strings.FieldsFunc(strings.TrimSpace(rawStmt), func(c rune) bool {
+		return c == ' '
+	})
 	tokens := []Token{}
 	for _, rawToken := range tokensTxt {
 		kind := getTokenKind(rawToken)
@@ -53,6 +72,9 @@ func getTokenKind(tkn string) TokenType {
 
 	if tkn == "=" {
 		return EQUALS
+	}
+	if tkn == "+" {
+		return PLUS
 	}
 
 	if utils.IsInt(tkn) {

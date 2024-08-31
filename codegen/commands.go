@@ -5,22 +5,6 @@ import "mindfck/env"
 // Based on https://esolangs.org/wiki/Brainfuck_algorithms
 // and https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
 
-// Registry cells
-const (
-	TEMP0 = 0
-	TEMP1 = 1
-	TEMP2 = 2
-
-	REG0 = 3
-	REG1 = 4
-	REG2 = 5
-
-	NIL  = "NIL" // Always 0
-	MAIN = 7
-)
-
-// TODO: registry lock
-
 type CommandHandler struct {
 	writer  *writer
 	env     *env.MindfuckEnv
@@ -33,17 +17,19 @@ func New() *CommandHandler {
 		env:    env.New(0),
 	}
 
-	cmd.env.ReserveMemory(NIL)
-
 	return &cmd
 }
 
-func (c *CommandHandler) Declare(label string) string {
-	return c.env.ReserveMemory(label)
+func (c *CommandHandler) Declare(label string) env.Variable {
+	return c.env.DeclareVariable(label)
 }
 
-func (c *CommandHandler) Print(label string) {
-	c.goTo(label)
+func (c *CommandHandler) Release(v env.Variable) {
+	c.env.ReleaseVariable(v)
+}
+
+func (c *CommandHandler) Print(v env.Variable) {
+	c.goTo(v)
 	c.writer.command(BFOut)
 }
 
@@ -53,34 +39,34 @@ func (c *CommandHandler) Print(label string) {
 // 	c.writer.write("x>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<")
 // }
 
-func (c *CommandHandler) Set(label string, value int) {
-	c.Reset(label)
-	c.add(label, value)
+func (c *CommandHandler) Set(v env.Variable, value int) {
+	c.Reset(v)
+	c.add(v, value)
 }
 
-func (c *CommandHandler) Sub(label string, count int) {
-	c.add(label, -1)
+func (c *CommandHandler) Sub(v env.Variable, count int) {
+	c.add(v, -1)
 }
 
-func (c *CommandHandler) Inc(label string) {
-	c.goTo(label)
+func (c *CommandHandler) Inc(v env.Variable) {
+	c.goTo(v)
 	c.writer.command(BFInc)
 }
 
-func (c *CommandHandler) Dec(label string) {
-	c.goTo(label)
+func (c *CommandHandler) Dec(v env.Variable) {
+	c.goTo(v)
 	c.writer.command(BFDec)
 }
 
 // Resets cell to 0
-func (c *CommandHandler) Reset(label string) {
-	c.Loop(label, func() {
+func (c *CommandHandler) Reset(v env.Variable) {
+	c.Loop(v, func() {
 		c.writer.command(BFDec)
 	})
 }
 
-// Move the value of current cell to target cell (counting from current cell)
-func (c *CommandHandler) Move(from string, to string) {
+// from -> to
+func (c *CommandHandler) Move(from env.Variable, to env.Variable) {
 	c.Reset(to)
 	c.Loop(from, func() {
 		c.Inc(to)
@@ -89,11 +75,11 @@ func (c *CommandHandler) Move(from string, to string) {
 }
 
 // Copy current cell into to, using temp cell, ends in origin and resets temp
-func (c *CommandHandler) Copy(from string, to string) {
-	temp0 := c.env.ReserveMemory("_temp0")
-	temp1 := c.env.ReserveMemory("_temp1")
-	defer c.env.ReleaseMemory(temp0)
-	defer c.env.ReleaseMemory(temp1)
+func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
+	temp0 := c.env.DeclareAnonVariable()
+	temp1 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp0)
+	defer c.env.ReleaseVariable(temp1)
 
 	// Reset temp and to
 	c.Reset(temp0)
@@ -109,9 +95,9 @@ func (c *CommandHandler) Copy(from string, to string) {
 }
 
 // Compares a and b, result is a boolean in res
-func (c *CommandHandler) Equals(x string, y string, res string) {
-	temp := c.env.ReserveMemory("_temp2")
-	defer c.env.ReleaseMemory(temp)
+func (c *CommandHandler) Equals(x env.Variable, y env.Variable, res env.Variable) {
+	temp := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp)
 	c.Copy(x, temp)
 	c.SubCell(y, temp)
 
@@ -122,7 +108,7 @@ func (c *CommandHandler) Equals(x string, y string, res string) {
 	})
 }
 
-func (c *CommandHandler) And(x string, y string, res string) {
+func (c *CommandHandler) And(x env.Variable, y env.Variable, res env.Variable) {
 	c.Reset(res)
 	c.If(x, func() {
 		c.If(y, func() {
@@ -131,7 +117,7 @@ func (c *CommandHandler) And(x string, y string, res string) {
 	})
 }
 
-func (c *CommandHandler) Or(x string, y string, res string) {
+func (c *CommandHandler) Or(x env.Variable, y env.Variable, res env.Variable) {
 	c.Reset(res)
 	c.If(x, func() {
 		c.Set(res, 1)
@@ -143,7 +129,7 @@ func (c *CommandHandler) Or(x string, y string, res string) {
 }
 
 // Boolean NOT
-func (c *CommandHandler) Not(x string, res string) {
+func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
 	c.Set(res, 1)
 	c.If(x, func() {
 		c.Dec(res)
@@ -151,15 +137,19 @@ func (c *CommandHandler) Not(x string, res string) {
 }
 
 // Boolean NOT
-func (c *CommandHandler) Add(a string, b string, res string) {
-	c.Copy(a, res)
-	c.addTo(b, res)
+func (c *CommandHandler) Add(a env.Variable, b env.Variable, res env.Variable) {
+	temp := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp)
+	c.Copy(a, temp)
+	c.addTo(b, temp)
+
+	c.Move(temp, res)
 }
 
 // Substracts cell a to b, b is modified
-func (c *CommandHandler) SubCell(a string, b string) {
-	temp := c.env.ReserveMemory("_temp3")
-	defer c.env.ReleaseMemory(temp)
+func (c *CommandHandler) SubCell(a env.Variable, b env.Variable) {
+	temp := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp)
 	c.Reset(temp)
 
 	c.Loop(a, func() {
@@ -172,9 +162,9 @@ func (c *CommandHandler) SubCell(a string, b string) {
 }
 
 // Multiply cell a and b
-func (c *CommandHandler) Mult(a string, b string, res string) {
-	temp := c.env.ReserveMemory("_temp4")
-	defer c.env.ReleaseMemory(temp)
+func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) {
+	temp := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp)
 	c.Copy(a, temp)
 	c.Reset(res)
 
@@ -187,16 +177,16 @@ func (c *CommandHandler) Mult(a string, b string, res string) {
 // Runs code inside if the current cell is truthy
 // Accepts a code function using the command handler
 // The resulting function must end in the same position as it begins!
-func (c *CommandHandler) If(cond string, code func()) {
+func (c *CommandHandler) If(cond env.Variable, code func()) {
 	c.goTo(cond)
 	c.beginLoop()
 	code()
-	c.goTo(NIL)
+	c.goTo(env.NIL)
 	c.endLoop()
 }
 
 // Loops, ensuring that the loop begins and ends in condCell
-func (c *CommandHandler) Loop(condCell string, code func()) {
+func (c *CommandHandler) Loop(condCell env.Variable, code func()) {
 	c.goTo(condCell)
 	c.beginLoop()
 	code()
@@ -238,19 +228,19 @@ func (c *CommandHandler) movePointer(pos int) {
 	}
 }
 
-func (c *CommandHandler) getPos(label string) int {
-	return c.env.GetPosition(label)
+func (c *CommandHandler) getPos(v env.Variable) int {
+	return v.Position()
 }
 
 // Move pointer to position (static)
-func (c *CommandHandler) goTo(label string) {
-	cell := c.getPos(label)
+func (c *CommandHandler) goTo(v env.Variable) {
+	cell := c.getPos(v)
 	var diff = cell - c.pointer
 	c.movePointer(diff)
 }
 
-func (c *CommandHandler) add(label string, count int) {
-	c.goTo(label)
+func (c *CommandHandler) add(v env.Variable, count int) {
+	c.goTo(v)
 	if count > 0 {
 		for i := 0; i < count; i++ {
 			c.writer.command(BFInc)
@@ -265,9 +255,9 @@ func (c *CommandHandler) add(label string, count int) {
 }
 
 // Adds cell a to b, b is modified
-func (c *CommandHandler) addTo(a string, b string) {
-	temp0 := c.env.ReserveMemory("_temp0")
-	defer c.env.ReleaseMemory(temp0)
+func (c *CommandHandler) addTo(a env.Variable, b env.Variable) {
+	temp0 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp0)
 	c.Reset(temp0)
 
 	c.Loop(a, func() {
