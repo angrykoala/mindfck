@@ -47,11 +47,11 @@ func (c *CommandHandler) Print(label string) {
 	c.writer.command(BFOut)
 }
 
-func (c *CommandHandler) PrintNumber(label string) {
-	c.goTo(label)
+// func (c *CommandHandler) PrintNumber(label string) {
+// 	c.goTo(label)
 
-	c.writer.write("x >>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<")
-}
+// 	c.writer.write("x>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<")
+// }
 
 func (c *CommandHandler) Set(label string, value int) {
 	c.Reset(label)
