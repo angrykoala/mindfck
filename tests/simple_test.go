@@ -40,7 +40,7 @@ func TestSimple(t *testing.T) {
 	assert.Equal(t, interpreter.Output, []byte{36, 38, 5})
 }
 
-func TestLogical(t *testing.T) {
+func TestComparison(t *testing.T) {
 	tokens, err := tokens.Tokenizer(`
 	byte a
 	byte b
@@ -75,4 +75,39 @@ func TestLogical(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 	assert.Equal(t, interpreter.Output, []byte{1, 1, 0, 1, 0})
+}
+
+func TestLogical(t *testing.T) {
+	tokens, err := tokens.Tokenizer(`
+	byte a
+	byte b
+	byte c
+    byte d
+	a = 2 < 6
+    b = 1
+    c = 0
+	d = a and b
+	print d
+	d = b and c
+	print d
+	d = b or c
+	print d
+	`)
+	if err != nil {
+		panic(err)
+	}
+
+	ast, err := parser.Parse(tokens)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, interpreter.Output, []byte{1, 0, 1})
 }
