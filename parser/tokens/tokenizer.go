@@ -50,23 +50,25 @@ func tokenizeStmt(rawStmt string) (StmtTokens, error) {
 }
 
 func getTokenKind(tkn string) TokenKind {
-	if tkn == "byte" {
+	switch tkn {
+	case "byte":
 		return BYTE
-	}
-
-	if tkn == "=" {
+	case "print":
+		return PRINT
+	case "=":
 		return EQUALS
-	}
-	if tkn == "+" {
+	case "+":
 		return PLUS
-	}
+	case "-":
+		return MINUS
+	default:
+		if utils.IsInt(tkn) {
+			return NUMBER
+		}
 
-	if utils.IsInt(tkn) {
-		return NUMBER
-	}
-
-	if isIdentifier(tkn) {
-		return IDENTIFIER
+		if isIdentifier(tkn) {
+			return IDENTIFIER
+		}
 	}
 
 	return UNKNOWN

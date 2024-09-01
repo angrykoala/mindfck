@@ -29,6 +29,8 @@ func parseStmt(stmtTokens []*tokens.Token) (mfast.Stmt, error) {
 		return parseDeclaration(stmtTokens)
 	case tokens.IDENTIFIER:
 		return parseAssignment(first, stmtTokens)
+	case tokens.PRINT:
+		return parsePrint(stmtTokens)
 
 	}
 
@@ -47,6 +49,16 @@ func parseDeclaration(tk []*tokens.Token) (*mfast.Declare, error) {
 	}
 	return &mfast.Declare{
 		Label: labeltk.Txt,
+	}, nil
+}
+
+func parsePrint(tk []*tokens.Token) (*mfast.Print, error) {
+	expr, err := parseExpr(tk)
+	if err != nil {
+		return nil, err
+	}
+	return &mfast.Print{
+		Value: expr,
 	}, nil
 }
 

@@ -1,15 +1,14 @@
-package tests
+package codegen
 
 import (
 	"mindfck/bfinterpreter"
-	"mindfck/codegen"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGeneratedAndRun(t *testing.T) {
-	cmd := codegen.New()
+	cmd := New()
 
 	var1 := cmd.Declare("var1")
 	var2 := cmd.Declare("var2")
@@ -33,7 +32,7 @@ func TestGeneratedAndRun(t *testing.T) {
 }
 
 func TestIf(t *testing.T) {
-	cmd := codegen.New()
+	cmd := New()
 
 	var1 := cmd.Declare("var1")
 	var2 := cmd.Declare("var2")
@@ -60,7 +59,7 @@ func TestIf(t *testing.T) {
 }
 
 func TestBt(t *testing.T) {
-	cmd := codegen.New()
+	cmd := New()
 
 	var1 := cmd.Declare("var1")
 	var2 := cmd.Declare("var2")
@@ -86,7 +85,7 @@ func TestBt(t *testing.T) {
 }
 
 func TestDiv(t *testing.T) {
-	cmd := codegen.New()
+	cmd := New()
 
 	var1 := cmd.Declare("var1")
 	var2 := cmd.Declare("var2")

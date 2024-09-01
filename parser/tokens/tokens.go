@@ -5,6 +5,8 @@ type TokenKind int
 const (
 	UNKNOWN TokenKind = iota
 	BYTE
+	PRINT
+
 	IDENTIFIER
 
 	EQUALS
