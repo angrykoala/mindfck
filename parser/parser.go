@@ -20,7 +20,7 @@ func Parse(tokens []tokens.StmtTokens) ([]mfast.Stmt, error) {
 	return statements, nil
 }
 
-func parseStmt(stmtTokens []tokens.Token) (mfast.Stmt, error) {
+func parseStmt(stmtTokens []*tokens.Token) (mfast.Stmt, error) {
 	first, stmtTokens := stmtTokens[0], stmtTokens[1:]
 
 	switch first.Kind {
@@ -35,7 +35,7 @@ func parseStmt(stmtTokens []tokens.Token) (mfast.Stmt, error) {
 	return nil, fmt.Errorf("unknown statement %v,  %v", first, stmtTokens)
 }
 
-func parseDeclaration(tk tokens.StmtTokens) (*mfast.Declare, error) {
+func parseDeclaration(tk []*tokens.Token) (*mfast.Declare, error) {
 	if len(tk) != 1 {
 		return nil, fmt.Errorf("error in declaration %v", tk)
 	}
@@ -50,7 +50,7 @@ func parseDeclaration(tk tokens.StmtTokens) (*mfast.Declare, error) {
 	}, nil
 }
 
-func parseAssignment(identifier tokens.Token, tk []tokens.Token) (*mfast.Assign, error) {
+func parseAssignment(identifier *tokens.Token, tk []*tokens.Token) (*mfast.Assign, error) {
 	if len(tk) < 2 {
 		return nil, fmt.Errorf("error in assignment %v", tk)
 	}
@@ -72,46 +72,71 @@ func parseAssignment(identifier tokens.Token, tk []tokens.Token) (*mfast.Assign,
 	}, nil
 }
 
-func parseExpr(tk []tokens.Token) (mfast.Expr, error) {
+func parseExpr(tk []*tokens.Token) (mfast.Expr, error) {
 	if len(tk) < 1 {
 		return nil, fmt.Errorf("invalid expression %v", tk)
 	}
 
-	first, tk := tk[0], tk[1:]
-
-	if first.Kind == tokens.IDENTIFIER || first.IsLiteral() {
-		value := utils.ToInt(first.Txt)
-		if len(tk) == 0 {
-			return &mfast.Literal{
-				Value: value,
-			}, nil
-		}
-
-		// Binary
-		operator, tk := tk[0], tk[1:]
-
-		if !operator.IsBinaryOperator() {
-			return nil, fmt.Errorf("invalid operator %v", operator)
-		}
-
-		rightExpr, err := parseExpr(tk)
-		if err != nil {
-			return nil, err
-		}
-
-		// TODO: handle complex operators in left
-		leftExpr, err := parseExpr([]tokens.Token{first})
-		if err != nil {
-			return nil, err
-		}
-
-		return &mfast.BinaryExpr{
-			Right:    rightExpr,
-			Operator: operator.Kind,
-			Left:     leftExpr,
-		}, nil
-
+	if len(tk) == 1 {
+		return parseUnaryExpr(tk[0])
 	}
 
-	return nil, fmt.Errorf("invalid expression %v %v", first, tk)
+	left, operator, right := consumeTokens(tk, func(token *tokens.Token) bool {
+		return token.IsBinaryOperator()
+	})
+
+	if operator == nil || !operator.IsBinaryOperator() {
+		return nil, fmt.Errorf("invalid expression, missing operator")
+	}
+
+	rightExpr, err := parseExpr(right)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: handle complex operators in left
+	leftExpr, err := parseExpr(left)
+	if err != nil {
+		return nil, err
+	}
+
+	return &mfast.BinaryExpr{
+		Right:    rightExpr,
+		Operator: operator.Kind,
+		Left:     leftExpr,
+	}, nil
+
+}
+
+func parseUnaryExpr(token *tokens.Token) (mfast.Expr, error) {
+	if token.IsLiteral() {
+		value := utils.ToInt(token.Txt)
+		return &mfast.Literal{
+			Value: value,
+		}, nil
+	}
+
+	if token.Kind == tokens.IDENTIFIER {
+		return &mfast.VariableExpr{
+			Label: token.Txt,
+		}, nil
+	}
+
+	return nil, fmt.Errorf("invalid expression %v", token)
+}
+
+func consumeTokens(tk []*tokens.Token, until func(*tokens.Token) bool) (left []*tokens.Token, match *tokens.Token, right []*tokens.Token) {
+	for _, token := range tk {
+		if until(token) {
+			match = token
+			continue
+		}
+
+		if match == nil {
+			left = append(left, token)
+		} else {
+			right = append(right, token)
+		}
+	}
+	return
 }

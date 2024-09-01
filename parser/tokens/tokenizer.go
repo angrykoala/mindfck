@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type StmtTokens []Token
+type StmtTokens []*Token
 
 func Tokenizer(code string) ([]StmtTokens, error) {
 
@@ -32,7 +32,7 @@ func tokenizeStmt(rawStmt string) (StmtTokens, error) {
 	tokensTxt := strings.FieldsFunc(strings.TrimSpace(rawStmt), func(c rune) bool {
 		return c == ' '
 	})
-	tokens := []Token{}
+	tokens := []*Token{}
 	for _, rawToken := range tokensTxt {
 		kind := getTokenKind(rawToken)
 		if kind == UNKNOWN {
@@ -43,7 +43,7 @@ func tokenizeStmt(rawStmt string) (StmtTokens, error) {
 			Txt:  rawToken,
 			Kind: kind,
 		}
-		tokens = append(tokens, newToken)
+		tokens = append(tokens, &newToken)
 	}
 
 	return tokens, nil

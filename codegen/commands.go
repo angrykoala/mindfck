@@ -20,6 +20,10 @@ func New() *CommandHandler {
 	return &cmd
 }
 
+func (c *CommandHandler) Env() *env.MindfuckEnv {
+	return c.env
+}
+
 func (c *CommandHandler) Declare(label string) env.Variable {
 	return c.env.DeclareVariable(label)
 }
