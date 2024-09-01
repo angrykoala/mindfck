@@ -17,6 +17,8 @@ const (
 	BFLoopEnd    BFCommand = "]"
 )
 
+const BFDebug BFCommand = "#"
+
 type writer struct {
 	sb *strings.Builder
 }

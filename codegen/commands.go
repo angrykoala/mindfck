@@ -37,6 +37,10 @@ func (c *CommandHandler) Print(v env.Variable) {
 	c.writer.command(BFOut)
 }
 
+func (c *CommandHandler) DebugBreak() {
+	c.writer.command(BFDebug)
+}
+
 // func (c *CommandHandler) PrintNumber(label string) {
 // 	c.goTo(label)
 
@@ -46,10 +50,6 @@ func (c *CommandHandler) Print(v env.Variable) {
 func (c *CommandHandler) Set(v env.Variable, value int) {
 	c.Reset(v)
 	c.add(v, value)
-}
-
-func (c *CommandHandler) Sub(v env.Variable, count int) {
-	c.add(v, -1)
 }
 
 func (c *CommandHandler) Inc(v env.Variable) {
@@ -64,7 +64,7 @@ func (c *CommandHandler) Dec(v env.Variable) {
 
 // Resets cell to 0
 func (c *CommandHandler) Reset(v env.Variable) {
-	c.Loop(v, func() {
+	c.While(v, func() {
 		c.writer.command(BFDec)
 	})
 }
@@ -72,7 +72,7 @@ func (c *CommandHandler) Reset(v env.Variable) {
 // from -> to
 func (c *CommandHandler) Move(from env.Variable, to env.Variable) {
 	c.Reset(to)
-	c.Loop(from, func() {
+	c.While(from, func() {
 		c.Inc(to)
 		c.Dec(from)
 	})
@@ -89,7 +89,7 @@ func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
 	c.Reset(temp0)
 	c.Reset(to)
 
-	c.Loop(from, func() {
+	c.While(from, func() {
 		c.Inc(to)
 		c.Inc(temp0)
 		c.Dec(from)
@@ -98,18 +98,55 @@ func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
 	c.Move(temp0, from)
 }
 
-// Compares a and b, result is a boolean in res
+// Compares x == y, result is a boolean in res
 func (c *CommandHandler) Equals(x env.Variable, y env.Variable, res env.Variable) {
 	temp := c.env.DeclareAnonVariable()
 	defer c.env.ReleaseVariable(temp)
 	c.Copy(x, temp)
-	c.SubCell(y, temp)
+	c.subTo(y, temp)
 
 	c.Set(res, 1)
 
 	c.If(temp, func() {
 		c.Set(res, 0)
 	})
+}
+
+// Compares x > b
+func (c *CommandHandler) Gt(x env.Variable, y env.Variable, res env.Variable) {
+	temp := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp)
+	tempy := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(tempy)
+	isZero := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(isZero)
+
+	c.Set(res, 1)
+	c.Copy(x, temp)
+	c.Copy(y, tempy)
+
+	c.While(tempy, func() { // Decrement temp by y, checking on every step
+		c.Dec(temp)
+
+		c.Not(temp, isZero)
+
+		c.If(isZero, func() {
+			c.Set(res, 0)
+		})
+
+		c.Dec(tempy)
+	})
+}
+
+// Compares x > b, cheap Gte
+func (c *CommandHandler) Gte(x env.Variable, y env.Variable, res env.Variable) {
+	x2 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(x2)
+
+	// Because these are integers, we just compare GT with an x increased by 1
+	c.Copy(x, x2)
+	c.Inc(x2)
+	c.Gt(x2, y, res)
 }
 
 func (c *CommandHandler) And(x env.Variable, y env.Variable, res env.Variable) {
@@ -132,7 +169,6 @@ func (c *CommandHandler) Or(x env.Variable, y env.Variable, res env.Variable) {
 	})
 }
 
-// Boolean NOT
 func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
 	c.Set(res, 1)
 	c.If(x, func() {
@@ -140,7 +176,6 @@ func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
 	})
 }
 
-// Boolean NOT
 func (c *CommandHandler) Add(a env.Variable, b env.Variable, res env.Variable) {
 	temp := c.env.DeclareAnonVariable()
 	defer c.env.ReleaseVariable(temp)
@@ -150,19 +185,13 @@ func (c *CommandHandler) Add(a env.Variable, b env.Variable, res env.Variable) {
 	c.Move(temp, res)
 }
 
-// Substracts cell a to b, b is modified
-func (c *CommandHandler) SubCell(a env.Variable, b env.Variable) {
+func (c *CommandHandler) Sub(a env.Variable, b env.Variable, res env.Variable) {
 	temp := c.env.DeclareAnonVariable()
 	defer c.env.ReleaseVariable(temp)
-	c.Reset(temp)
+	c.Copy(a, temp)
+	c.subTo(b, temp)
 
-	c.Loop(a, func() {
-		c.Inc(temp)
-		c.Dec(b)
-		c.Dec(a)
-	})
-
-	c.Move(temp, a)
+	c.Move(temp, res)
 }
 
 // Multiply cell a and b
@@ -172,9 +201,29 @@ func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) 
 	c.Copy(a, temp)
 	c.Reset(res)
 
-	c.Loop(temp, func() {
+	c.While(temp, func() {
 		c.addTo(b, res)
 		c.Dec(temp)
+	})
+}
+
+// Divide cell a and b
+func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
+	remainder := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(remainder)
+	isRemainderBigger := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(isRemainderBigger)
+
+	c.Reset(res)
+	c.Copy(a, remainder)
+
+	c.Gte(remainder, b, isRemainderBigger)
+
+	c.While(isRemainderBigger, func() {
+		c.Inc(res)
+		c.subTo(b, remainder)
+
+		c.Gte(remainder, b, isRemainderBigger)
 	})
 }
 
@@ -182,15 +231,18 @@ func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) 
 // Accepts a code function using the command handler
 // The resulting function must end in the same position as it begins!
 func (c *CommandHandler) If(cond env.Variable, code func()) {
-	c.goTo(cond)
-	c.beginLoop()
-	code()
-	c.goTo(env.NIL)
-	c.endLoop()
+	temp := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp)
+	c.Copy(cond, temp)
+	c.While(temp, func() {
+		code()
+		c.Set(temp, 0)
+	})
+
 }
 
 // Loops, ensuring that the loop begins and ends in condCell
-func (c *CommandHandler) Loop(condCell env.Variable, code func()) {
+func (c *CommandHandler) While(condCell env.Variable, code func()) {
 	c.goTo(condCell)
 	c.beginLoop()
 	code()
@@ -264,11 +316,26 @@ func (c *CommandHandler) addTo(a env.Variable, b env.Variable) {
 	defer c.env.ReleaseVariable(temp0)
 	c.Reset(temp0)
 
-	c.Loop(a, func() {
+	c.While(a, func() {
 		c.Inc(temp0)
 		c.Inc(b)
 		c.Dec(a)
 	})
 
 	c.Move(temp0, a)
+}
+
+// Substracts cell a to b, b is modified
+func (c *CommandHandler) subTo(a env.Variable, b env.Variable) {
+	temp := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp)
+	c.Reset(temp)
+
+	c.While(a, func() {
+		c.Inc(temp)
+		c.Dec(b)
+		c.Dec(a)
+	})
+
+	c.Move(temp, a)
 }

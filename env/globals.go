@@ -1,7 +1,8 @@
 package env
 
-const GlobalsCount = 1
+const GlobalsCount = 0
 
-var NIL = &AnonVariable{
-	position: 0,
-}
+// To create globally reserved memory
+// var NIL = &AnonVariable{
+// 	position: 0,
+// }

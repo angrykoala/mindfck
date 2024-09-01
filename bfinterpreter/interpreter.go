@@ -1,5 +1,7 @@
 package bfinterpreter
 
+import "fmt"
+
 type Interpreter struct {
 	Memory []byte
 	memPtr int
@@ -59,8 +61,17 @@ func (interpreter *Interpreter) Run(code string) {
 		case '.':
 			var value = interpreter.Memory[interpreter.memPtr]
 			interpreter.Output = append(interpreter.Output, value)
+		case '#':
+			interpreter.Debug()
+			// return
 		}
 	}
+}
+
+func (interpreter *Interpreter) Debug() {
+	fmt.Println("Memory:", interpreter.Memory)
+	fmt.Println("Output:", interpreter.Output)
+	fmt.Println("Pointer:", interpreter.memPtr)
 }
 
 func (interpreter *Interpreter) currentValue() byte {

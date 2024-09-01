@@ -1,6 +1,7 @@
 package mfast
 
 import (
+	"fmt"
 	"mindfck/codegen"
 	"mindfck/env"
 	"mindfck/parser/tokens"
@@ -53,6 +54,23 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 
 	v3 := cmd.Env().DeclareAnonVariable()
 
-	cmd.Add(v1, v2, v3)
+	switch expr.Operator {
+	case tokens.PLUS:
+		cmd.Add(v1, v2, v3)
+	case tokens.MINUS:
+		cmd.Sub(v1, v2, v3)
+	case tokens.MULTIPLY:
+		cmd.Mult(v1, v2, v3)
+	case tokens.DIVIDE:
+
+	case tokens.EQUALEQUAL:
+
+	case tokens.AND:
+
+	case tokens.OR:
+
+	default:
+		return nil, fmt.Errorf("Invalid Operator %v", expr.Operator)
+	}
 	return v3, nil
 }
