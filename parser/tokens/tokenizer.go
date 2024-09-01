@@ -61,6 +61,28 @@ func getTokenKind(tkn string) TokenKind {
 		return PLUS
 	case "-":
 		return MINUS
+	case "*":
+		return MULTIPLY
+	case "/":
+		return DIVIDE
+
+		// Booleans
+	case "==":
+		return EQUALEQUAL
+	case ">":
+		return GT
+	case "<":
+		return LT
+	case ">=":
+		return GTE
+	case "<=":
+		return LTE
+	case "and":
+		return AND
+	case "or":
+		return OR
+	case "not":
+		return NOT
 	default:
 		if utils.IsInt(tkn) {
 			return NUMBER

@@ -62,15 +62,25 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 	case tokens.MULTIPLY:
 		cmd.Mult(v1, v2, v3)
 	case tokens.DIVIDE:
-
+		cmd.Div(v1, v2, v3)
 	case tokens.EQUALEQUAL:
-
+		cmd.Equals(v1, v2, v3)
 	case tokens.AND:
-
+		cmd.And(v1, v2, v3)
 	case tokens.OR:
+		cmd.Or(v1, v2, v3)
+
+	case tokens.GT:
+		cmd.Gt(v1, v2, v3)
+	case tokens.LT:
+		cmd.Gte(v2, v1, v3)
+	case tokens.GTE:
+		cmd.Gte(v1, v2, v3)
+	case tokens.LTE:
+		cmd.Gt(v2, v1, v3)
 
 	default:
-		return nil, fmt.Errorf("Invalid Operator %v", expr.Operator)
+		return nil, fmt.Errorf("evalexpr: invalid operator %v", expr.Operator)
 	}
 	return v3, nil
 }

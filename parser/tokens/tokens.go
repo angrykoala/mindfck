@@ -19,6 +19,11 @@ const (
 
 	// Booleans
 	EQUALEQUAL
+	GT
+	LT
+	GTE
+	LTE
+
 	AND
 	OR
 	NOT
@@ -41,7 +46,11 @@ func (tk *Token) IsBinaryOperator() bool {
 		DIVIDE,
 		EQUALEQUAL,
 		AND,
-		OR:
+		OR,
+		GT,
+		LT,
+		GTE,
+		LTE:
 		return true
 	}
 	return false

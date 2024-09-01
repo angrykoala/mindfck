@@ -68,7 +68,6 @@ func parseAssignment(identifier *tokens.Token, tk []*tokens.Token) (*mfast.Assig
 	}
 
 	operator, exprTokens := tk[0], tk[1:]
-
 	if operator.Kind != tokens.EQUALS {
 		return nil, fmt.Errorf("error in declaration, invalid operator %s", operator.Txt)
 	}
