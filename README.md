@@ -1,5 +1,26 @@
 # mindfck
 
+## Requirements
+
+Install antlr4-tools to work with the parser
+```
+pip3 install antlr4-tools
+```
+
+To regenerate the parser, do:
+
+```
+antlr4 parser/antlr/mindfck.g4 -Dlanguage=Go
+```
+
+To parse something manually in the command line:
+
+```
+antlr4-parse parser/antlr/mindfck.g4 statements -gui
+```
+
+## Description
+
 A simple language that transpiles to brainfuck:
 
 ```

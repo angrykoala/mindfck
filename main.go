@@ -5,12 +5,11 @@ import (
 	"mindfck/bfinterpreter"
 	"mindfck/compiler"
 	"mindfck/parser"
-	"mindfck/parser/tokens"
 )
 
 func main() {
 	// code()
-	tokens, err := tokens.Tokenizer(`
+	input := `
 	byte a
 	byte b
 	a = 3 + a
@@ -21,12 +20,9 @@ func main() {
 	a = a + 2
 	b = 10 + a
 	c = a + b
-	`)
-	if err != nil {
-		panic(err)
-	}
+	`
 
-	ast, err := parser.Parse(tokens)
+	ast, err := parser.Parse(input)
 	if err != nil {
 		panic(err)
 	}

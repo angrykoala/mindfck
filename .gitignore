@@ -23,3 +23,8 @@ go.work.sum
 
 # env file
 .env
+
+#antlr4 files
+*.interp
+*.tokens
+mindfck*.java

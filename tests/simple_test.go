@@ -4,14 +4,13 @@ import (
 	"mindfck/bfinterpreter"
 	"mindfck/compiler"
 	"mindfck/parser"
-	"mindfck/parser/tokens"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSimple(t *testing.T) {
-	tokens, err := tokens.Tokenizer(`
+	input := `
 	byte a
 	byte b
 	a = 3
@@ -20,12 +19,9 @@ func TestSimple(t *testing.T) {
 	print a
     print b
     print 5
-	`)
-	if err != nil {
-		panic(err)
-	}
+	`
 
-	ast, err := parser.Parse(tokens)
+	ast, err := parser.Parse(input)
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +37,7 @@ func TestSimple(t *testing.T) {
 }
 
 func TestComparison(t *testing.T) {
-	tokens, err := tokens.Tokenizer(`
+	input := `
 	byte a
 	byte b
 	byte c
@@ -57,12 +53,8 @@ func TestComparison(t *testing.T) {
     print c
     c = a == 4
     print c
-	`)
-	if err != nil {
-		panic(err)
-	}
-
-	ast, err := parser.Parse(tokens)
+	`
+	ast, err := parser.Parse(input)
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +70,7 @@ func TestComparison(t *testing.T) {
 }
 
 func TestLogical(t *testing.T) {
-	tokens, err := tokens.Tokenizer(`
+	input := `
 	byte a
 	byte b
 	byte c
@@ -92,12 +84,9 @@ func TestLogical(t *testing.T) {
 	print d
 	d = b or c
 	print d
-	`)
-	if err != nil {
-		panic(err)
-	}
+	`
 
-	ast, err := parser.Parse(tokens)
+	ast, err := parser.Parse(input)
 	if err != nil {
 		panic(err)
 	}
