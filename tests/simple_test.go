@@ -100,3 +100,33 @@ func TestLogical(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, interpreter.Output, []byte{1, 0, 1})
 }
+
+func TestComplexExpressions(t *testing.T) {
+	input := `
+	byte a
+	byte b
+	byte c
+    byte d
+	byte e
+	a = 0
+    b = 1
+    c = 0
+	d = 1
+	e = a + b + c + 8 + d + 3
+	print e
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, interpreter.Output, []byte{13})
+}
