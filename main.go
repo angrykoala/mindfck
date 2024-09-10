@@ -1,3 +1,5 @@
+//go:generate antlr4 parser/antlr/mindfck.g4 -Dlanguage=Go
+
 package main
 
 import (

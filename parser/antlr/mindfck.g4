@@ -2,29 +2,35 @@ grammar mindfck;
 
 statements: statement*;
 
-statement: 
-    declaration | assignment | print;
+statement: declaration | assignment | print;
 
-declaration: 
-    BYTE identifier;
+declaration: BYTE identifier;
 
-assignment: 
-    identifier EQUALS expression;
+assignment: identifier EQUALS expression;
 
 expression:
-    identifier | literal | expression operand expression;
+	identifier
+	| literal
+	| expression operand expression;
 
-print:
-    PRINT expression;
+print: PRINT expression;
 
 operand:
-    PLUS | MINUS | TIMES | DIVIDE | DEQUALS | GT | GE | LT | LE | AND | OR;
+	PLUS
+	| MINUS
+	| TIMES
+	| DIVIDE
+	| DEQUALS
+	| GT
+	| GE
+	| LT
+	| LE
+	| AND
+	| OR;
 
-identifier: 
-    IDENTIFIER;
+identifier: IDENTIFIER;
 
-literal:
-    NUMBER;
+literal: NUMBER;
 
 WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
