@@ -1,153 +1,77 @@
 package parser
 
 import (
-	"fmt"
+	mindfck "mindfck/parser/antlr"
 	"mindfck/parser/mfast"
-	"mindfck/parser/tokens"
 	"mindfck/utils"
+
+	"github.com/antlr4-go/antlr/v4"
 )
 
-func Parse(tokens []tokens.StmtTokens) ([]mfast.Stmt, error) {
-	statements := []mfast.Stmt{}
-	for _, stmtTokens := range tokens {
-		stmt, err := parseStmt(stmtTokens)
-		if err != nil {
-			return nil, err
+type AstGenerator struct {
+	*mindfck.BasemindfckListener
+
+	ast  []mfast.Stmt
+	expr []mfast.Expr
+}
+
+func (l *AstGenerator) EnterStatement(c *mindfck.StatementContext) {
+	l.expr = []mfast.Expr{}
+}
+
+func (l *AstGenerator) ExitStatement(c *mindfck.StatementContext) {
+	decl := c.Declaration()
+	assignment := c.Assignment()
+	print := c.Print_()
+
+	if decl != nil {
+		current := &mfast.Declare{
+			Label: decl.Identifier().IDENTIFIER().GetText(),
 		}
-		statements = append(statements, stmt)
-	}
-
-	return statements, nil
-}
-
-func parseStmt(stmtTokens []*tokens.Token) (mfast.Stmt, error) {
-	first, stmtTokens := stmtTokens[0], stmtTokens[1:]
-
-	switch first.Kind {
-
-	case tokens.BYTE:
-		return parseDeclaration(stmtTokens)
-	case tokens.IDENTIFIER:
-		return parseAssignment(first, stmtTokens)
-	case tokens.PRINT:
-		return parsePrint(stmtTokens)
-
-	}
-
-	return nil, fmt.Errorf("unknown statement %v,  %v", first, stmtTokens)
-}
-
-func parseDeclaration(tk []*tokens.Token) (*mfast.Declare, error) {
-	if len(tk) != 1 {
-		return nil, fmt.Errorf("error in declaration %v", tk)
-	}
-
-	var labeltk = tk[0]
-
-	if labeltk.Kind != tokens.IDENTIFIER {
-		return nil, fmt.Errorf("error in declaration, invalid token %v", labeltk)
-	}
-	return &mfast.Declare{
-		Label: labeltk.Txt,
-	}, nil
-}
-
-func parsePrint(tk []*tokens.Token) (*mfast.Print, error) {
-	expr, err := parseExpr(tk)
-	if err != nil {
-		return nil, err
-	}
-	return &mfast.Print{
-		Value: expr,
-	}, nil
-}
-
-func parseAssignment(identifier *tokens.Token, tk []*tokens.Token) (*mfast.Assign, error) {
-	if len(tk) < 2 {
-		return nil, fmt.Errorf("error in assignment %v", tk)
-	}
-
-	operator, exprTokens := tk[0], tk[1:]
-	if operator.Kind != tokens.EQUALS {
-		return nil, fmt.Errorf("error in declaration, invalid operator %s", operator.Txt)
-	}
-
-	fromExpr, err := parseExpr(exprTokens)
-	if err != nil {
-		return nil, err
-	}
-
-	return &mfast.Assign{
-		To:   identifier.Txt,
-		From: fromExpr,
-	}, nil
-}
-
-func parseExpr(tk []*tokens.Token) (mfast.Expr, error) {
-	if len(tk) < 1 {
-		return nil, fmt.Errorf("invalid expression %v", tk)
-	}
-
-	if len(tk) == 1 {
-		return parseUnaryExpr(tk[0])
-	}
-
-	left, operator, right := consumeTokens(tk, func(token *tokens.Token) bool {
-		return token.IsBinaryOperator()
-	})
-
-	if operator == nil || !operator.IsBinaryOperator() {
-		return nil, fmt.Errorf("invalid expression, missing operator")
-	}
-
-	rightExpr, err := parseExpr(right)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: handle complex operators in left
-	leftExpr, err := parseExpr(left)
-	if err != nil {
-		return nil, err
-	}
-
-	return &mfast.BinaryExpr{
-		Right:    rightExpr,
-		Operator: operator.Kind,
-		Left:     leftExpr,
-	}, nil
-
-}
-
-func parseUnaryExpr(token *tokens.Token) (mfast.Expr, error) {
-	if token.IsLiteral() {
-		value := utils.ToInt(token.Txt)
-		return &mfast.Literal{
-			Value: value,
-		}, nil
-	}
-
-	if token.Kind == tokens.IDENTIFIER {
-		return &mfast.VariableExpr{
-			Label: token.Txt,
-		}, nil
-	}
-
-	return nil, fmt.Errorf("invalid expression %v", token)
-}
-
-func consumeTokens(tk []*tokens.Token, until func(*tokens.Token) bool) (left []*tokens.Token, match *tokens.Token, right []*tokens.Token) {
-	for _, token := range tk {
-		if until(token) {
-			match = token
-			continue
+		l.ast = append(l.ast, current)
+	} else if assignment != nil {
+		current := &mfast.Assign{
+			To:   assignment.Identifier().GetText(),
+			From: l.expr[0],
 		}
 
-		if match == nil {
-			left = append(left, token)
-		} else {
-			right = append(right, token)
+		l.ast = append(l.ast, current)
+	} else if print != nil {
+		current := &mfast.Print{
+			Value: l.expr[0],
 		}
+		l.ast = append(l.ast, current)
 	}
-	return
+}
+
+func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
+	if c.Literal() != nil {
+		l.expr = append(l.expr, &mfast.Literal{
+			Value: utils.ToInt(c.Literal().GetText()),
+		})
+	} else if c.Identifier() != nil {
+		l.expr = append(l.expr, &mfast.VariableExpr{
+			Label: c.Identifier().GetText(),
+		})
+	} else if c.Expression(0) != nil && c.Expression(1) != nil {
+		l.expr = []mfast.Expr{&mfast.BinaryExpr{
+			Operator: mfast.Operand(c.Operand().GetText()),
+			Left:     l.expr[0],
+			Right:    l.expr[1],
+		}}
+	}
+}
+
+func Parse(input string) ([]mfast.Stmt, error) {
+	inputStream := antlr.NewInputStream(input)
+	lexer := mindfck.NewmindfckLexer(inputStream)
+	tokenStream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+	parser := mindfck.NewmindfckParser(tokenStream)
+	tree := parser.Statements()
+
+	listener := &AstGenerator{}
+	// TODO How to do the error handling here?
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+
+	return listener.ast, nil
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"mindfck/codegen"
 	"mindfck/env"
-	"mindfck/parser/tokens"
 )
 
 type Expr interface {
@@ -34,8 +33,28 @@ func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, er
 	return v2, nil
 }
 
+type Operand string
+
+const (
+	PLUS     Operand = "+"
+	MINUS    Operand = "-"
+	MULTIPLY Operand = "*"
+	DIVIDE   Operand = "/"
+
+	// Booleans
+	EQUALEQUAL Operand = "=="
+	GT         Operand = ">"
+	LT         Operand = "<"
+	GTE        Operand = ">="
+	LTE        Operand = "<="
+
+	AND Operand = "and"
+	OR  Operand = "or"
+	NOT Operand = "not"
+)
+
 type BinaryExpr struct {
-	Operator tokens.TokenKind // Using TokenKind to simplify
+	Operator Operand
 	Left     Expr
 	Right    Expr
 }
@@ -55,28 +74,28 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 	v3 := cmd.Env().DeclareAnonVariable()
 
 	switch expr.Operator {
-	case tokens.PLUS:
+	case PLUS:
 		cmd.Add(v1, v2, v3)
-	case tokens.MINUS:
+	case MINUS:
 		cmd.Sub(v1, v2, v3)
-	case tokens.MULTIPLY:
+	case MULTIPLY:
 		cmd.Mult(v1, v2, v3)
-	case tokens.DIVIDE:
+	case DIVIDE:
 		cmd.Div(v1, v2, v3)
-	case tokens.EQUALEQUAL:
+	case EQUALEQUAL:
 		cmd.Equals(v1, v2, v3)
-	case tokens.AND:
+	case AND:
 		cmd.And(v1, v2, v3)
-	case tokens.OR:
+	case OR:
 		cmd.Or(v1, v2, v3)
 
-	case tokens.GT:
+	case GT:
 		cmd.Gt(v1, v2, v3)
-	case tokens.LT:
+	case LT:
 		cmd.Gte(v2, v1, v3)
-	case tokens.GTE:
+	case GTE:
 		cmd.Gte(v1, v2, v3)
-	case tokens.LTE:
+	case LTE:
 		cmd.Gt(v2, v1, v3)
 
 	default:
