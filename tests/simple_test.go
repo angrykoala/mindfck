@@ -33,7 +33,7 @@ func TestSimple(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, interpreter.Output, []byte{36, 38, 5})
+	assert.Equal(t, []byte{36, 38, 5}, interpreter.Output)
 }
 
 func TestComparison(t *testing.T) {
@@ -66,7 +66,7 @@ func TestComparison(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, interpreter.Output, []byte{1, 1, 0, 1, 0})
+	assert.Equal(t, []byte{1, 1, 0, 1, 0}, interpreter.Output)
 }
 
 func TestLogical(t *testing.T) {
@@ -98,7 +98,7 @@ func TestLogical(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, interpreter.Output, []byte{1, 0, 1})
+	assert.Equal(t, []byte{1, 0, 1}, interpreter.Output)
 }
 
 func TestComplexExpressions(t *testing.T) {
@@ -128,5 +128,5 @@ func TestComplexExpressions(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, interpreter.Output, []byte{13})
+	assert.Equal(t, []byte{13}, interpreter.Output)
 }

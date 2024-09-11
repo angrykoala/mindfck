@@ -31,3 +31,5 @@ mindfck*.java
 .antlr/
 
 mindfck
+
+.vscode

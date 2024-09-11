@@ -8,11 +8,50 @@ import (
 	"github.com/antlr4-go/antlr/v4"
 )
 
+func Parse(input string) ([]mfast.Stmt, error) {
+	inputStream := antlr.NewInputStream(input)
+	lexer := mindfck.NewmindfckLexer(inputStream)
+	tokenStream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+	parser := mindfck.NewmindfckParser(tokenStream)
+	tree := parser.Statements()
+
+	listener := &AstGenerator{
+		currentScope: newScope(),
+		scopeStack:   []scope{},
+	}
+	// TODO How to do the error handling here?
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+
+	return listener.ast, nil
+}
+
+type scope struct {
+	stmt []mfast.Stmt
+	expr []mfast.Expr
+}
+
+func newScope() scope {
+	return scope{
+		stmt: []mfast.Stmt{},
+		expr: []mfast.Expr{},
+	}
+}
+
 type AstGenerator struct {
 	*mindfck.BasemindfckListener
 
-	ast  []mfast.Stmt
-	expr []mfast.Expr
+	currentScope scope
+
+	scopeStack []scope
+
+	// ast  []mfast.Stmt
+	// expr []mfast.Expr
+
+	blockStack [][]mfast.Stmt // Scope should also keep expressions?
+}
+
+func (l *AstGenerator) Ast() []mfast.Stmt {
+	return l.currentScope.stmt
 }
 
 func (l *AstGenerator) EnterStatement(c *mindfck.StatementContext) {
@@ -42,6 +81,20 @@ func (l *AstGenerator) ExitPrint(print *mindfck.PrintContext) {
 	l.ast = append(l.ast, current)
 }
 
+func (l *AstGenerator) EnterIfConditional(cond *mindfck.IfConditionalContext) {
+	// Begin block scope
+	l.beginScope()
+}
+
+func (l *AstGenerator) ExitIfConditional(cond *mindfck.IfConditionalContext) {
+	innerBlock := l.popScope()
+	current := &mfast.If{
+		Condition: l.expr[0],
+		Block:     innerBlock,
+	}
+	l.ast = append(l.ast, current)
+}
+
 func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
 	if c.Literal() != nil {
 		l.expr = append(l.expr, &mfast.Literal{
@@ -60,16 +113,28 @@ func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
 	}
 }
 
-func Parse(input string) ([]mfast.Stmt, error) {
-	inputStream := antlr.NewInputStream(input)
-	lexer := mindfck.NewmindfckLexer(inputStream)
-	tokenStream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
-	parser := mindfck.NewmindfckParser(tokenStream)
-	tree := parser.Statements()
+// func (l *AstGenerator) beginScope() {
+// 	l.blockStack = append(l.blockStack, l.ast)
+// 	l.ast = []mfast.Stmt{}
+// }
 
-	listener := &AstGenerator{}
-	// TODO How to do the error handling here?
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+// // Pops last scope into current, returns current ast
+// func (l *AstGenerator) popScope() []mfast.Stmt {
+// 	current := l.ast
+// 	l.ast = l.blockStack[len(l.blockStack)-1]
+// 	l.blockStack = l.blockStack[:len(l.blockStack)-1]
+// 	return current
+// }
 
-	return listener.ast, nil
+func (l *AstGenerator) beginScope() {
+	l.scopeStack = append(l.scopeStack, l.currentScope)
+	l.currentScope = newScope()
+}
+
+// Pops last scope into current, returns current scope
+func (l *AstGenerator) popScope() scope {
+	current := l.currentScope
+	l.currentScope = l.scopeStack[len(l.scopeStack)-1]
+	l.scopeStack = l.scopeStack[:len(l.scopeStack)-1]
+	return current
 }
