@@ -153,33 +153,6 @@ func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
 	})
 }
 
-// Compares x > b
-func (c *CommandHandler) Gt2(x env.Variable, y env.Variable, res env.Variable) {
-	println("GT")
-	temp := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp)
-	tempy := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(tempy)
-	isZero := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(isZero)
-
-	c.Set(res, 1)
-	c.Copy(x, temp)
-	c.Copy(y, tempy)
-
-	c.While(tempy, func() { // Decrement temp by y, checking on every step
-		c.Dec(temp)
-
-		c.Not(temp, isZero)
-
-		c.If(isZero, func() {
-			c.Set(res, 0)
-		})
-
-		c.Dec(tempy)
-	})
-}
-
 // Compares x+1 > b, cheap Gte
 func (c *CommandHandler) Gte(x env.Variable, y env.Variable, res env.Variable) {
 	x2 := c.env.DeclareAnonVariable()
