@@ -10,7 +10,9 @@ assignment: identifier EQUALS expression;
 
 print: PRINT expression;
 
-ifConditional: IF '(' expression ')' '{' statement* '}';
+ifConditional: IF '(' expression ')' '{' block '}';
+
+block: statement*;
 
 expression:
 	identifier

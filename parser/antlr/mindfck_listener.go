@@ -26,6 +26,9 @@ type mindfckListener interface {
 	// EnterIfConditional is called when entering the ifConditional production.
 	EnterIfConditional(c *IfConditionalContext)
 
+	// EnterBlock is called when entering the block production.
+	EnterBlock(c *BlockContext)
+
 	// EnterExpression is called when entering the expression production.
 	EnterExpression(c *ExpressionContext)
 
@@ -55,6 +58,9 @@ type mindfckListener interface {
 
 	// ExitIfConditional is called when exiting the ifConditional production.
 	ExitIfConditional(c *IfConditionalContext)
+
+	// ExitBlock is called when exiting the block production.
+	ExitBlock(c *BlockContext)
 
 	// ExitExpression is called when exiting the expression production.
 	ExitExpression(c *ExpressionContext)

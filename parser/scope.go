@@ -29,8 +29,8 @@ func (s *Scope) appendStmt(stmt mfast.Stmt) {
 	s.stmts = append(s.stmts, stmt)
 }
 
-func newScope() Scope {
-	return Scope{
+func newScope() *Scope {
+	return &Scope{
 		stmts: []mfast.Stmt{},
 		exprs: []mfast.Expr{},
 	}

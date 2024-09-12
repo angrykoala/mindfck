@@ -57,6 +57,12 @@ func (s *BasemindfckListener) EnterIfConditional(ctx *IfConditionalContext) {}
 // ExitIfConditional is called when production ifConditional is exited.
 func (s *BasemindfckListener) ExitIfConditional(ctx *IfConditionalContext) {}
 
+// EnterBlock is called when production block is entered.
+func (s *BasemindfckListener) EnterBlock(ctx *BlockContext) {}
+
+// ExitBlock is called when production block is exited.
+func (s *BasemindfckListener) ExitBlock(ctx *BlockContext) {}
+
 // EnterExpression is called when production expression is entered.
 func (s *BasemindfckListener) EnterExpression(ctx *ExpressionContext) {}
 

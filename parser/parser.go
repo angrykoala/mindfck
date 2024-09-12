@@ -17,7 +17,7 @@ func Parse(input string) ([]mfast.Stmt, error) {
 
 	listener := &AstGenerator{
 		scope:      newScope(),
-		scopeStack: []Scope{},
+		scopeStack: []*Scope{},
 	}
 	// TODO How to do the error handling here?
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
@@ -28,9 +28,10 @@ func Parse(input string) ([]mfast.Stmt, error) {
 type AstGenerator struct {
 	*mindfck.BasemindfckListener
 
-	scope Scope
+	scope          *Scope
+	lastInnerScope *Scope // Scope to be set on exitBlock
 
-	scopeStack []Scope
+	scopeStack []*Scope
 }
 
 func (l *AstGenerator) Ast() []mfast.Stmt {
@@ -65,19 +66,28 @@ func (l *AstGenerator) ExitPrint(print *mindfck.PrintContext) {
 	l.scope.appendStmt(current)
 }
 
-// func (l *AstGenerator) EnterIfConditional(cond *mindfck.IfConditionalContext) {
-// 	// Begin block scope
-// 	l.beginScope()
-// }
+// EnterBlock is called when entering the block production.
+func (l *AstGenerator) EnterBlock(c *mindfck.BlockContext) {
+	l.beginScope()
+}
 
-// func (l *AstGenerator) ExitIfConditional(cond *mindfck.IfConditionalContext) {
-// 	innerBlock := l.popScope()
-// 	current := &mfast.If{
-// 		Condition: l.expr[0],
-// 		Block:     innerBlock,
-// 	}
-// 	l.ast = append(l.ast, current)
-// }
+// ExitBlock is called when exiting the block production.
+func (l *AstGenerator) ExitBlock(c *mindfck.BlockContext) {
+	l.lastInnerScope = l.popScope()
+}
+
+func (l *AstGenerator) ExitIfConditional(cond *mindfck.IfConditionalContext) {
+	innerScope := l.lastInnerScope
+	if innerScope == nil {
+		panic("Cannot find inner scope in if block")
+	}
+
+	current := &mfast.If{
+		Condition: l.scope.popLeftExpr(),
+		Block:     innerScope.stmts,
+	}
+	l.scope.appendStmt(current)
+}
 
 func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
 	if c.Literal() != nil {
@@ -98,26 +108,13 @@ func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
 	}
 }
 
-// func (l *AstGenerator) beginScope() {
-// 	l.blockStack = append(l.blockStack, l.ast)
-// 	l.ast = []mfast.Stmt{}
-// }
-
-// // Pops last scope into current, returns current ast
-// func (l *AstGenerator) popScope() []mfast.Stmt {
-// 	current := l.ast
-// 	l.ast = l.blockStack[len(l.blockStack)-1]
-// 	l.blockStack = l.blockStack[:len(l.blockStack)-1]
-// 	return current
-// }
-
 func (l *AstGenerator) beginScope() {
 	l.scopeStack = append(l.scopeStack, l.scope)
 	l.scope = newScope()
 }
 
 // Pops last scope into current, returns current scope
-func (l *AstGenerator) popScope() Scope {
+func (l *AstGenerator) popScope() *Scope {
 	current := l.scope
 	l.scope = l.scopeStack[len(l.scopeStack)-1]
 	l.scopeStack = l.scopeStack[:len(l.scopeStack)-1]
