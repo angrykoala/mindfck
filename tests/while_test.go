@@ -9,12 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIfTrue(t *testing.T) {
+func TestWhileSimple(t *testing.T) {
 	input := `
 	byte a
-	a = 2
-    if (a==2) {
+	a = 1
+    while (a==1) {
         print a
+        a=a-1
     }
     print 0
 	`
@@ -27,15 +28,16 @@ func TestIfTrue(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{2, 0}, interpreter.Output)
+	assert.Equal(t, []byte{1, 0}, interpreter.Output)
 }
 
-func TestIfFalse(t *testing.T) {
+func TestWhileSimpleGT(t *testing.T) {
 	input := `
 	byte a
-	a = 2
-    if (a==1) {
+	a = 3
+    while (a>1) {
         print a
+        a=a-1
     }
     print 0
 	`
@@ -48,20 +50,16 @@ func TestIfFalse(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{0}, interpreter.Output)
+	assert.Equal(t, []byte{3, 2, 0}, interpreter.Output)
 }
 
-func TestNestedIf(t *testing.T) {
+func TestWhile(t *testing.T) {
 	input := `
 	byte a
-	byte b
-	a = 2
-	b = 3
-    if (a==2) {
+	a = 10
+    while (a>0) {
         print a
-		if (a+b==5) {
-			print 6
-		}
+        a = a-1
     }
     print 0
 	`
@@ -74,31 +72,5 @@ func TestNestedIf(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{2, 6, 0}, interpreter.Output)
-}
-
-func TestIfGTZero(t *testing.T) {
-	input := `
-	byte a
-	byte b
-	a = 2
-	b = 0
-    if (a>0) {
-        print a
-    }
-	if (b>0) {
-		print b
-	}
-    print 0
-	`
-
-	ast, err := parser.Parse(input)
-	assert.Nil(t, err)
-
-	code, err := compiler.Compile(ast)
-	assert.Nil(t, err)
-
-	interpreter := bfinterpreter.New()
-	interpreter.Run(code)
-	assert.Equal(t, []byte{2, 0}, interpreter.Output)
+	assert.Equal(t, []byte{10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0}, interpreter.Output)
 }

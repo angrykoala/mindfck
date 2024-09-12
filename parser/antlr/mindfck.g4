@@ -2,7 +2,12 @@ grammar mindfck;
 
 statements: statement*;
 
-statement: declaration | assignment | print | ifConditional;
+statement:
+	declaration
+	| assignment
+	| print
+	| ifConditional
+	| whileLoop;
 
 declaration: BYTE identifier;
 
@@ -11,6 +16,8 @@ assignment: identifier EQUALS expression;
 print: PRINT expression;
 
 ifConditional: IF '(' expression ')' '{' block '}';
+
+whileLoop: WHILE '(' expression ')' '{' block '}';
 
 block: statement*;
 
@@ -40,6 +47,7 @@ WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
 PRINT: 'print';
 IF: 'if';
+WHILE: 'while';
 PLUS: '+';
 MINUS: '-';
 TIMES: '*';

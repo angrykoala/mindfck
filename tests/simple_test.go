@@ -130,3 +130,47 @@ func TestComplexExpressions(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{13}, interpreter.Output)
 }
+
+func TestDecrement(t *testing.T) {
+	input := `
+	byte a
+	a = 2
+	a = a - 1
+	print a
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{1}, interpreter.Output)
+}
+
+func TestGTZero(t *testing.T) {
+	input := `
+	print 3 > 0
+	print 0 > 0
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{1, 0}, interpreter.Output)
+}

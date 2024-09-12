@@ -7,6 +7,7 @@ import (
 )
 
 type Expr interface {
+	// Evaluates the expression, returning a single anonymous variable with the result, that must be released afterwards
 	EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error)
 }
 
@@ -88,7 +89,6 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 		cmd.And(v1, v2, v3)
 	case OR:
 		cmd.Or(v1, v2, v3)
-
 	case GT:
 		cmd.Gt(v1, v2, v3)
 	case LT:

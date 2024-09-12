@@ -26,6 +26,9 @@ type mindfckListener interface {
 	// EnterIfConditional is called when entering the ifConditional production.
 	EnterIfConditional(c *IfConditionalContext)
 
+	// EnterWhileLoop is called when entering the whileLoop production.
+	EnterWhileLoop(c *WhileLoopContext)
+
 	// EnterBlock is called when entering the block production.
 	EnterBlock(c *BlockContext)
 
@@ -58,6 +61,9 @@ type mindfckListener interface {
 
 	// ExitIfConditional is called when exiting the ifConditional production.
 	ExitIfConditional(c *IfConditionalContext)
+
+	// ExitWhileLoop is called when exiting the whileLoop production.
+	ExitWhileLoop(c *WhileLoopContext)
 
 	// ExitBlock is called when exiting the block production.
 	ExitBlock(c *BlockContext)

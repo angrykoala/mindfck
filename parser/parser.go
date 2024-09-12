@@ -89,6 +89,20 @@ func (l *AstGenerator) ExitIfConditional(cond *mindfck.IfConditionalContext) {
 	l.scope.appendStmt(current)
 }
 
+// ExitWhileLoop is called when exiting the whileLoop production.
+func (l *AstGenerator) ExitWhileLoop(c *mindfck.WhileLoopContext) {
+	innerScope := l.lastInnerScope
+	if innerScope == nil {
+		panic("Cannot find inner scope in if block")
+	}
+
+	current := &mfast.While{
+		Condition: l.scope.popLeftExpr(),
+		Block:     innerScope.stmts,
+	}
+	l.scope.appendStmt(current)
+}
+
 func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
 	if c.Literal() != nil {
 		l.scope.pushExpr(&mfast.Literal{
