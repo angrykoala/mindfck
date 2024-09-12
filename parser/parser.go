@@ -16,100 +16,85 @@ func Parse(input string) ([]mfast.Stmt, error) {
 	tree := parser.Statements()
 
 	listener := &AstGenerator{
-		currentScope: newScope(),
-		scopeStack:   []scope{},
+		scope:      newScope(),
+		scopeStack: []Scope{},
 	}
 	// TODO How to do the error handling here?
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 
-	return listener.ast, nil
-}
-
-type scope struct {
-	stmt []mfast.Stmt
-	expr []mfast.Expr
-}
-
-func newScope() scope {
-	return scope{
-		stmt: []mfast.Stmt{},
-		expr: []mfast.Expr{},
-	}
+	return listener.Ast(), nil
 }
 
 type AstGenerator struct {
 	*mindfck.BasemindfckListener
 
-	currentScope scope
+	scope Scope
 
-	scopeStack []scope
-
-	// ast  []mfast.Stmt
-	// expr []mfast.Expr
-
-	blockStack [][]mfast.Stmt // Scope should also keep expressions?
+	scopeStack []Scope
 }
 
 func (l *AstGenerator) Ast() []mfast.Stmt {
-	return l.currentScope.stmt
+	return l.scope.stmts
 }
 
 func (l *AstGenerator) EnterStatement(c *mindfck.StatementContext) {
-	l.expr = []mfast.Expr{}
+	l.scope.clearExpr()
 }
 
 func (l *AstGenerator) ExitDeclaration(decl *mindfck.DeclarationContext) {
 	current := &mfast.Declare{
 		Label: decl.Identifier().IDENTIFIER().GetText(),
 	}
-	l.ast = append(l.ast, current)
+	l.scope.appendStmt(current)
 }
 
 func (l *AstGenerator) ExitAssignment(assignment *mindfck.AssignmentContext) {
 	current := &mfast.Assign{
 		To:   assignment.Identifier().GetText(),
-		From: l.expr[0],
+		From: l.scope.popLeftExpr(),
 	}
 
-	l.ast = append(l.ast, current)
+	l.scope.appendStmt(current)
 }
 
 func (l *AstGenerator) ExitPrint(print *mindfck.PrintContext) {
 	current := &mfast.Print{
-		Value: l.expr[0],
+		Value: l.scope.popLeftExpr(),
 	}
-	l.ast = append(l.ast, current)
+
+	l.scope.appendStmt(current)
 }
 
-func (l *AstGenerator) EnterIfConditional(cond *mindfck.IfConditionalContext) {
-	// Begin block scope
-	l.beginScope()
-}
+// func (l *AstGenerator) EnterIfConditional(cond *mindfck.IfConditionalContext) {
+// 	// Begin block scope
+// 	l.beginScope()
+// }
 
-func (l *AstGenerator) ExitIfConditional(cond *mindfck.IfConditionalContext) {
-	innerBlock := l.popScope()
-	current := &mfast.If{
-		Condition: l.expr[0],
-		Block:     innerBlock,
-	}
-	l.ast = append(l.ast, current)
-}
+// func (l *AstGenerator) ExitIfConditional(cond *mindfck.IfConditionalContext) {
+// 	innerBlock := l.popScope()
+// 	current := &mfast.If{
+// 		Condition: l.expr[0],
+// 		Block:     innerBlock,
+// 	}
+// 	l.ast = append(l.ast, current)
+// }
 
 func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
 	if c.Literal() != nil {
-		l.expr = append(l.expr, &mfast.Literal{
+		l.scope.pushExpr(&mfast.Literal{
 			Value: utils.ToInt(c.Literal().GetText()),
 		})
+
 	} else if c.Identifier() != nil {
-		l.expr = append(l.expr, &mfast.VariableExpr{
+		l.scope.pushExpr(&mfast.VariableExpr{
 			Label: c.Identifier().GetText(),
 		})
 	} else if c.Expression(0) != nil && c.Expression(1) != nil {
-		l.expr = []mfast.Expr{&mfast.BinaryExpr{
+		l.scope.pushExpr(&mfast.BinaryExpr{
 			Operator: mfast.Operand(c.Operand().GetText()),
-			Left:     l.expr[0],
-			Right:    l.expr[1],
-		}}
+			Left:     l.scope.popLeftExpr(),
+			Right:    l.scope.popLeftExpr(),
+		})
 	}
 }
 
@@ -127,14 +112,14 @@ func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
 // }
 
 func (l *AstGenerator) beginScope() {
-	l.scopeStack = append(l.scopeStack, l.currentScope)
-	l.currentScope = newScope()
+	l.scopeStack = append(l.scopeStack, l.scope)
+	l.scope = newScope()
 }
 
 // Pops last scope into current, returns current scope
-func (l *AstGenerator) popScope() scope {
-	current := l.currentScope
-	l.currentScope = l.scopeStack[len(l.scopeStack)-1]
+func (l *AstGenerator) popScope() Scope {
+	current := l.scope
+	l.scope = l.scopeStack[len(l.scopeStack)-1]
 	l.scopeStack = l.scopeStack[:len(l.scopeStack)-1]
 	return current
 }
