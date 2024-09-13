@@ -174,3 +174,45 @@ func TestGTZero(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{1, 0}, interpreter.Output)
 }
+func TestLT(t *testing.T) {
+	input := `
+	print 3 < 10
+	print 10 < 10
+	print 12 < 10
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{1, 0, 0}, interpreter.Output)
+}
+func TestGTE(t *testing.T) {
+	input := `
+	print 3 >= 10
+	print 10 >= 10
+	print 12 >= 10
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{0, 1, 1}, interpreter.Output)
+}
