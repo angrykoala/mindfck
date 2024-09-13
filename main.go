@@ -1,4 +1,4 @@
-//go:generate antlr4 parser/antlr/mindfck.g4 -Dlanguage=Go
+//go:generate antlr4 parser/mindfck.g4 -Dlanguage=Go -o parser/antlr/ -Xexact-output-dir
 
 package main
 
