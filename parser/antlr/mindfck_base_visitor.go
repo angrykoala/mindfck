@@ -44,10 +44,6 @@ func (v *BasemindfckVisitor) VisitExpression(ctx *ExpressionContext) interface{}
 	return v.VisitChildren(ctx)
 }
 
-func (v *BasemindfckVisitor) VisitOperand(ctx *OperandContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BasemindfckVisitor) VisitIdentifier(ctx *IdentifierContext) interface{} {
 	return v.VisitChildren(ctx)
 }

@@ -24,20 +24,10 @@ block: statement*;
 expression:
 	identifier
 	| literal
-	| expression operand expression;
-
-operand:
-	PLUS
-	| MINUS
-	| TIMES
-	| DIVIDE
-	| DEQUALS
-	| GT
-	| GE
-	| LT
-	| LE
-	| AND
-	| OR;
+	| '(' expression ')'
+	| expression op = (TIMES | DIVIDE | AND) expression
+	| expression op = (PLUS | MINUS | OR) expression
+	| expression op = (GT | GE | LT | LE | EQUALS | DEQUALS) expression;
 
 identifier: IDENTIFIER;
 

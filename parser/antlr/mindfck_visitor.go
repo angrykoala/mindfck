@@ -35,9 +35,6 @@ type mindfckVisitor interface {
 	// Visit a parse tree produced by mindfckParser#expression.
 	VisitExpression(ctx *ExpressionContext) interface{}
 
-	// Visit a parse tree produced by mindfckParser#operand.
-	VisitOperand(ctx *OperandContext) interface{}
-
 	// Visit a parse tree produced by mindfckParser#identifier.
 	VisitIdentifier(ctx *IdentifierContext) interface{}
 

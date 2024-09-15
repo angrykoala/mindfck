@@ -35,9 +35,6 @@ type mindfckListener interface {
 	// EnterExpression is called when entering the expression production.
 	EnterExpression(c *ExpressionContext)
 
-	// EnterOperand is called when entering the operand production.
-	EnterOperand(c *OperandContext)
-
 	// EnterIdentifier is called when entering the identifier production.
 	EnterIdentifier(c *IdentifierContext)
 
@@ -70,9 +67,6 @@ type mindfckListener interface {
 
 	// ExitExpression is called when exiting the expression production.
 	ExitExpression(c *ExpressionContext)
-
-	// ExitOperand is called when exiting the operand production.
-	ExitOperand(c *OperandContext)
 
 	// ExitIdentifier is called when exiting the identifier production.
 	ExitIdentifier(c *IdentifierContext)

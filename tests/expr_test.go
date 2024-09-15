@@ -12,8 +12,11 @@ import (
 func TestExprPrecedence(t *testing.T) {
 	input := `
 	byte a
+	byte b
 	a = 3 + 2 * 2
+	b = 3 * (2  + (2 / 2)) - 5/5
 	print a
+	print b
 	`
 
 	ast, err := parser.Parse(input)
@@ -28,5 +31,5 @@ func TestExprPrecedence(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{6, 7}, interpreter.Output)
+	assert.Equal(t, []byte{7, 8}, interpreter.Output)
 }
