@@ -101,9 +101,17 @@ func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) in
 }
 
 func (v *AstGeneratorVisitor) VisitIfConditional(ctx *mindfck.IfConditionalContext) interface{} {
+	condition := ctx.Expression().Accept(v).(mfast.Expr)
+	block := ctx.Block(0).Accept(v).([]mfast.Stmt)
+	elseBlock := []mfast.Stmt{}
+	if ctx.Block(1) != nil {
+		elseBlock = ctx.Block(1).Accept(v).([]mfast.Stmt)
+	}
+
 	return &mfast.If{
-		Condition: ctx.Expression().Accept(v).(mfast.Expr),
-		Block:     ctx.Block().Accept(v).([]mfast.Stmt),
+		Condition: condition,
+		Block:     block,
+		Else:      elseBlock,
 	}
 }
 
