@@ -75,12 +75,6 @@ func (s *BasemindfckListener) EnterExpression(ctx *ExpressionContext) {}
 // ExitExpression is called when production expression is exited.
 func (s *BasemindfckListener) ExitExpression(ctx *ExpressionContext) {}
 
-// EnterOperand is called when production operand is entered.
-func (s *BasemindfckListener) EnterOperand(ctx *OperandContext) {}
-
-// ExitOperand is called when production operand is exited.
-func (s *BasemindfckListener) ExitOperand(ctx *OperandContext) {}
-
 // EnterIdentifier is called when production identifier is entered.
 func (s *BasemindfckListener) EnterIdentifier(ctx *IdentifierContext) {}
 

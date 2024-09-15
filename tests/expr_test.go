@@ -1,23 +1,22 @@
-//go:generate antlr4 parser/mindfck.g4 -Dlanguage=Go -o parser/antlr/ -Xexact-output-dir -visitor
-
-package main
+package tests
 
 import (
-	"fmt"
 	"mindfck/bfinterpreter"
 	"mindfck/compiler"
 	"mindfck/parser"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func main() {
-	// code()
+func TestExprPrecedence(t *testing.T) {
 	input := `
 	byte a
-	a = 2
-    if (a==2) {
-        print a
-    }
-    print 0
+	byte b
+	a = 3 + 2 * 2
+	b = 3 * (2  + (2 / 2)) - 5/5
+	print a
+	print b
 	`
 
 	ast, err := parser.Parse(input)
@@ -30,10 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(code)
-
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	fmt.Println(string(interpreter.Output))
-	fmt.Println(interpreter.Memory)
+	assert.Equal(t, []byte{7, 8}, interpreter.Output)
 }
