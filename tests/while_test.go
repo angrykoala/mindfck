@@ -96,3 +96,32 @@ func TestWhileLT(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, interpreter.Output)
 }
+
+func TestWhileNested(t *testing.T) {
+	input := `
+	byte acc
+	acc = 0
+	byte i
+	i=0
+	byte j
+    while (i<10) {
+		j=0
+        while(j<5) {
+			acc = acc+1
+			j=j+1
+		}
+        i=i+1
+    }
+    print acc
+	`
+
+	ast, err := parser.Parse(input)
+	assert.Nil(t, err)
+
+	code, err := compiler.Compile(ast)
+	assert.Nil(t, err)
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{50}, interpreter.Output)
+}
