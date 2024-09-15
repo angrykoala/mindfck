@@ -1,6 +1,6 @@
 package parser
 
-import "mindfck/parser/mfast"
+import "mindfck/mfast"
 
 type Scope struct {
 	stmts []mfast.Stmt

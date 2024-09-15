@@ -1,8 +1,8 @@
 package parser
 
 import (
+	"mindfck/mfast"
 	mindfck "mindfck/parser/antlr"
-	"mindfck/parser/mfast"
 	"mindfck/utils"
 
 	"github.com/antlr4-go/antlr/v4"

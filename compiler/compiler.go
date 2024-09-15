@@ -2,7 +2,7 @@ package compiler
 
 import (
 	"mindfck/codegen"
-	"mindfck/parser/mfast"
+	"mindfck/mfast"
 )
 
 func Compile(ast []mfast.Stmt) (string, error) {
