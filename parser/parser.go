@@ -19,29 +19,27 @@ func (l *AstGenerator) EnterStatement(c *mindfck.StatementContext) {
 	l.expr = []mfast.Expr{}
 }
 
-func (l *AstGenerator) ExitStatement(c *mindfck.StatementContext) {
-	decl := c.Declaration()
-	assignment := c.Assignment()
-	print := c.Print_()
-
-	if decl != nil {
-		current := &mfast.Declare{
-			Label: decl.Identifier().IDENTIFIER().GetText(),
-		}
-		l.ast = append(l.ast, current)
-	} else if assignment != nil {
-		current := &mfast.Assign{
-			To:   assignment.Identifier().GetText(),
-			From: l.expr[0],
-		}
-
-		l.ast = append(l.ast, current)
-	} else if print != nil {
-		current := &mfast.Print{
-			Value: l.expr[0],
-		}
-		l.ast = append(l.ast, current)
+func (l *AstGenerator) ExitDeclaration(decl *mindfck.DeclarationContext) {
+	current := &mfast.Declare{
+		Label: decl.Identifier().IDENTIFIER().GetText(),
 	}
+	l.ast = append(l.ast, current)
+}
+
+func (l *AstGenerator) ExitAssignment(assignment *mindfck.AssignmentContext) {
+	current := &mfast.Assign{
+		To:   assignment.Identifier().GetText(),
+		From: l.expr[0],
+	}
+
+	l.ast = append(l.ast, current)
+}
+
+func (l *AstGenerator) ExitPrint(print *mindfck.PrintContext) {
+	current := &mfast.Print{
+		Value: l.expr[0],
+	}
+	l.ast = append(l.ast, current)
 }
 
 func (l *AstGenerator) ExitExpression(c *mindfck.ExpressionContext) {
