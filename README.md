@@ -1,31 +1,5 @@
 # mindfck
 
-## Requirements
-
-Install antlr4-tools to work with the parser
-
-```
-pip3 install antlr4-tools
-```
-
-You'll also need java-11-jre or openjdk-11-jre installed
-
-To regenerate the parser, do:
-
-```
-go generate
-```
-
-This will execute antlr4, equivalent to: `antlr4 parser/antlr/mindfck.g4 -Dlanguage=Go`
-
-To parse something manually in the command line:
-
-```
-antlr4-parse parser/antlr/mindfck.g4 statements -gui
-```
-
-## Description
-
 A simple language that transpiles to brainfuck:
 
 ```
@@ -48,12 +22,74 @@ Transpiles to:
 >>[-]+++>>[-]<[-]<<<[>>>+>+<<<<-][-]>>>>[<<<<+>>>>-]>>[-]<<[-]<<[>>+>>+<<<<-][-]>>>>[<<<<+>>>>-]>[-]<<<<[>>>>+<<<+<-][-]>>>>[<<<<+>>>>-]<<[-]<[>+<-]<<<<[-]>>>>>[<<<<<+>>>>>-]>[-]+++++++++++++++++++++++++++++++++<<[-]>>>[-]<<<<<<<[>>>>>>>+<<<+<<<<-][-]>>>>[<<<<+>>>>-]<[-]>>[-]>[<+<<+>>>-][-]<<<[>>>+<<<-]>[-]>>>[<<<+>+>>-][-]<<<[>>>+<<<-]<<[-]>>>[<<<+>>>-]<<<<<[-]>>[<<+>>-]>>[-]<[-]<<<[>>>+>+<<<<-][-]>>>>[<<<<+>>>>-]>>>[-]++<<[-]<<<[-]>[<+>>>+<<-][-]>>[<<+>>-]<[-]>>>[<<<+<<+>>>>>-][-]<<<[>>>+<<<-]>>[-]<<<<[>>>>+<<<<-]<<[-]>>>>>>[<<<<<<+>>>>>>-]<<<<[-]>>[-]<<<<[>>>>+<<+<<-][-]>>[<<+>>-]>[-]+++++++++++++++++++++<[-]>>>>>[-]<<<[>>>+<<<<<+>>-][-]<<[>>+<<-]>>>>>>[-]<<<<<[>>>>>+<+<<<<-][-]>>>>>[<<<<<+>>>>>-]<<[-]>[<+>-]<<<<<<<[-]>>>>>>[<<<<<<+>>>>>>-]>>[-]<<<<<<[-]<<[>>+>>>>>>+<<<<<<<<-][-]>>>>>>>>[<<<<<<<<+>>>>>>>>-]<<<<<[-]++>>>>[-]<[-]<<<<[>>>>+>+<<<<<-][-]>>>>>[<<<<<+>>>>>-]>[-]<<<<<[>>>>>+<<+<<<-][-]>>>>>[<<<<<+>>>>>-]<<<<[-]>>[<<+>>-]<<<<<<[-]>>>>[<<<<+>>>>-]>>>[-]++++++++++<[-]>>[-]<<<<<<<<[>>>>>>>>+<<+<<<<<<-][-]>>>>>>[<<<<<<+>>>>>>-]<<<[-]>[-]>>>[<<<+<+>>>>-][-]<<<<[>>>>+<<<<-]>>>[-]>>[<<+<<+>>>>-][-]<<[>>+<<-]<<<<[-]>>[<<+>>-]<<<[-]>[<+>-]>>>>[-]<<<[-]<<<[>>>+>>>+<<<<<<-][-]>>>>>>[<<<<<<+>>>>>>-]>[-]>[-]<<<<<<<[>>>>>>>+<+<<<<<<-][-]>>>>>>[<<<<<<+>>>>>>-]<<<<<[-]>>>>[-]<<<[>>>+<<<<+>-][-]<[>+<-]>>>>>[-]>[<+<+>>-][-]<[>+<-]<<<[-]>>[<<+>>-]<[-]<[>+<-]>>>[-]<<<<<[-]>>>[<<<+>>>>>+<<-][-]>>[<<+>>-]<<<<<.
 ```
 
+## Usage
+
+To compile:
+
+```
+minfck examples/abc.mf
+```
+
+To compile and execute the brainfuck code:
+
+```
+minfck example.mf --run
+```
+
 ## FAQ
 
 Q: Is this useful?  
 A: No  
 Q: Is it fun?  
 A: Also no
+
+## Development
+
+Mindfck is written in go.
+
+**Build**
+
+```
+go build .
+```
+
+**Run**
+
+```
+go run .
+```
+
+**Tests**
+
+```
+go test ./...
+```
+
+### Grammar
+
+Grammar is written in antlr4 (`parser/mindfck.g4`). If it is updated, files need to be regenerated.
+
+Install antlr4-tools to work with the parser
+
+```
+pip3 install antlr4-tools
+```
+
+You'll also need java-11-jre or openjdk-11-jre installed
+
+To regenerate the parser, do:
+
+```
+go generate
+```
+
+This will execute antlr4, equivalent to: `antlr4 parser/antlr/mindfck.g4 -Dlanguage=Go`
+
+To parse something manually in the command line:
+
+```
+antlr4-parse parser/antlr/mindfck.g4 statements -gui
+```
 
 ## Resources
 
