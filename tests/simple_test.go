@@ -216,3 +216,23 @@ func TestGTE(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{0, 1, 1}, interpreter.Output)
 }
+
+func TestByte(t *testing.T) {
+	input := `
+	byte a
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{0, 1, 1}, interpreter.Output)
+}

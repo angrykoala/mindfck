@@ -19,10 +19,52 @@ func Parse(input string) ([]mfast.Stmt, error) {
 		scope:      newScope(),
 		scopeStack: []*Scope{},
 	}
+
+	visitor := &AstGeneratorVisitor{}
+
 	// TODO How to do the error handling here?
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	ast := visitor.Visit(tree)
 
-	return listener.Ast(), nil
+	return ast.([]mfast.Stmt), nil
+}
+
+type AstGeneratorVisitor struct {
+	mindfck.BasemindfckVisitor
+}
+
+func (v *AstGeneratorVisitor) Visit(tree antlr.ParseTree) interface{} {
+	switch tree.(type) {
+	case *mindfck.StatementsContext:
+		return v.VisitStatements(tree.(*mindfck.StatementsContext))
+	}
+
+	return nil
+}
+
+func (v *AstGeneratorVisitor) VisitStatements(ctx *mindfck.StatementsContext) []mfast.Stmt {
+	result := []mfast.Stmt{}
+	if ctx.AllStatement() != nil {
+		for i, _ := range ctx.AllStatement() {
+			result = append(result, v.VisitStatement(ctx.Statement(i).(*mindfck.StatementContext))...)
+		}
+	}
+
+	return result
+}
+
+func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) []mfast.Stmt {
+	if ctx.Declaration() != nil {
+		return v.VisitDeclaration(ctx.Declaration().(*mindfck.DeclarationContext))
+	}
+
+	return []mfast.Stmt{}
+}
+
+func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) []mfast.Stmt {
+	return []mfast.Stmt{&mfast.Declare{
+		Label: ctx.Identifier().IDENTIFIER().GetText(),
+	}}
 }
 
 type AstGenerator struct {
