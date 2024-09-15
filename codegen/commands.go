@@ -112,33 +112,48 @@ func (c *CommandHandler) Equals(x env.Variable, y env.Variable, res env.Variable
 	})
 }
 
-// Compares x > b
-func (c *CommandHandler) Gt(x env.Variable, y env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp)
-	tempy := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(tempy)
-	isZero := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(isZero)
+// Compares x > b, based on https://esolangs.org/wiki/Brainfuck_algorithms#z_=_x_%3E_y
+func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
+	temp0 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp0)
+	temp1 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp1)
 
-	c.Set(res, 1)
-	c.Copy(x, temp)
-	c.Copy(y, tempy)
+	x2 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(x2)
+	y2 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(y2)
+	c.Copy(x, x2)
+	c.Copy(y, y2)
 
-	c.While(tempy, func() { // Decrement temp by y, checking on every step
-		c.Dec(temp)
+	c.Set(temp0, 0)
+	c.Set(temp1, 0)
+	c.Set(z, 0)
 
-		c.Not(temp, isZero)
+	c.While(x2, func() {
+		c.Inc(temp0)
 
-		c.If(isZero, func() {
-			c.Set(res, 0)
+		c.While(y2, func() {
+			c.Dec(y2)
+			c.Set(temp0, 0)
+			c.Inc(temp1)
 		})
 
-		c.Dec(tempy)
+		c.While(temp0, func() {
+			c.Dec(temp0)
+			c.Inc(z)
+		})
+		c.While(temp1, func() {
+			c.Dec(temp1)
+			c.Inc(y2)
+		})
+
+		c.Dec(y2)
+		c.Dec(x2)
 	})
 }
 
-// Compares x > b, cheap Gte
+// Compares x+1 > b, cheap Gte
 func (c *CommandHandler) Gte(x env.Variable, y env.Variable, res env.Variable) {
 	x2 := c.env.DeclareAnonVariable()
 	defer c.env.ReleaseVariable(x2)

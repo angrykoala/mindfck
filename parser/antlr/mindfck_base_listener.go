@@ -57,6 +57,12 @@ func (s *BasemindfckListener) EnterIfConditional(ctx *IfConditionalContext) {}
 // ExitIfConditional is called when production ifConditional is exited.
 func (s *BasemindfckListener) ExitIfConditional(ctx *IfConditionalContext) {}
 
+// EnterWhileLoop is called when production whileLoop is entered.
+func (s *BasemindfckListener) EnterWhileLoop(ctx *WhileLoopContext) {}
+
+// ExitWhileLoop is called when production whileLoop is exited.
+func (s *BasemindfckListener) ExitWhileLoop(ctx *WhileLoopContext) {}
+
 // EnterBlock is called when production block is entered.
 func (s *BasemindfckListener) EnterBlock(ctx *BlockContext) {}
 
