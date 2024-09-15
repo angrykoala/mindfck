@@ -7,7 +7,8 @@ statement:
 	| assignment
 	| print
 	| ifConditional
-	| whileLoop;
+	| whileLoop
+	| read;
 
 declaration: BYTE identifier;
 
@@ -19,6 +20,8 @@ ifConditional:
 	IF '(' expression ')' '{' block '}' (ELSE '{' block '}')?;
 
 whileLoop: WHILE '(' expression ')' '{' block '}';
+
+read: READ identifier;
 
 block: statement*;
 
@@ -41,6 +44,7 @@ PRINT: 'print';
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';
+READ: 'read';
 PLUS: '+';
 MINUS: '-';
 TIMES: '*';

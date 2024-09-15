@@ -49,8 +49,11 @@ func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) inte
 	if ctx.WhileLoop() != nil {
 		return ctx.WhileLoop().Accept(v)
 	}
+	if ctx.Read() != nil {
+		return ctx.Read().Accept(v)
+	}
 
-	panic("Spanish Inquisition")
+	panic("Spanish Inquisition (unexpected)")
 }
 
 func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) interface{} {
@@ -72,6 +75,12 @@ func (v *AstGeneratorVisitor) VisitPrint(ctx *mindfck.PrintContext) interface{} 
 
 	return &mfast.Print{
 		Value: expr,
+	}
+}
+
+func (v *AstGeneratorVisitor) VisitRead(ctx *mindfck.ReadContext) interface{} {
+	return &mfast.Read{
+		To: ctx.Identifier().GetText(),
 	}
 }
 
