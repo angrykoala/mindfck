@@ -3,15 +3,20 @@
 ## Requirements
 
 Install antlr4-tools to work with the parser
+
 ```
 pip3 install antlr4-tools
 ```
 
+You'll also need java-11-jre or openjdk-11-jre installed
+
 To regenerate the parser, do:
 
 ```
-antlr4 parser/antlr/mindfck.g4 -Dlanguage=Go
+go generate
 ```
+
+This will execute antlr4, equivalent to: `antlr4 parser/antlr/mindfck.g4 -Dlanguage=Go`
 
 To parse something manually in the command line:
 
@@ -48,9 +53,10 @@ Transpiles to:
 Q: Is this useful?  
 A: No  
 Q: Is it fun?  
-A: Also no  
+A: Also no
 
 ## Resources
+
 These resources where used as inspiration / tools for this project
 
 -   https://github.com/LucasMW/Headache
