@@ -99,7 +99,7 @@ func (env *MindfuckEnv) ResolveLabel(label string) Variable {
 	variable, hasLabel := env.labels[label]
 
 	if !hasLabel {
-		panic(fmt.Sprintf("Label %s not found", label))
+		panic(fmt.Sprintf("env: label %s not found", label))
 	}
 
 	return variable

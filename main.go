@@ -13,15 +13,11 @@ func main() {
 	// code()
 	input := `
 	byte a
-	byte b
-	a = 3 + a
-	a = 33 + a
-	a = a + 2
-	byte c
-	a = a + 21
-	a = a + 2
-	b = 10 + a
-	c = a + b
+	a = 2
+    if (a==2) {
+        print a
+    }
+    print 0
 	`
 
 	ast, err := parser.Parse(input)

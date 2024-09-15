@@ -47,3 +47,27 @@ func (s *Print) EvalStmt(cmd *codegen.CommandHandler) error {
 	cmd.Print(v)
 	return nil
 }
+
+type If struct {
+	Condition Expr
+	Block     []Stmt
+}
+
+func (s *If) EvalStmt(cmd *codegen.CommandHandler) error {
+	v, err := s.Condition.EvalExpr(cmd)
+	if err != nil {
+		return err
+	}
+
+	cmd.If(v, func() {
+		for _, stmt := range s.Block {
+			nestedError := stmt.EvalStmt(cmd)
+			if nestedError != nil {
+				err = nestedError
+				return
+			}
+		}
+	})
+
+	return err
+}

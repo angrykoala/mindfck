@@ -2,18 +2,22 @@ grammar mindfck;
 
 statements: statement*;
 
-statement: declaration | assignment | print;
+statement: declaration | assignment | print | ifConditional;
 
 declaration: BYTE identifier;
 
 assignment: identifier EQUALS expression;
 
+print: PRINT expression;
+
+ifConditional: IF '(' expression ')' '{' block '}';
+
+block: statement*;
+
 expression:
 	identifier
 	| literal
 	| expression operand expression;
-
-print: PRINT expression;
 
 operand:
 	PLUS
@@ -35,6 +39,7 @@ literal: NUMBER;
 WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
 PRINT: 'print';
+IF: 'if';
 PLUS: '+';
 MINUS: '-';
 TIMES: '*';

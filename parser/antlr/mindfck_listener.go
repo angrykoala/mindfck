@@ -20,11 +20,17 @@ type mindfckListener interface {
 	// EnterAssignment is called when entering the assignment production.
 	EnterAssignment(c *AssignmentContext)
 
-	// EnterExpression is called when entering the expression production.
-	EnterExpression(c *ExpressionContext)
-
 	// EnterPrint is called when entering the print production.
 	EnterPrint(c *PrintContext)
+
+	// EnterIfConditional is called when entering the ifConditional production.
+	EnterIfConditional(c *IfConditionalContext)
+
+	// EnterBlock is called when entering the block production.
+	EnterBlock(c *BlockContext)
+
+	// EnterExpression is called when entering the expression production.
+	EnterExpression(c *ExpressionContext)
 
 	// EnterOperand is called when entering the operand production.
 	EnterOperand(c *OperandContext)
@@ -47,11 +53,17 @@ type mindfckListener interface {
 	// ExitAssignment is called when exiting the assignment production.
 	ExitAssignment(c *AssignmentContext)
 
-	// ExitExpression is called when exiting the expression production.
-	ExitExpression(c *ExpressionContext)
-
 	// ExitPrint is called when exiting the print production.
 	ExitPrint(c *PrintContext)
+
+	// ExitIfConditional is called when exiting the ifConditional production.
+	ExitIfConditional(c *IfConditionalContext)
+
+	// ExitBlock is called when exiting the block production.
+	ExitBlock(c *BlockContext)
+
+	// ExitExpression is called when exiting the expression production.
+	ExitExpression(c *ExpressionContext)
 
 	// ExitOperand is called when exiting the operand production.
 	ExitOperand(c *OperandContext)

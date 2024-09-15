@@ -45,17 +45,29 @@ func (s *BasemindfckListener) EnterAssignment(ctx *AssignmentContext) {}
 // ExitAssignment is called when production assignment is exited.
 func (s *BasemindfckListener) ExitAssignment(ctx *AssignmentContext) {}
 
-// EnterExpression is called when production expression is entered.
-func (s *BasemindfckListener) EnterExpression(ctx *ExpressionContext) {}
-
-// ExitExpression is called when production expression is exited.
-func (s *BasemindfckListener) ExitExpression(ctx *ExpressionContext) {}
-
 // EnterPrint is called when production print is entered.
 func (s *BasemindfckListener) EnterPrint(ctx *PrintContext) {}
 
 // ExitPrint is called when production print is exited.
 func (s *BasemindfckListener) ExitPrint(ctx *PrintContext) {}
+
+// EnterIfConditional is called when production ifConditional is entered.
+func (s *BasemindfckListener) EnterIfConditional(ctx *IfConditionalContext) {}
+
+// ExitIfConditional is called when production ifConditional is exited.
+func (s *BasemindfckListener) ExitIfConditional(ctx *IfConditionalContext) {}
+
+// EnterBlock is called when production block is entered.
+func (s *BasemindfckListener) EnterBlock(ctx *BlockContext) {}
+
+// ExitBlock is called when production block is exited.
+func (s *BasemindfckListener) ExitBlock(ctx *BlockContext) {}
+
+// EnterExpression is called when production expression is entered.
+func (s *BasemindfckListener) EnterExpression(ctx *ExpressionContext) {}
+
+// ExitExpression is called when production expression is exited.
+func (s *BasemindfckListener) ExitExpression(ctx *ExpressionContext) {}
 
 // EnterOperand is called when production operand is entered.
 func (s *BasemindfckListener) EnterOperand(ctx *OperandContext) {}
