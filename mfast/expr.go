@@ -103,3 +103,19 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 	}
 	return v3, nil
 }
+
+type NotExpr struct {
+	Expr Expr
+}
+
+func (n *NotExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
+	v, err := n.Expr.EvalExpr(cmd)
+	defer cmd.Release(v)
+	if err != nil {
+		return nil, err
+	}
+
+	res := cmd.Env().DeclareAnonVariable()
+	cmd.Not(v, res)
+	return res, nil
+}

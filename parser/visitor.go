@@ -94,6 +94,12 @@ func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) in
 			Right:    right,
 		}
 	} else if ctx.Expression(0) != nil {
+		if ctx.NOT() != nil {
+			return &mfast.NotExpr{
+				Expr: ctx.Expression(0).Accept(v).(mfast.Expr),
+			}
+		}
+
 		return ctx.Expression(0).Accept(v).(mfast.Expr)
 	}
 
