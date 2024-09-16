@@ -5,45 +5,6 @@ import (
 	"mindfck/utils"
 )
 
-type Variable interface {
-	Position() int
-	hasLabel() bool
-	label() string
-}
-
-type NamedVariable struct {
-	position int
-	_label   string
-}
-
-func (v *NamedVariable) Position() int {
-	return v.position
-}
-
-func (v *NamedVariable) hasLabel() bool {
-	return true
-}
-
-func (v *NamedVariable) label() string {
-	return v._label
-}
-
-type AnonVariable struct {
-	position int
-}
-
-func (v *AnonVariable) Position() int {
-	return v.position
-}
-
-func (v *AnonVariable) hasLabel() bool {
-	return false
-}
-
-func (v *AnonVariable) label() string {
-	return ""
-}
-
 type MindfuckEnv struct {
 	labels         map[string]Variable
 	reservedMemory utils.ItemSet
@@ -67,9 +28,9 @@ func (env *MindfuckEnv) DeclareVariable(label string) Variable {
 		panic("Cannot reserve label, already reserved")
 	}
 
-	var newVar = &NamedVariable{
+	var newVar = &ByteVariable{
 		position: env.reserveMemory(),
-		_label:   label,
+		label:    label,
 	}
 	env.labels[label] = newVar
 
@@ -77,7 +38,7 @@ func (env *MindfuckEnv) DeclareVariable(label string) Variable {
 }
 
 func (env *MindfuckEnv) DeclareAnonVariable() Variable {
-	return &AnonVariable{
+	return &ByteVariable{
 		position: env.reserveMemory(),
 	}
 }
@@ -90,8 +51,8 @@ func (env *MindfuckEnv) ReleaseVariable(v Variable) {
 	env.reservedMemory.Delete(v.Position())
 	env.freedMemory = append(env.freedMemory, v.Position())
 
-	if v.hasLabel() {
-		env.releaseLabel(v.label())
+	if v.HasLabel() {
+		env.releaseLabel(v.Label())
 	}
 }
 
