@@ -24,13 +24,27 @@ Transpiles to:
 
 ## Usage
 
-To compile:
+You need go to compile or run mindfck
+
+### Quickstart
+
+```
+go run . examples/abc.mf
+```
+
+To compile mindfck into a binary:
+
+```
+go build .
+```
+
+Once the compiler is ready, you can compile mindfck (`.mf`) files into brainfuck:
 
 ```
 minfck examples/abc.mf
 ```
 
-To compile and execute the brainfuck code:
+To compile and execute the brainfuck code directly:
 
 ```
 minfck example.mf --run
