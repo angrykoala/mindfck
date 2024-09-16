@@ -21,7 +21,7 @@ func New(begin int) *MindfuckEnv {
 	}
 }
 
-func (env *MindfuckEnv) DeclareVariable(label string) Variable {
+func (env *MindfuckEnv) DeclareVariable(label string) *ByteVariable {
 	_, hasLabel := env.labels[label]
 
 	if hasLabel {
@@ -29,6 +29,22 @@ func (env *MindfuckEnv) DeclareVariable(label string) Variable {
 	}
 
 	var newVar = &ByteVariable{
+		position: env.reserveMemory(),
+		label:    label,
+	}
+	env.labels[label] = newVar
+
+	return newVar
+}
+
+func (env *MindfuckEnv) DeclareArrayVariable(label string) *ArrayVariable {
+	_, hasLabel := env.labels[label]
+
+	if hasLabel {
+		panic("Cannot reserve label, already reserved")
+	}
+
+	var newVar = &ArrayVariable{
 		position: env.reserveMemory(),
 		label:    label,
 	}
@@ -50,6 +66,7 @@ func (env *MindfuckEnv) ReleaseVariable(v Variable) {
 
 	env.reservedMemory.Delete(v.Position())
 	env.freedMemory = append(env.freedMemory, v.Position())
+	// slices.Sort(env.freedMemory)
 
 	if v.HasLabel() {
 		env.releaseLabel(v.Label())
@@ -76,6 +93,7 @@ func (env *MindfuckEnv) releaseLabel(label string) {
 }
 
 func (env *MindfuckEnv) reserveMemory() int {
+	// return env.reserveMemoryOfSize(1)
 	var varPos int
 
 	if len(env.freedMemory) > 0 {
@@ -89,4 +107,49 @@ func (env *MindfuckEnv) reserveMemory() int {
 	env.reservedMemory.Add(varPos)
 
 	return varPos
+}
+
+func (env *MindfuckEnv) reserveMemoryOfSize(size int) int {
+	if size < 1 {
+		panic("Invalid size in reserve Memory")
+	}
+	var varPos int
+
+	freePos, ok := findFirstConsecutiveSet(env.freedMemory, size)
+	if ok {
+		// Reuse position if possible
+		varPos = env.freedMemory[freePos]
+		env.freedMemory = append(env.freedMemory[0:freePos-1], env.freedMemory[freePos+size+1:]...)
+
+	} else {
+		varPos = len(env.freedMemory) + env.reservedMemory.Size() + env.memoryBegin
+	}
+
+	for i := 0; i < size; i++ {
+		env.reservedMemory.Add(varPos + i)
+	}
+
+	return varPos
+}
+
+func findFirstConsecutiveSet(nums []int, s int) (pos int, ok bool) {
+	// Ensure there are enough elements to form a consecutive set of size s
+	if len(nums) < s {
+		return 0, false
+	}
+
+	// Iterate over the slice, looking for a consecutive sequence of size s
+	for i := 0; i <= len(nums)-s; i++ {
+		isConsecutive := true
+		for j := 1; j < s; j++ {
+			if nums[i+j] != nums[i+j-1]+1 {
+				isConsecutive = false
+				break
+			}
+		}
+		if isConsecutive {
+			return i, true
+		}
+	}
+	return 0, false
 }
