@@ -7,33 +7,35 @@ import (
 	"mindfck/bfinterpreter"
 	"mindfck/compiler"
 	"mindfck/parser"
+	"os"
+	"slices"
 )
 
 func main() {
-	// code()
-	input := `
-	byte a
-	a = 2
-    if (a==2) {
-        print a
-    }
-    print 0
-	`
+	filename := os.Args[1]
 
-	ast, err := parser.Parse(input)
+	run := slices.Contains(os.Args, "--run")
+
+	input, err := os.ReadFile(filename)
 	if err != nil {
 		panic(err)
 	}
 
+	ast, err := parser.Parse(string(input))
+	if err != nil {
+		panic(err)
+	}
 	code, err := compiler.Compile(ast)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(code)
-
-	interpreter := bfinterpreter.New()
-	interpreter.Run(code)
-	fmt.Println(string(interpreter.Output))
-	fmt.Println(interpreter.Memory)
+	if run {
+		interpreter := bfinterpreter.New()
+		interpreter.Run(code)
+		fmt.Println(string(interpreter.Output))
+		// fmt.Println(interpreter.Memory)
+	} else {
+		fmt.Println(code)
+	}
 }

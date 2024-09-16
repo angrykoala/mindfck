@@ -1,0 +1,31 @@
+byte H
+H = 72
+byte e 
+e = 101
+byte l 
+l = 108
+byte o
+o = 111
+byte newLine 
+newLine = 10
+
+
+print H
+print e
+print l
+print l
+print o
+print newLine
+
+byte a
+a = 97
+byte z
+z = 122
+
+byte letter
+letter = a
+
+while (letter < z) {
+    print letter
+    letter = letter + 1
+}
