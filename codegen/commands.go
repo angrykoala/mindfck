@@ -242,6 +242,27 @@ func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
 	})
 }
 
+func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func()) {
+	temp0 := c.env.DeclareAnonVariable()
+	temp1 := c.env.DeclareAnonVariable()
+	defer c.env.ReleaseVariable(temp0)
+	defer c.env.ReleaseVariable(temp1)
+	c.Copy(cond, temp0)
+	c.Set(temp1, 1)
+
+	c.While(temp0, func() {
+		ifCode()
+		c.Set(temp0, 0)
+		c.Set(temp1, 0)
+	})
+
+	c.While(temp1, func() {
+		elseCode()
+		c.Set(temp1, 0)
+	})
+
+}
+
 // Runs code inside if the current cell is truthy
 // Accepts a code function using the command handler
 // The resulting function must end in the same position as it begins!

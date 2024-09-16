@@ -102,3 +102,33 @@ func TestIfGTZero(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{2, 0}, interpreter.Output)
 }
+
+func TestIfElse(t *testing.T) {
+	input := `
+	byte a
+	byte b
+	a = 2
+	b = 0
+    if (a>0) {
+        print 1
+    } else {
+		print 2
+	}
+
+	if (b>0) {
+		print 3
+	} else {
+		print 4 
+	}
+	`
+
+	ast, err := parser.Parse(input)
+	assert.Nil(t, err)
+
+	code, err := compiler.Compile(ast)
+	assert.Nil(t, err)
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{1, 4}, interpreter.Output)
+}
