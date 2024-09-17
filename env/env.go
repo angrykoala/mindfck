@@ -38,7 +38,7 @@ func (env *MindfuckEnv) DeclareVariable(label string, varType VarType) Variable 
 	return newVar
 }
 
-func (env *MindfuckEnv) DeclareAnonVariable() Variable {
+func (env *MindfuckEnv) DeclareAnonByte() Variable {
 	return env.DeclareVariable("", BYTE)
 }
 

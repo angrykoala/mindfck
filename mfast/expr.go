@@ -16,7 +16,7 @@ type Literal struct {
 }
 
 func (lit *Literal) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
-	res := cmd.Env().DeclareAnonVariable()
+	res := cmd.Env().DeclareAnonByte()
 	cmd.SetByte(res, lit.Value)
 	return res, nil
 }
@@ -27,7 +27,7 @@ type VariableExpr struct {
 
 func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	v1 := cmd.Env().ResolveLabel(lit.Label)
-	v2 := cmd.Env().DeclareAnonVariable()
+	v2 := cmd.Env().DeclareAnonByte()
 
 	cmd.CopyByte(v1, v2)
 
@@ -72,7 +72,7 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 	}
 	defer cmd.Release(v2)
 
-	v3 := cmd.Env().DeclareAnonVariable()
+	v3 := cmd.Env().DeclareAnonByte()
 
 	switch expr.Operator {
 	case PLUS:
@@ -115,7 +115,7 @@ func (n *NotExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 		return nil, err
 	}
 
-	res := cmd.Env().DeclareAnonVariable()
+	res := cmd.Env().DeclareAnonByte()
 	cmd.Not(v, res)
 	return res, nil
 }

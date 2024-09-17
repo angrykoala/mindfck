@@ -45,6 +45,36 @@ func (c *CommandHandler) DebugBreak() {
 	c.writer.command(BFDebug)
 }
 
+// Global Ops
+
+// Resets cell to 0
+func (c *CommandHandler) Reset(v env.Variable) {
+	c.iterateBytes(v, func(b env.Variable, _ int) {
+		c.ResetByte(b)
+	})
+}
+
+// from -> to
+func (c *CommandHandler) Move(from env.Variable, to env.Variable) {
+	assertSameSize(from, to)
+	c.Reset(to)
+	c.iterateBytes(from, func(fromByte env.Variable, i int) {
+		targetByte := to.GetByte(i)
+		c.MoveByte(fromByte, targetByte)
+	})
+}
+
+// Copy current cell into to, using temp cell, ends in origin and resets temp
+func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
+	assertSameSize(from, to)
+
+	c.iterateBytes(from, func(fromByte env.Variable, i int) {
+		targetByte := to.GetByte(i)
+		c.CopyByte(fromByte, targetByte)
+
+	})
+}
+
 func (c *CommandHandler) Inc(v env.Variable) {
 	c.goTo(v)
 	c.increment()
@@ -58,8 +88,8 @@ func (c *CommandHandler) Dec(v env.Variable) {
 // Control Flow
 
 func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func()) {
-	temp0 := c.env.DeclareAnonVariable()
-	temp1 := c.env.DeclareAnonVariable()
+	temp0 := c.env.DeclareAnonByte()
+	temp1 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp0)
 	defer c.env.ReleaseVariable(temp1)
 	c.CopyByte(cond, temp0)
@@ -82,7 +112,7 @@ func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func(
 // Accepts a code function using the command handler
 // The resulting function must end in the same position as it begins!
 func (c *CommandHandler) If(cond env.Variable, code func()) {
-	temp := c.env.DeclareAnonVariable()
+	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(cond, temp)
 	c.While(temp, func() {
@@ -152,10 +182,18 @@ func (c *CommandHandler) decrement() {
 
 // Helpers
 
-func (c *CommandHandler) iterateArr(v env.Variable, cb func(i int)) {
+func (c *CommandHandler) iterateBytes(v env.Variable, cb func(b env.Variable, i int)) {
 	c.goTo(v)
 	for i := 0; i < v.Size(); i++ {
-		cb(v.Position() + i)
+		cb(v.GetByte(i), i)
 		c.shift(1)
+	}
+}
+
+// Assertions
+
+func assertSameSize(a env.Variable, b env.Variable) {
+	if b.Size() != b.Size() {
+		panic("Incompatible size of variables")
 	}
 }

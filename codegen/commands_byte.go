@@ -28,8 +28,8 @@ func (c *CommandHandler) MoveByte(from env.Variable, to env.Variable) {
 
 // Copy current cell into to, using temp cell, ends in origin and resets temp
 func (c *CommandHandler) CopyByte(from env.Variable, to env.Variable) {
-	temp0 := c.env.DeclareAnonVariable()
-	temp1 := c.env.DeclareAnonVariable()
+	temp0 := c.env.DeclareAnonByte()
+	temp1 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp0)
 	defer c.env.ReleaseVariable(temp1)
 
@@ -48,7 +48,7 @@ func (c *CommandHandler) CopyByte(from env.Variable, to env.Variable) {
 
 // Compares x == y, result is a boolean in res
 func (c *CommandHandler) Equals(x env.Variable, y env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
+	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(x, temp)
 	c.subTo(y, temp)
@@ -62,14 +62,14 @@ func (c *CommandHandler) Equals(x env.Variable, y env.Variable, res env.Variable
 
 // Compares x > b, based on https://esolangs.org/wiki/Brainfuck_algorithms#z_=_x_%3E_y
 func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
-	temp0 := c.env.DeclareAnonVariable()
+	temp0 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp0)
-	temp1 := c.env.DeclareAnonVariable()
+	temp1 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp1)
 
-	x2 := c.env.DeclareAnonVariable()
+	x2 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(x2)
-	y2 := c.env.DeclareAnonVariable()
+	y2 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(y2)
 	c.CopyByte(x, x2)
 	c.CopyByte(y, y2)
@@ -103,7 +103,7 @@ func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
 
 // Compares x+1 > b, cheap Gte
 func (c *CommandHandler) Gte(x env.Variable, y env.Variable, res env.Variable) {
-	x2 := c.env.DeclareAnonVariable()
+	x2 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(x2)
 
 	// Because these are integers, we just compare GT with an x increased by 1
@@ -140,7 +140,7 @@ func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
 }
 
 func (c *CommandHandler) Add(a env.Variable, b env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
+	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(a, temp)
 	c.addTo(b, temp)
@@ -149,7 +149,7 @@ func (c *CommandHandler) Add(a env.Variable, b env.Variable, res env.Variable) {
 }
 
 func (c *CommandHandler) Sub(a env.Variable, b env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
+	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(a, temp)
 	c.subTo(b, temp)
@@ -159,7 +159,7 @@ func (c *CommandHandler) Sub(a env.Variable, b env.Variable, res env.Variable) {
 
 // Multiply cell a and b
 func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
+	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(a, temp)
 	c.ResetByte(res)
@@ -172,9 +172,9 @@ func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) 
 
 // Divide cell a and b
 func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
-	remainder := c.env.DeclareAnonVariable()
+	remainder := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(remainder)
-	isRemainderBigger := c.env.DeclareAnonVariable()
+	isRemainderBigger := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(isRemainderBigger)
 
 	c.ResetByte(res)
@@ -214,7 +214,7 @@ func assertByte(v env.Variable) {
 
 // Substracts cell a to b, b is modified
 func (c *CommandHandler) subTo(a env.Variable, b env.Variable) {
-	temp := c.env.DeclareAnonVariable()
+	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.ResetByte(temp)
 
@@ -229,7 +229,7 @@ func (c *CommandHandler) subTo(a env.Variable, b env.Variable) {
 
 // Adds cell a to b, b is modified
 func (c *CommandHandler) addTo(a env.Variable, b env.Variable) {
-	temp0 := c.env.DeclareAnonVariable()
+	temp0 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp0)
 	c.ResetByte(temp0)
 

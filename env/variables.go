@@ -26,7 +26,7 @@ type Variable interface {
 	HasLabel() bool
 	Label() string
 	Type() VarType
-	// GetByte(pos int) *ByteVariable
+	GetByte(pos int) Variable
 }
 
 type variable struct {
