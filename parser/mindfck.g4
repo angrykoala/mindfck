@@ -25,6 +25,7 @@ expression:
 	identifier
 	| literal
 	| '(' expression ')'
+	| NOT expression
 	| expression op = (TIMES | DIVIDE | AND) expression
 	| expression op = (PLUS | MINUS | OR) expression
 	| expression op = (GT | GE | LT | LE | EQUALS | DEQUALS) expression;
@@ -45,8 +46,9 @@ TIMES: '*';
 DIVIDE: '/';
 EQUALS: '=';
 DEQUALS: '==';
-AND: 'AND' | 'and';
-OR: 'OR' | 'or';
+AND: 'and';
+OR: 'or';
+NOT: 'not ' | '!';
 GT: '>';
 GE: '>=';
 LT: '<';
