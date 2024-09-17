@@ -33,7 +33,7 @@ func (s *While) EvalStmt(cmd *codegen.CommandHandler) error {
 			err = nestedError
 			return
 		}
-		cmd.Move(v2, v)
+		cmd.MoveByte(v2, v)
 	})
 	if err != nil {
 		return err

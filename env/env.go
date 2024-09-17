@@ -22,42 +22,24 @@ func New(begin int) *MindfuckEnv {
 	}
 }
 
-func (env *MindfuckEnv) DeclareVariable(label string) *ByteVariable {
-	_, hasLabel := env.labels[label]
+func (env *MindfuckEnv) DeclareVariable(label string, varType VarType) Variable {
+	position := env.reserveMemory(getSize(varType))
 
-	if hasLabel {
-		panic("Cannot reserve label, already reserved")
+	var newVar = NewVariable(position, varType, label)
+	if newVar.HasLabel() {
+		_, hasLabel := env.labels[label]
+
+		if hasLabel {
+			panic(fmt.Sprintf("Cannot reserve label [%s], already reserved", label))
+		}
+
+		env.labels[label] = newVar
 	}
-
-	var newVar = &ByteVariable{
-		position: env.reserveMemory(1),
-		label:    label,
-	}
-	env.labels[label] = newVar
-
-	return newVar
-}
-
-func (env *MindfuckEnv) DeclareArrayVariable(label string) *ArrayVariable {
-	_, hasLabel := env.labels[label]
-
-	if hasLabel {
-		panic("Cannot reserve label, already reserved")
-	}
-
-	var newVar = &ArrayVariable{
-		position: env.reserveMemory(1),
-		label:    label,
-	}
-	env.labels[label] = newVar
-
 	return newVar
 }
 
 func (env *MindfuckEnv) DeclareAnonVariable() Variable {
-	return &ByteVariable{
-		position: env.reserveMemory(1),
-	}
+	return env.DeclareVariable("", BYTE)
 }
 
 func (env *MindfuckEnv) ReleaseVariable(v Variable) {

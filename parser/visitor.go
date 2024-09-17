@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"mindfck/env"
 	"mindfck/mfast"
 	mindfck "mindfck/parser/antlr"
 	"mindfck/utils"
@@ -53,8 +54,18 @@ func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) inte
 }
 
 func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) interface{} {
+	var varType env.VarType
+	if ctx.INT() != nil {
+		varType = env.INT
+	} else if ctx.BYTE() != nil {
+		varType = env.BYTE
+	} else {
+		panic("invalid type in declaration")
+	}
+
 	return &mfast.Declare{
-		Label: ctx.Identifier().IDENTIFIER().GetText(),
+		Label:   ctx.Identifier().IDENTIFIER().GetText(),
+		VarType: varType,
 	}
 }
 

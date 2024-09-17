@@ -17,7 +17,7 @@ type Literal struct {
 
 func (lit *Literal) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	res := cmd.Env().DeclareAnonVariable()
-	cmd.Set(res, lit.Value)
+	cmd.SetByte(res, lit.Value)
 	return res, nil
 }
 
@@ -29,7 +29,7 @@ func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, er
 	v1 := cmd.Env().ResolveLabel(lit.Label)
 	v2 := cmd.Env().DeclareAnonVariable()
 
-	cmd.Copy(v1, v2)
+	cmd.CopyByte(v1, v2)
 
 	return v2, nil
 }

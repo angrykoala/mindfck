@@ -9,13 +9,14 @@ statement:
 	| ifConditional
 	| whileLoop;
 
-declaration: BYTE identifier;
+declaration: type = (BYTE | INT) identifier;
 
 assignment: identifier EQUALS expression;
 
 print: PRINT expression;
 
-ifConditional: IF '(' expression ')' '{' block '}' (ELSE '{' block '}')?;
+ifConditional:
+	IF '(' expression ')' '{' block '}' (ELSE '{' block '}')?;
 
 whileLoop: WHILE '(' expression ')' '{' block '}';
 
@@ -36,6 +37,7 @@ literal: NUMBER;
 
 WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
+INT: 'int';
 PRINT: 'print';
 IF: 'if';
 ELSE: 'else';

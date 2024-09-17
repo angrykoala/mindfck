@@ -15,7 +15,7 @@ func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 		return err
 	}
 	defer cmd.Release(v2)
-	cmd.Move(v2, v1)
+	cmd.MoveByte(v2, v1)
 
 	return nil
 }
