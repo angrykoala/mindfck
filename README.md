@@ -57,6 +57,16 @@ A: No
 Q: Is it fun?  
 A: Also no
 
+## Features
+
+-   Variables
+    -   Byte, can be assigned with numbers or char values
+-   Math operations
+-   Logical operations
+-   If ... Else
+-   While loops
+-   Print and read bytes
+
 ## Development
 
 Mindfck is written in go.
