@@ -15,7 +15,7 @@ assignment: identifier EQUALS expression;
 
 print: PRINT expression;
 
-ifConditional: IF '(' expression ')' '{' block '}';
+ifConditional: IF '(' expression ')' '{' block '}' (ELSE '{' block '}')?;
 
 whileLoop: WHILE '(' expression ')' '{' block '}';
 
@@ -38,6 +38,7 @@ WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
 PRINT: 'print';
 IF: 'if';
+ELSE: 'else';
 WHILE: 'while';
 PLUS: '+';
 MINUS: '-';
