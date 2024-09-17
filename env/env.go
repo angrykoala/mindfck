@@ -3,6 +3,7 @@ package env
 import (
 	"fmt"
 	"mindfck/utils"
+	"slices"
 )
 
 type MindfuckEnv struct {
@@ -29,7 +30,7 @@ func (env *MindfuckEnv) DeclareVariable(label string) *ByteVariable {
 	}
 
 	var newVar = &ByteVariable{
-		position: env.reserveMemory(),
+		position: env.reserveMemory(1),
 		label:    label,
 	}
 	env.labels[label] = newVar
@@ -45,7 +46,7 @@ func (env *MindfuckEnv) DeclareArrayVariable(label string) *ArrayVariable {
 	}
 
 	var newVar = &ArrayVariable{
-		position: env.reserveMemory(),
+		position: env.reserveMemory(1),
 		label:    label,
 	}
 	env.labels[label] = newVar
@@ -55,7 +56,7 @@ func (env *MindfuckEnv) DeclareArrayVariable(label string) *ArrayVariable {
 
 func (env *MindfuckEnv) DeclareAnonVariable() Variable {
 	return &ByteVariable{
-		position: env.reserveMemory(),
+		position: env.reserveMemory(1),
 	}
 }
 
@@ -64,9 +65,7 @@ func (env *MindfuckEnv) ReleaseVariable(v Variable) {
 		panic("release: out of bounds")
 	}
 
-	env.reservedMemory.Delete(v.Position())
-	env.freedMemory = append(env.freedMemory, v.Position())
-	// slices.Sort(env.freedMemory)
+	env.releaseMemory(v.Position(), v.Size())
 
 	if v.HasLabel() {
 		env.releaseLabel(v.Label())
@@ -92,24 +91,7 @@ func (env *MindfuckEnv) releaseLabel(label string) {
 	delete(env.labels, label)
 }
 
-func (env *MindfuckEnv) reserveMemory() int {
-	// return env.reserveMemoryOfSize(1)
-	var varPos int
-
-	if len(env.freedMemory) > 0 {
-		// Reuse position
-		varPos = env.freedMemory[0]
-		env.freedMemory = env.freedMemory[1:]
-	} else {
-		varPos = env.reservedMemory.Size() + env.memoryBegin
-	}
-
-	env.reservedMemory.Add(varPos)
-
-	return varPos
-}
-
-func (env *MindfuckEnv) reserveMemoryOfSize(size int) int {
+func (env *MindfuckEnv) reserveMemory(size int) int {
 	if size < 1 {
 		panic("Invalid size in reserve Memory")
 	}
@@ -119,7 +101,7 @@ func (env *MindfuckEnv) reserveMemoryOfSize(size int) int {
 	if ok {
 		// Reuse position if possible
 		varPos = env.freedMemory[freePos]
-		env.freedMemory = append(env.freedMemory[0:freePos-1], env.freedMemory[freePos+size+1:]...)
+		env.freedMemory = append(env.freedMemory[0:freePos], env.freedMemory[freePos+size:]...)
 
 	} else {
 		varPos = len(env.freedMemory) + env.reservedMemory.Size() + env.memoryBegin
@@ -130,6 +112,19 @@ func (env *MindfuckEnv) reserveMemoryOfSize(size int) int {
 	}
 
 	return varPos
+}
+
+func (env *MindfuckEnv) releaseMemory(pos int, size int) {
+	for i := pos; i < pos+size; i++ {
+		if !env.reservedMemory.Has(i) {
+			panic(fmt.Sprintf("release unallocated memory: %d. Memory: %d", i, env.reservedMemory.Items()))
+		}
+
+		env.reservedMemory.Delete(i)
+
+		env.freedMemory = append(env.freedMemory, i)
+	}
+	slices.Sort(env.freedMemory)
 }
 
 func findFirstConsecutiveSet(nums []int, s int) (pos int, ok bool) {

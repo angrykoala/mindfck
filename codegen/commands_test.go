@@ -27,8 +27,8 @@ func TestGeneratedAndRun(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, string(interpreter.Output), "F")
-	assert.Equal(t, interpreter.Memory, []byte{70, 50, 0, 70, 0})
+	assert.Equal(t, "F", string(interpreter.Output))
+	assert.Equal(t, []byte{70, 50, 70, 0}, interpreter.Memory)
 }
 
 func TestIf(t *testing.T) {
@@ -54,8 +54,8 @@ func TestIf(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, interpreter.Output, []byte{5})
-	assert.Equal(t, interpreter.Memory, []byte{20, 0, 5, 0, 0, 0})
+	assert.Equal(t, []byte{5}, interpreter.Output)
+	assert.Equal(t, []byte{20, 0, 5, 0, 0}, interpreter.Memory)
 }
 
 func TestBt(t *testing.T) {
