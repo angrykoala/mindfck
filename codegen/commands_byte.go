@@ -21,8 +21,8 @@ func (c *CommandHandler) ResetByte(v env.Variable) {
 func (c *CommandHandler) MoveByte(from env.Variable, to env.Variable) {
 	c.ResetByte(to)
 	c.While(from, func() {
-		c.Inc(to)
-		c.Dec(from)
+		c.IncByte(to)
+		c.DecByte(from)
 	})
 }
 
@@ -38,9 +38,9 @@ func (c *CommandHandler) CopyByte(from env.Variable, to env.Variable) {
 	c.ResetByte(to)
 
 	c.While(from, func() {
-		c.Inc(to)
-		c.Inc(temp0)
-		c.Dec(from)
+		c.IncByte(to)
+		c.IncByte(temp0)
+		c.DecByte(from)
 	})
 
 	c.MoveByte(temp0, from)
@@ -79,25 +79,25 @@ func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
 	c.SetByte(z, 0)
 
 	c.While(x2, func() {
-		c.Inc(temp0)
+		c.IncByte(temp0)
 
 		c.While(y2, func() {
-			c.Dec(y2)
+			c.DecByte(y2)
 			c.SetByte(temp0, 0)
-			c.Inc(temp1)
+			c.IncByte(temp1)
 		})
 
 		c.While(temp0, func() {
-			c.Dec(temp0)
-			c.Inc(z)
+			c.DecByte(temp0)
+			c.IncByte(z)
 		})
 		c.While(temp1, func() {
-			c.Dec(temp1)
-			c.Inc(y2)
+			c.DecByte(temp1)
+			c.IncByte(y2)
 		})
 
-		c.Dec(y2)
-		c.Dec(x2)
+		c.DecByte(y2)
+		c.DecByte(x2)
 	})
 }
 
@@ -108,7 +108,7 @@ func (c *CommandHandler) Gte(x env.Variable, y env.Variable, res env.Variable) {
 
 	// Because these are integers, we just compare GT with an x increased by 1
 	c.CopyByte(x, x2)
-	c.Inc(x2)
+	c.IncByte(x2)
 	c.Gt(x2, y, res)
 }
 
@@ -135,7 +135,7 @@ func (c *CommandHandler) Or(x env.Variable, y env.Variable, res env.Variable) {
 func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
 	c.SetByte(res, 1)
 	c.If(x, func() {
-		c.Dec(res)
+		c.DecByte(res)
 	})
 }
 
@@ -166,7 +166,7 @@ func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) 
 
 	c.While(temp, func() {
 		c.addTo(b, res)
-		c.Dec(temp)
+		c.DecByte(temp)
 	})
 }
 
@@ -183,7 +183,7 @@ func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
 	c.Gte(remainder, b, isRemainderBigger)
 
 	c.While(isRemainderBigger, func() {
-		c.Inc(res)
+		c.IncByte(res)
 		c.subTo(b, remainder)
 
 		c.Gte(remainder, b, isRemainderBigger)
@@ -223,9 +223,9 @@ func (c *CommandHandler) subTo(a env.Variable, b env.Variable) {
 	c.ResetByte(temp)
 
 	c.While(a, func() {
-		c.Inc(temp)
-		c.Dec(b)
-		c.Dec(a)
+		c.IncByte(temp)
+		c.DecByte(b)
+		c.DecByte(a)
 	})
 
 	c.MoveByte(temp, a)
@@ -238,10 +238,22 @@ func (c *CommandHandler) addTo(a env.Variable, b env.Variable) {
 	c.ResetByte(temp0)
 
 	c.While(a, func() {
-		c.Inc(temp0)
-		c.Inc(b)
-		c.Dec(a)
+		c.IncByte(temp0)
+		c.IncByte(b)
+		c.DecByte(a)
 	})
 
 	c.MoveByte(temp0, a)
+}
+
+func (c *CommandHandler) IncByte(v env.Variable) {
+	assertByte(v)
+	c.goTo(v)
+	c.increment()
+}
+
+func (c *CommandHandler) DecByte(v env.Variable) {
+	assertByte(v)
+	c.goTo(v)
+	c.decrement()
 }

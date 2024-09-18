@@ -77,16 +77,6 @@ func (c *CommandHandler) Clone(from env.Variable) env.Variable {
 	return newVar
 }
 
-func (c *CommandHandler) Inc(v env.Variable) {
-	c.goTo(v)
-	c.increment()
-}
-
-func (c *CommandHandler) Dec(v env.Variable) {
-	c.goTo(v)
-	c.decrement()
-}
-
 // Control Flow
 
 func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func()) {
