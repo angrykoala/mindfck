@@ -13,6 +13,16 @@ func (c *CommandHandler) PrintInt(v env.Variable) {
 	c.out()
 }
 
+func (c *CommandHandler) CastByteToInt(from env.Variable, to env.Variable) {
+	assertInt(to)
+	assertByte(from)
+	c.Reset(to)
+
+	lastByte := to.GetByte(1)
+
+	c.Copy(from, lastByte)
+}
+
 func assertInt(v env.Variable) {
 	if v.Type() != env.INT {
 		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.INT))

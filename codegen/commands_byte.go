@@ -189,6 +189,10 @@ func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
 		c.Gte(remainder, b, isRemainderBigger)
 	})
 }
+func (c *CommandHandler) PrintByte(v env.Variable) {
+	c.goTo(v)
+	c.out()
+}
 
 func (c *CommandHandler) add(v env.Variable, count int) {
 	assertByte(v)

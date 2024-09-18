@@ -27,9 +27,7 @@ type VariableExpr struct {
 
 func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	v1 := cmd.Env().ResolveLabel(lit.Label)
-	v2 := cmd.Env().DeclareAnonByte()
-
-	cmd.CopyByte(v1, v2)
+	v2 := cmd.Clone(v1)
 
 	return v2, nil
 }

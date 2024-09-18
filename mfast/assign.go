@@ -1,6 +1,9 @@
 package mfast
 
-import "mindfck/codegen"
+import (
+	"mindfck/codegen"
+	"mindfck/env"
+)
 
 type Assign struct {
 	To   string
@@ -15,7 +18,13 @@ func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 		return err
 	}
 	defer cmd.Release(v2)
-	cmd.MoveByte(v2, v1)
+
+	// Implicit cast
+	if v1.Type() == env.INT && v2.Type() == env.BYTE {
+		cmd.CastByteToInt(v2, v1)
+	} else {
+		cmd.MoveByte(v2, v1)
+	}
 
 	return nil
 }

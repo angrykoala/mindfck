@@ -21,7 +21,7 @@ func TestGeneratedAndRun(t *testing.T) {
 	var3 := cmd.Declare("var3", env.BYTE)
 
 	cmd.CopyByte(var1, var3)
-	cmd.Print(var3)
+	cmd.PrintByte(var3)
 
 	code := cmd.Compile()
 
@@ -44,10 +44,10 @@ func TestIf(t *testing.T) {
 	cmd.SetByte(var3, 5)
 
 	cmd.If(var1, func() {
-		cmd.Print(var3)
+		cmd.PrintByte(var3)
 	})
 	cmd.If(var2, func() {
-		cmd.Print(var1)
+		cmd.PrintByte(var1)
 	})
 
 	code := cmd.Compile()
@@ -72,11 +72,11 @@ func TestBt(t *testing.T) {
 	cmd.SetByte(var3, 5)
 
 	cmd.Gt(var1, var2, res)
-	cmd.Print(res)
+	cmd.PrintByte(res)
 	cmd.Gt(var2, var1, res)
-	cmd.Print(res)
+	cmd.PrintByte(res)
 	cmd.Gt(var2, var3, res)
-	cmd.Print(res)
+	cmd.PrintByte(res)
 
 	code := cmd.Compile()
 	interpreter := bfinterpreter.New()
@@ -97,11 +97,11 @@ func TestDiv(t *testing.T) {
 	cmd.SetByte(var2, 5)
 
 	cmd.Div(var1, var2, var3)
-	cmd.Print(var3)
+	cmd.PrintByte(var3)
 	cmd.Div(var2, var3, var4)
-	cmd.Print(var4)
+	cmd.PrintByte(var4)
 	cmd.Div(var3, var2, var4)
-	cmd.Print(var4)
+	cmd.PrintByte(var4)
 
 	code := cmd.Compile()
 

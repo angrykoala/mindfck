@@ -36,18 +36,13 @@ func (c *CommandHandler) Release(v env.Variable) {
 	c.env.ReleaseVariable(v)
 }
 
-func (c *CommandHandler) Print(v env.Variable) {
-	c.goTo(v)
-	c.out()
-}
-
 func (c *CommandHandler) DebugBreak() {
 	c.writer.command(BFDebug)
 }
 
 // Global Ops
 
-// Resets cell to 0
+// Resets variable
 func (c *CommandHandler) Reset(v env.Variable) {
 	c.iterateBytes(v, func(b env.Variable, _ int) {
 		c.ResetByte(b)
@@ -73,6 +68,13 @@ func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
 		c.CopyByte(fromByte, targetByte)
 
 	})
+}
+
+// Clone variable from into a new variable of the same type
+func (c *CommandHandler) Clone(from env.Variable) env.Variable {
+	newVar := c.env.DeclareAnonVariable(from.Type())
+	c.Copy(from, newVar)
+	return newVar
 }
 
 func (c *CommandHandler) Inc(v env.Variable) {

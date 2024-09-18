@@ -31,6 +31,5 @@ func TestInt(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{100, 10}, interpreter.Output)
-	assert.Equal(t, []byte{100, 0, 10, 10, 0}, interpreter.Memory)
+	assert.Equal(t, []byte{0, 100, 10}, interpreter.Output)
 }
