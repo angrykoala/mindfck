@@ -58,3 +58,24 @@ func TestDecInt(t *testing.T) {
 
 	assert.Equal(t, []byte{1, 254}, interpreter.Output)
 }
+
+func TestIsZeroInt(t *testing.T) {
+	cmd := New()
+
+	var1 := cmd.Declare("var1", env.INT)
+	res1 := cmd.Declare("res1", env.BYTE)
+	res2 := cmd.Declare("res2", env.BYTE)
+	cmd.isZeroInt(var1, res1)
+	cmd.SetByte(var1.GetByte(0), 2)
+	cmd.SetByte(var1.GetByte(1), 1)
+	cmd.isZeroInt(var1, res2)
+
+	cmd.PrintByte(res1)
+	cmd.PrintByte(res2)
+
+	code := cmd.Compile()
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+
+	assert.Equal(t, []byte{1, 0}, interpreter.Output)
+}

@@ -82,7 +82,7 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 	case DIVIDE:
 		cmd.Div(v1, v2, v3)
 	case EQUALEQUAL:
-		cmd.Equals(v1, v2, v3)
+		cmd.EqualsByte(v1, v2, v3)
 	case AND:
 		cmd.And(v1, v2, v3)
 	case OR:

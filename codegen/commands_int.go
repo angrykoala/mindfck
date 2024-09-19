@@ -23,7 +23,7 @@ func (c *CommandHandler) IncInt(v env.Variable) {
 
 	secondByte := v.GetByte(1)
 	c.IncByte(secondByte)
-	c.Equals(secondByte, zero, temp)
+	c.EqualsByte(secondByte, zero, temp)
 	c.If(temp, func() {
 		firstByte := v.GetByte(0)
 		c.IncByte(firstByte)
@@ -38,7 +38,7 @@ func (c *CommandHandler) DecInt(v env.Variable) {
 	c.Reset(zero)
 
 	secondByte := v.GetByte(1)
-	c.Equals(secondByte, zero, temp)
+	c.EqualsByte(secondByte, zero, temp)
 	c.If(temp, func() {
 		firstByte := v.GetByte(0)
 		c.DecByte(firstByte)
@@ -66,6 +66,54 @@ func (c *CommandHandler) CastIntToByte(from env.Variable, to env.Variable) {
 
 	c.Copy(lastByte, from)
 }
+
+// func (c *CommandHandler) EqualsInt(x env.Variable, y env.Variable, res env.Variable) {
+// 	assertInt(x)
+// 	assertInt(y)
+// 	assertBool(res)
+
+// 	temp := c.env.DeclareAnonByte()
+// 	defer c.env.ReleaseVariable(temp)
+// 	c.CopyByte(x, temp)
+// 	c.subTo(y, temp)
+
+// 	c.SetByte(res, 1)
+
+// 	c.If(temp, func() {
+// 		c.SetByte(res, 0)
+// 	})
+// }
+
+// Checks if variable is zero, result is written in res
+func (c *CommandHandler) isZeroInt(a env.Variable, res env.Variable) {
+	assertInt(a)
+	assertBool(res)
+	c.SetByte(res, 1)
+
+	c.If(a.GetByte(0), func() {
+		c.SetByte(res, 0)
+	})
+	c.If(a.GetByte(1), func() {
+		c.SetByte(res, 0)
+	})
+}
+
+// // // Substracts int a to b, b is modified
+// func (c *CommandHandler) subToInt(a env.Variable, b env.Variable) {
+// 	assertInt(a)
+// 	assertInt(b)
+// 	temp := c.env.DeclareAnonVariable(env.INT)
+// 	defer c.env.ReleaseVariable(temp)
+// 	c.Reset(temp)
+
+// 	c.While(a, func() {
+// 		c.IncByte(temp)
+// 		c.DecByte(b)
+// 		c.DecByte(a)
+// 	})
+
+// 	c.MoveByte(temp, a)
+// }
 
 func assertInt(v env.Variable) {
 	if v.Type() != env.INT {

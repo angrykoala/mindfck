@@ -77,8 +77,7 @@ func (c *CommandHandler) Clone(from env.Variable) env.Variable {
 	return newVar
 }
 
-// Control Flow
-
+// Control Flow (Bool)
 func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func()) {
 	temp0 := c.env.DeclareAnonByte()
 	temp1 := c.env.DeclareAnonByte()
@@ -185,7 +184,7 @@ func (c *CommandHandler) iterateBytes(v env.Variable, cb func(b env.Variable, i 
 // Assertions
 
 func assertSameSize(a env.Variable, b env.Variable) {
-	if b.Size() != b.Size() {
+	if a.Size() != b.Size() {
 		panic("Incompatible size of variables")
 	}
 }

@@ -47,11 +47,14 @@ func (c *CommandHandler) CopyByte(from env.Variable, to env.Variable) {
 }
 
 // Compares x == y, result is a boolean in res
-func (c *CommandHandler) Equals(x env.Variable, y env.Variable, res env.Variable) {
+func (c *CommandHandler) EqualsByte(x env.Variable, y env.Variable, res env.Variable) {
+	assertByte(x)
+	assertByte(y)
+	assertBool(res)
 	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(x, temp)
-	c.subTo(y, temp)
+	c.subToByte(y, temp)
 
 	c.SetByte(res, 1)
 
@@ -152,7 +155,7 @@ func (c *CommandHandler) Sub(a env.Variable, b env.Variable, res env.Variable) {
 	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(a, temp)
-	c.subTo(b, temp)
+	c.subToByte(b, temp)
 
 	c.MoveByte(temp, res)
 }
@@ -184,7 +187,7 @@ func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
 
 	c.While(isRemainderBigger, func() {
 		c.IncByte(res)
-		c.subTo(b, remainder)
+		c.subToByte(b, remainder)
 
 		c.Gte(remainder, b, isRemainderBigger)
 	})
@@ -216,8 +219,15 @@ func assertByte(v env.Variable) {
 	}
 }
 
+// Atm same as assertByte
+func assertBool(v env.Variable) {
+	if v.Type() != env.BYTE {
+		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.BYTE))
+	}
+}
+
 // Substracts cell a to b, b is modified
-func (c *CommandHandler) subTo(a env.Variable, b env.Variable) {
+func (c *CommandHandler) subToByte(a env.Variable, b env.Variable) {
 	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.ResetByte(temp)
