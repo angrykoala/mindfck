@@ -15,7 +15,8 @@ assignment: identifier EQUALS expression;
 
 print: PRINT expression;
 
-ifConditional: IF '(' expression ')' '{' block '}' (ELSE '{' block '}')?;
+ifConditional:
+	IF '(' expression ')' '{' block '}' (ELSE '{' block '}')?;
 
 whileLoop: WHILE '(' expression ')' '{' block '}';
 
@@ -32,7 +33,7 @@ expression:
 
 identifier: IDENTIFIER;
 
-literal: NUMBER;
+literal: NUMBER | CHAR;
 
 WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
@@ -55,3 +56,8 @@ LT: '<';
 LE: '<=';
 IDENTIFIER: [a-zA-Z]+;
 NUMBER: [0-9]+;
+
+CHAR: '\'' EXT_ASCII_CHAR '\'';
+
+fragment EXT_ASCII_CHAR:
+	[\u0000-\u00FF] ; // Matches characters in the range 0–255 (extended ASCII).

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"mindfck/mfast"
 	mindfck "mindfck/parser/antlr"
 	"mindfck/utils"
@@ -76,8 +77,17 @@ func (v *AstGeneratorVisitor) VisitPrint(ctx *mindfck.PrintContext) interface{} 
 
 func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) interface{} {
 	if ctx.Literal() != nil {
+		var value int
+		if ctx.Literal().NUMBER() != nil {
+			value = utils.ToInt(ctx.Literal().GetText())
+		} else if ctx.Literal().CHAR() != nil {
+			value = int(ctx.Literal().CHAR().GetText()[1])
+		} else {
+			panic(fmt.Sprintf("invalid literal %s", ctx.Literal().GetText()))
+		}
+
 		return &mfast.Literal{
-			Value: utils.ToInt(ctx.Literal().GetText()),
+			Value: value,
 		}
 
 	} else if ctx.Identifier() != nil {
