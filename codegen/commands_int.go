@@ -5,12 +5,25 @@ import (
 	"mindfck/env"
 )
 
+// TODO: Fix so it is proper print
 func (c *CommandHandler) PrintInt(v env.Variable) {
 	assertInt(v)
 	c.goTo(v)
 	c.out()
 	c.shift(1)
 	c.out()
+}
+func (c *CommandHandler) SetInt(v env.Variable, value int) {
+	assertInt(v)
+
+	leadingByte := value / 256
+	remainder := value % 256
+
+	b1 := v.GetByte(0)
+	b2 := v.GetByte(1)
+
+	c.SetByte(b1, leadingByte)
+	c.SetByte(b2, remainder)
 }
 
 func (c *CommandHandler) IncInt(v env.Variable) {
@@ -29,6 +42,7 @@ func (c *CommandHandler) IncInt(v env.Variable) {
 		c.IncByte(firstByte)
 	})
 }
+
 func (c *CommandHandler) DecInt(v env.Variable) {
 	assertInt(v)
 	zero := c.env.DeclareAnonByte()

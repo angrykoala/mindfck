@@ -17,6 +17,8 @@ type Literal struct {
 
 func (lit *Literal) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	res := cmd.Env().DeclareAnonByte()
+	// res := cmd.Env().DeclareAnonVariable(env.INT)
+	// cmd.SetInt(res, lit.Value)
 	cmd.SetByte(res, lit.Value)
 	return res, nil
 }
@@ -100,6 +102,10 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 		return nil, fmt.Errorf("evalexpr: invalid operator %v", expr.Operator)
 	}
 	return v3, nil
+}
+
+func (expr *BinaryExpr) evalIntExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
+
 }
 
 type NotExpr struct {
