@@ -89,8 +89,8 @@ func (expr *BinaryExpr) evalIntExpr(cmd *codegen.CommandHandler, v1 env.Variable
 		cmd.SubInt(v1, v2, v3)
 	case MULTIPLY:
 		cmd.MultInt(v1, v2, v3)
-	// case DIVIDE:
-	// 	cmd.DivInt(v1, v2, v3)
+	case DIVIDE:
+		cmd.DivInt(v1, v2, v3)
 	default:
 		return nil, fmt.Errorf("evalexpr: invalid operator %v", expr.Operator)
 	}
@@ -112,13 +112,13 @@ func (expr *BinaryExpr) evalByteExpr(cmd *codegen.CommandHandler, v1 env.Variabl
 	case EQUALEQUAL:
 		cmd.EqualsByte(v1, v2, v3)
 	case GT:
-		cmd.Gt(v1, v2, v3)
+		cmd.GtByte(v1, v2, v3)
 	case LT:
-		cmd.Gt(v2, v1, v3)
+		cmd.GtByte(v2, v1, v3)
 	case GTE:
-		cmd.Gte(v1, v2, v3)
+		cmd.GteByte(v1, v2, v3)
 	case LTE:
-		cmd.Gte(v2, v1, v3)
+		cmd.GteByte(v2, v1, v3)
 	case AND: // Boolean OPS
 		cmd.And(v1, v2, v3)
 	case OR:

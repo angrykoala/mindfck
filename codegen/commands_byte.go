@@ -64,7 +64,7 @@ func (c *CommandHandler) EqualsByte(x env.Variable, y env.Variable, res env.Vari
 }
 
 // Compares x > b, based on https://esolangs.org/wiki/Brainfuck_algorithms#z_=_x_%3E_y
-func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
+func (c *CommandHandler) GtByte(x env.Variable, y env.Variable, z env.Variable) {
 	temp0 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp0)
 	temp1 := c.env.DeclareAnonByte()
@@ -105,14 +105,14 @@ func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
 }
 
 // Compares x+1 > b, cheap Gte
-func (c *CommandHandler) Gte(x env.Variable, y env.Variable, res env.Variable) {
+func (c *CommandHandler) GteByte(x env.Variable, y env.Variable, res env.Variable) {
 	x2 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(x2)
 
 	// Because these are integers, we just compare GT with an x increased by 1
 	c.CopyByte(x, x2)
 	c.IncByte(x2)
-	c.Gt(x2, y, res)
+	c.GtByte(x2, y, res)
 }
 
 func (c *CommandHandler) And(x env.Variable, y env.Variable, res env.Variable) {
@@ -186,13 +186,13 @@ func (c *CommandHandler) DivByte(a env.Variable, b env.Variable, res env.Variabl
 	c.ResetByte(res)
 	c.CopyByte(a, remainder)
 
-	c.Gte(remainder, b, isRemainderBigger)
+	c.GteByte(remainder, b, isRemainderBigger)
 
 	c.While(isRemainderBigger, func() {
 		c.IncByte(res)
 		c.subToByte(b, remainder)
 
-		c.Gte(remainder, b, isRemainderBigger)
+		c.GteByte(remainder, b, isRemainderBigger)
 	})
 }
 

@@ -71,11 +71,11 @@ func TestBt(t *testing.T) {
 	cmd.SetByte(var2, 5)
 	cmd.SetByte(var3, 5)
 
-	cmd.Gt(var1, var2, res)
+	cmd.GtByte(var1, var2, res)
 	cmd.PrintByte(res)
-	cmd.Gt(var2, var1, res)
+	cmd.GtByte(var2, var1, res)
 	cmd.PrintByte(res)
-	cmd.Gt(var2, var3, res)
+	cmd.GtByte(var2, var3, res)
 	cmd.PrintByte(res)
 
 	code := cmd.Compile()

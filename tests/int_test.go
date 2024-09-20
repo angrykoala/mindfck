@@ -57,6 +57,30 @@ func TestIntAdd(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{2, 38}, interpreter.Output)
 }
+
+func TestIntSub(t *testing.T) {
+	input := `
+	int a
+    int b
+	a = 250
+    b = 300 - a
+	print b
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{0, 50}, interpreter.Output)
+}
 func TestIntMult(t *testing.T) {
 	input := `
 	int a
@@ -79,4 +103,26 @@ func TestIntMult(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 	assert.Equal(t, []byte{11, 184}, interpreter.Output)
+}
+
+func TestIntDiv(t *testing.T) {
+	input := `
+    int b
+    b = 100 / 2
+	print b
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{0, 50}, interpreter.Output)
 }

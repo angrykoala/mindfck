@@ -27,7 +27,9 @@ func TestFibonacci10(t *testing.T) {
 		c = b
 		b = a+b
 		a=c
-		i=i+1
+		byte one
+		one = 1
+		i=i+one
     }
 	`
 

@@ -12,8 +12,10 @@ import (
 func TestIfTrue(t *testing.T) {
 	input := `
 	byte a
+	byte b
 	a = 2
-    if (a==2) {
+	b = 2
+    if (a==b) {
         print a
     }
     print 0
@@ -27,7 +29,7 @@ func TestIfTrue(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{2, 0}, interpreter.Output)
+	assert.Equal(t, []byte{2, 0, 0}, interpreter.Output)
 }
 
 func TestIfFalse(t *testing.T) {

@@ -59,6 +59,26 @@ func TestDecInt(t *testing.T) {
 	assert.Equal(t, []byte{1, 254}, interpreter.Output)
 }
 
+func TestSubInt(t *testing.T) {
+	cmd := New()
+
+	a := cmd.Declare("a", env.INT)
+	b := cmd.Declare("b", env.INT)
+	c := cmd.Declare("c", env.INT)
+	cmd.SetInt(a, 300)
+	cmd.SetInt(b, 250)
+	cmd.SubInt(a, b, c)
+	cmd.PrintInt(a)
+	cmd.PrintInt(b)
+	cmd.PrintInt(c)
+
+	code := cmd.Compile()
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+
+	assert.Equal(t, []byte{1, 44, 0, 250, 0, 50}, interpreter.Output)
+}
+
 func TestIsZeroInt(t *testing.T) {
 	cmd := New()
 
@@ -72,6 +92,26 @@ func TestIsZeroInt(t *testing.T) {
 
 	cmd.PrintByte(res1)
 	cmd.PrintByte(res2)
+
+	code := cmd.Compile()
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+
+	assert.Equal(t, []byte{1, 0}, interpreter.Output)
+}
+
+func TestGTInt(t *testing.T) {
+	cmd := New()
+
+	var1 := cmd.Declare("var1", env.INT)
+	var2 := cmd.Declare("var2", env.INT)
+	res := cmd.Declare("res", env.BYTE)
+	cmd.SetInt(var1, 10)
+	cmd.SetInt(var2, 20)
+	cmd.GtInt(var2, var1, res)
+	cmd.PrintByte(res)
+	cmd.GtInt(var1, var2, res)
+	cmd.PrintByte(res)
 
 	code := cmd.Compile()
 	interpreter := bfinterpreter.New()

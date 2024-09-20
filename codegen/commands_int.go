@@ -7,6 +7,12 @@ import (
 
 // TODO: Fix so it is proper print
 func (c *CommandHandler) PrintInt(v env.Variable) {
+	// >++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-
+	// <+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++
+	// <]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]
+
+	// Print up to 65536 (5 characters)
+
 	assertInt(v)
 	c.goTo(v)
 	c.out()
@@ -80,7 +86,6 @@ func (c *CommandHandler) SubInt(a env.Variable, b env.Variable, res env.Variable
 
 // Multiply cell a and b
 func (c *CommandHandler) MultInt(a env.Variable, b env.Variable, res env.Variable) {
-	println("MULTBYTE")
 	temp := c.env.DeclareAnonVariable(env.INT)
 	defer c.env.ReleaseVariable(temp)
 	c.Copy(a, temp)
@@ -106,13 +111,45 @@ func (c *CommandHandler) DivInt(a env.Variable, b env.Variable, res env.Variable
 	c.Reset(res)
 	c.Copy(a, remainder)
 
-	c.Gte(remainder, b, isRemainderBigger) // TODO: make this support ints
+	c.GteInt(remainder, b, isRemainderBigger) // TODO: make this support ints
 
 	c.While(isRemainderBigger, func() {
 		c.IncInt(res)
 		c.subToInt(b, remainder)
 
-		c.Gte(remainder, b, isRemainderBigger)
+		c.GteInt(remainder, b, isRemainderBigger)
+	})
+}
+
+// Compares x+1 > b, cheap Gte
+func (c *CommandHandler) GteInt(x env.Variable, y env.Variable, res env.Variable) {
+	x2 := c.env.DeclareAnonVariable(env.INT)
+	defer c.env.ReleaseVariable(x2)
+
+	// Because these are integers, we just compare GT with an x increased by 1
+	c.Copy(x, x2)
+	c.IncInt(x2)
+	c.GtInt(x2, y, res)
+}
+
+func (c *CommandHandler) GtInt(x env.Variable, y env.Variable, res env.Variable) {
+	assertInt(x)
+	assertInt(y)
+	assertBool(res)
+
+	temp := c.env.DeclareAnonByte()
+	defer c.env.ReleaseVariable(temp)
+	c.Reset(temp)
+
+	c.GtByte(x.GetByte(0), y.GetByte(0), temp)
+
+	c.If(temp, func() {
+		c.SetByte(res, 1)
+	})
+
+	c.EqualsByte(x.GetByte(0), y.GetByte(0), temp)
+	c.If(temp, func() {
+		c.GtByte(x.GetByte(1), y.GetByte(1), res)
 	})
 }
 
@@ -132,17 +169,13 @@ func (c *CommandHandler) addToInt(a env.Variable, b env.Variable) {
 }
 
 func (c *CommandHandler) subToInt(a env.Variable, b env.Variable) {
-	// Step 1, sub second byte
-	c.subToByte(a.GetByte(1), b.GetByte(1))
-
-	// Step 2, add second byte with int inc
-	aCopy := c.env.DeclareAnonByte()
+	aCopy := c.env.DeclareAnonVariable(env.INT)
 	defer c.env.ReleaseVariable(aCopy)
-	c.CopyByte(a.GetByte(1), aCopy)
+	c.Copy(a, aCopy)
 
-	c.While(aCopy, func() {
+	c.whileInt(aCopy, func() {
 		c.DecInt(b)
-		c.DecByte(aCopy)
+		c.DecInt(aCopy)
 	})
 }
 
@@ -181,7 +214,7 @@ func (c *CommandHandler) CastIntToByte(from env.Variable, to env.Variable) {
 
 	lastByte := from.GetByte(1)
 
-	c.Copy(lastByte, from)
+	c.Copy(lastByte, to)
 }
 
 // func (c *CommandHandler) EqualsInt(x env.Variable, y env.Variable, res env.Variable) {
