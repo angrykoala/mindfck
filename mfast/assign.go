@@ -25,7 +25,7 @@ func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 	} else if v1.Type() == env.BYTE && v2.Type() == env.INT {
 		cmd.CastIntToByte(v2, v1)
 	} else {
-		cmd.MoveByte(v2, v1)
+		cmd.Move(v2, v1)
 	}
 
 	return nil

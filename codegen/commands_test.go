@@ -17,7 +17,7 @@ func TestGeneratedAndRun(t *testing.T) {
 	cmd.SetByte(var1, 20)
 	cmd.SetByte(var2, 50)
 
-	cmd.Add(var1, var2, var1)
+	cmd.AddByte(var1, var2, var1)
 	var3 := cmd.Declare("var3", env.BYTE)
 
 	cmd.CopyByte(var1, var3)
@@ -96,11 +96,11 @@ func TestDiv(t *testing.T) {
 	cmd.SetByte(var1, 20)
 	cmd.SetByte(var2, 5)
 
-	cmd.Div(var1, var2, var3)
+	cmd.DivByte(var1, var2, var3)
 	cmd.PrintByte(var3)
-	cmd.Div(var2, var3, var4)
+	cmd.DivByte(var2, var3, var4)
 	cmd.PrintByte(var4)
-	cmd.Div(var3, var2, var4)
+	cmd.DivByte(var3, var2, var4)
 	cmd.PrintByte(var4)
 
 	code := cmd.Compile()

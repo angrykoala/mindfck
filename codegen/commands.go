@@ -51,7 +51,7 @@ func (c *CommandHandler) Reset(v env.Variable) {
 
 // from -> to
 func (c *CommandHandler) Move(from env.Variable, to env.Variable) {
-	assertSameSize(from, to)
+	AssertSameSize(from, to)
 	c.Reset(to)
 	c.iterateBytes(from, func(fromByte env.Variable, i int) {
 		targetByte := to.GetByte(i)
@@ -61,7 +61,7 @@ func (c *CommandHandler) Move(from env.Variable, to env.Variable) {
 
 // Copy current cell into to, using temp cell, ends in origin and resets temp
 func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
-	assertSameSize(from, to)
+	AssertSameSize(from, to)
 
 	c.iterateBytes(from, func(fromByte env.Variable, i int) {
 		targetByte := to.GetByte(i)
@@ -183,7 +183,7 @@ func (c *CommandHandler) iterateBytes(v env.Variable, cb func(b env.Variable, i 
 
 // Assertions
 
-func assertSameSize(a env.Variable, b env.Variable) {
+func AssertSameSize(a env.Variable, b env.Variable) {
 	if a.Size() != b.Size() {
 		panic("Incompatible size of variables")
 	}

@@ -57,3 +57,26 @@ func TestIntAdd(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{2, 38}, interpreter.Output)
 }
+func TestIntMult(t *testing.T) {
+	input := `
+	int a
+    int b
+	a = 10
+    b = 300 * a
+	print b
+	`
+
+	ast, err := parser.Parse(input)
+	if err != nil {
+		panic(err)
+	}
+
+	code, err := compiler.Compile(ast)
+	if err != nil {
+		panic(err)
+	}
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte{11, 184}, interpreter.Output)
+}

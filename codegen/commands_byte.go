@@ -142,16 +142,19 @@ func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
 	})
 }
 
-func (c *CommandHandler) Add(a env.Variable, b env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonByte()
+func (c *CommandHandler) AddByte(a env.Variable, b env.Variable, res env.Variable) {
+	assertByte(a)
+	assertByte(b)
+	assertByte(res)
+	temp := c.env.DeclareAnonByte() // Do we need temp here?
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(a, temp)
-	c.addTo(b, temp)
+	c.addToByte(b, temp)
 
 	c.MoveByte(temp, res)
 }
 
-func (c *CommandHandler) Sub(a env.Variable, b env.Variable, res env.Variable) {
+func (c *CommandHandler) SubByte(a env.Variable, b env.Variable, res env.Variable) {
 	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(a, temp)
@@ -161,20 +164,20 @@ func (c *CommandHandler) Sub(a env.Variable, b env.Variable, res env.Variable) {
 }
 
 // Multiply cell a and b
-func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) {
+func (c *CommandHandler) MultByte(a env.Variable, b env.Variable, res env.Variable) {
 	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
 	c.CopyByte(a, temp)
 	c.ResetByte(res)
 
 	c.While(temp, func() {
-		c.addTo(b, res)
+		c.addToByte(b, res)
 		c.DecByte(temp)
 	})
 }
 
 // Divide cell a and b
-func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
+func (c *CommandHandler) DivByte(a env.Variable, b env.Variable, res env.Variable) {
 	remainder := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(remainder)
 	isRemainderBigger := c.env.DeclareAnonByte()
@@ -192,6 +195,7 @@ func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
 		c.Gte(remainder, b, isRemainderBigger)
 	})
 }
+
 func (c *CommandHandler) PrintByte(v env.Variable) {
 	c.goTo(v)
 	c.out()
@@ -242,7 +246,7 @@ func (c *CommandHandler) subToByte(a env.Variable, b env.Variable) {
 }
 
 // Adds cell a to b, b is modified
-func (c *CommandHandler) addTo(a env.Variable, b env.Variable) {
+func (c *CommandHandler) addToByte(a env.Variable, b env.Variable) {
 	temp0 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp0)
 	c.ResetByte(temp0)
