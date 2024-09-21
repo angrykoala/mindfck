@@ -33,14 +33,14 @@ var MindfckParserStaticData struct {
 func mindfckParserInit() {
 	staticData := &MindfckParserStaticData
 	staticData.LiteralNames = []string{
-		"", "'('", "')'", "'{'", "'}'", "", "'byte'", "'int'", "'print'", "'if'",
-		"'else'", "'while'", "'read'", "'+'", "'-'", "'*'", "'/'", "'='", "'=='",
-		"'and'", "'or'", "", "'>'", "'>='", "'<'", "'<='",
+		"", "'('", "')'", "'{'", "'}'", "", "", "", "'byte'", "'int'", "'print'",
+		"'if'", "'else'", "'while'", "'read'", "'+'", "'-'", "'*'", "'/'", "'='",
+		"'=='", "'and'", "'or'", "", "'>'", "'>='", "'<'", "'<='",
 	}
 	staticData.SymbolicNames = []string{
-		"", "", "", "", "", "WS", "BYTE", "INT", "PRINT", "IF", "ELSE", "WHILE",
-		"READ", "PLUS", "MINUS", "TIMES", "DIVIDE", "EQUALS", "DEQUALS", "AND",
-		"OR", "NOT", "GT", "GE", "LT", "LE", "IDENTIFIER", "NUMBER", "CHAR",
+		"", "", "", "", "", "CHAR", "BYTE_NUMBER", "WS", "BYTE", "INT", "PRINT",
+		"IF", "ELSE", "WHILE", "READ", "PLUS", "MINUS", "TIMES", "DIVIDE", "EQUALS",
+		"DEQUALS", "AND", "OR", "NOT", "GT", "GE", "LT", "LE", "NUMBER", "IDENTIFIER",
 	}
 	staticData.RuleNames = []string{
 		"statements", "statement", "declaration", "assignment", "print", "ifConditional",
@@ -48,7 +48,7 @@ func mindfckParserInit() {
 	}
 	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 28, 109, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 29, 109, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
 		10, 2, 11, 7, 11, 1, 0, 5, 0, 26, 8, 0, 10, 0, 12, 0, 29, 9, 0, 1, 1, 1,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 37, 8, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 3,
@@ -58,39 +58,39 @@ func mindfckParserInit() {
 		8, 78, 9, 8, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 3, 9,
 		89, 8, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 5, 9, 100,
 		8, 9, 10, 9, 12, 9, 103, 9, 9, 1, 10, 1, 10, 1, 11, 1, 11, 1, 11, 0, 1,
-		18, 12, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 0, 5, 1, 0, 6, 7, 2,
-		0, 15, 16, 19, 19, 2, 0, 13, 14, 20, 20, 2, 0, 17, 18, 22, 25, 1, 0, 27,
-		28, 110, 0, 27, 1, 0, 0, 0, 2, 36, 1, 0, 0, 0, 4, 38, 1, 0, 0, 0, 6, 41,
-		1, 0, 0, 0, 8, 45, 1, 0, 0, 0, 10, 48, 1, 0, 0, 0, 12, 62, 1, 0, 0, 0,
-		14, 70, 1, 0, 0, 0, 16, 76, 1, 0, 0, 0, 18, 88, 1, 0, 0, 0, 20, 104, 1,
-		0, 0, 0, 22, 106, 1, 0, 0, 0, 24, 26, 3, 2, 1, 0, 25, 24, 1, 0, 0, 0, 26,
-		29, 1, 0, 0, 0, 27, 25, 1, 0, 0, 0, 27, 28, 1, 0, 0, 0, 28, 1, 1, 0, 0,
-		0, 29, 27, 1, 0, 0, 0, 30, 37, 3, 4, 2, 0, 31, 37, 3, 6, 3, 0, 32, 37,
+		18, 12, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 0, 5, 1, 0, 8, 9, 2,
+		0, 17, 18, 21, 21, 2, 0, 15, 16, 22, 22, 2, 0, 19, 20, 24, 27, 2, 0, 5,
+		6, 28, 28, 110, 0, 27, 1, 0, 0, 0, 2, 36, 1, 0, 0, 0, 4, 38, 1, 0, 0, 0,
+		6, 41, 1, 0, 0, 0, 8, 45, 1, 0, 0, 0, 10, 48, 1, 0, 0, 0, 12, 62, 1, 0,
+		0, 0, 14, 70, 1, 0, 0, 0, 16, 76, 1, 0, 0, 0, 18, 88, 1, 0, 0, 0, 20, 104,
+		1, 0, 0, 0, 22, 106, 1, 0, 0, 0, 24, 26, 3, 2, 1, 0, 25, 24, 1, 0, 0, 0,
+		26, 29, 1, 0, 0, 0, 27, 25, 1, 0, 0, 0, 27, 28, 1, 0, 0, 0, 28, 1, 1, 0,
+		0, 0, 29, 27, 1, 0, 0, 0, 30, 37, 3, 4, 2, 0, 31, 37, 3, 6, 3, 0, 32, 37,
 		3, 8, 4, 0, 33, 37, 3, 10, 5, 0, 34, 37, 3, 12, 6, 0, 35, 37, 3, 14, 7,
 		0, 36, 30, 1, 0, 0, 0, 36, 31, 1, 0, 0, 0, 36, 32, 1, 0, 0, 0, 36, 33,
 		1, 0, 0, 0, 36, 34, 1, 0, 0, 0, 36, 35, 1, 0, 0, 0, 37, 3, 1, 0, 0, 0,
 		38, 39, 7, 0, 0, 0, 39, 40, 3, 20, 10, 0, 40, 5, 1, 0, 0, 0, 41, 42, 3,
-		20, 10, 0, 42, 43, 5, 17, 0, 0, 43, 44, 3, 18, 9, 0, 44, 7, 1, 0, 0, 0,
-		45, 46, 5, 8, 0, 0, 46, 47, 3, 18, 9, 0, 47, 9, 1, 0, 0, 0, 48, 49, 5,
-		9, 0, 0, 49, 50, 5, 1, 0, 0, 50, 51, 3, 18, 9, 0, 51, 52, 5, 2, 0, 0, 52,
-		53, 5, 3, 0, 0, 53, 54, 3, 16, 8, 0, 54, 60, 5, 4, 0, 0, 55, 56, 5, 10,
-		0, 0, 56, 57, 5, 3, 0, 0, 57, 58, 3, 16, 8, 0, 58, 59, 5, 4, 0, 0, 59,
-		61, 1, 0, 0, 0, 60, 55, 1, 0, 0, 0, 60, 61, 1, 0, 0, 0, 61, 11, 1, 0, 0,
-		0, 62, 63, 5, 11, 0, 0, 63, 64, 5, 1, 0, 0, 64, 65, 3, 18, 9, 0, 65, 66,
-		5, 2, 0, 0, 66, 67, 5, 3, 0, 0, 67, 68, 3, 16, 8, 0, 68, 69, 5, 4, 0, 0,
-		69, 13, 1, 0, 0, 0, 70, 71, 5, 12, 0, 0, 71, 72, 3, 20, 10, 0, 72, 15,
-		1, 0, 0, 0, 73, 75, 3, 2, 1, 0, 74, 73, 1, 0, 0, 0, 75, 78, 1, 0, 0, 0,
-		76, 74, 1, 0, 0, 0, 76, 77, 1, 0, 0, 0, 77, 17, 1, 0, 0, 0, 78, 76, 1,
-		0, 0, 0, 79, 80, 6, 9, -1, 0, 80, 89, 3, 20, 10, 0, 81, 89, 3, 22, 11,
-		0, 82, 83, 5, 1, 0, 0, 83, 84, 3, 18, 9, 0, 84, 85, 5, 2, 0, 0, 85, 89,
-		1, 0, 0, 0, 86, 87, 5, 21, 0, 0, 87, 89, 3, 18, 9, 4, 88, 79, 1, 0, 0,
-		0, 88, 81, 1, 0, 0, 0, 88, 82, 1, 0, 0, 0, 88, 86, 1, 0, 0, 0, 89, 101,
+		20, 10, 0, 42, 43, 5, 19, 0, 0, 43, 44, 3, 18, 9, 0, 44, 7, 1, 0, 0, 0,
+		45, 46, 5, 10, 0, 0, 46, 47, 3, 18, 9, 0, 47, 9, 1, 0, 0, 0, 48, 49, 5,
+		11, 0, 0, 49, 50, 5, 1, 0, 0, 50, 51, 3, 18, 9, 0, 51, 52, 5, 2, 0, 0,
+		52, 53, 5, 3, 0, 0, 53, 54, 3, 16, 8, 0, 54, 60, 5, 4, 0, 0, 55, 56, 5,
+		12, 0, 0, 56, 57, 5, 3, 0, 0, 57, 58, 3, 16, 8, 0, 58, 59, 5, 4, 0, 0,
+		59, 61, 1, 0, 0, 0, 60, 55, 1, 0, 0, 0, 60, 61, 1, 0, 0, 0, 61, 11, 1,
+		0, 0, 0, 62, 63, 5, 13, 0, 0, 63, 64, 5, 1, 0, 0, 64, 65, 3, 18, 9, 0,
+		65, 66, 5, 2, 0, 0, 66, 67, 5, 3, 0, 0, 67, 68, 3, 16, 8, 0, 68, 69, 5,
+		4, 0, 0, 69, 13, 1, 0, 0, 0, 70, 71, 5, 14, 0, 0, 71, 72, 3, 20, 10, 0,
+		72, 15, 1, 0, 0, 0, 73, 75, 3, 2, 1, 0, 74, 73, 1, 0, 0, 0, 75, 78, 1,
+		0, 0, 0, 76, 74, 1, 0, 0, 0, 76, 77, 1, 0, 0, 0, 77, 17, 1, 0, 0, 0, 78,
+		76, 1, 0, 0, 0, 79, 80, 6, 9, -1, 0, 80, 89, 3, 20, 10, 0, 81, 89, 3, 22,
+		11, 0, 82, 83, 5, 1, 0, 0, 83, 84, 3, 18, 9, 0, 84, 85, 5, 2, 0, 0, 85,
+		89, 1, 0, 0, 0, 86, 87, 5, 23, 0, 0, 87, 89, 3, 18, 9, 4, 88, 79, 1, 0,
+		0, 0, 88, 81, 1, 0, 0, 0, 88, 82, 1, 0, 0, 0, 88, 86, 1, 0, 0, 0, 89, 101,
 		1, 0, 0, 0, 90, 91, 10, 3, 0, 0, 91, 92, 7, 1, 0, 0, 92, 100, 3, 18, 9,
 		4, 93, 94, 10, 2, 0, 0, 94, 95, 7, 2, 0, 0, 95, 100, 3, 18, 9, 3, 96, 97,
 		10, 1, 0, 0, 97, 98, 7, 3, 0, 0, 98, 100, 3, 18, 9, 2, 99, 90, 1, 0, 0,
 		0, 99, 93, 1, 0, 0, 0, 99, 96, 1, 0, 0, 0, 100, 103, 1, 0, 0, 0, 101, 99,
 		1, 0, 0, 0, 101, 102, 1, 0, 0, 0, 102, 19, 1, 0, 0, 0, 103, 101, 1, 0,
-		0, 0, 104, 105, 5, 26, 0, 0, 105, 21, 1, 0, 0, 0, 106, 107, 7, 4, 0, 0,
+		0, 0, 104, 105, 5, 29, 0, 0, 105, 21, 1, 0, 0, 0, 106, 107, 7, 4, 0, 0,
 		107, 23, 1, 0, 0, 0, 7, 27, 36, 60, 76, 88, 99, 101,
 	}
 	deserializer := antlr.NewATNDeserializer(nil)
@@ -129,35 +129,36 @@ func NewmindfckParser(input antlr.TokenStream) *mindfckParser {
 
 // mindfckParser tokens.
 const (
-	mindfckParserEOF        = antlr.TokenEOF
-	mindfckParserT__0       = 1
-	mindfckParserT__1       = 2
-	mindfckParserT__2       = 3
-	mindfckParserT__3       = 4
-	mindfckParserWS         = 5
-	mindfckParserBYTE       = 6
-	mindfckParserINT        = 7
-	mindfckParserPRINT      = 8
-	mindfckParserIF         = 9
-	mindfckParserELSE       = 10
-	mindfckParserWHILE      = 11
-	mindfckParserREAD       = 12
-	mindfckParserPLUS       = 13
-	mindfckParserMINUS      = 14
-	mindfckParserTIMES      = 15
-	mindfckParserDIVIDE     = 16
-	mindfckParserEQUALS     = 17
-	mindfckParserDEQUALS    = 18
-	mindfckParserAND        = 19
-	mindfckParserOR         = 20
-	mindfckParserNOT        = 21
-	mindfckParserGT         = 22
-	mindfckParserGE         = 23
-	mindfckParserLT         = 24
-	mindfckParserLE         = 25
-	mindfckParserIDENTIFIER = 26
-	mindfckParserNUMBER     = 27
-	mindfckParserCHAR       = 28
+	mindfckParserEOF         = antlr.TokenEOF
+	mindfckParserT__0        = 1
+	mindfckParserT__1        = 2
+	mindfckParserT__2        = 3
+	mindfckParserT__3        = 4
+	mindfckParserCHAR        = 5
+	mindfckParserBYTE_NUMBER = 6
+	mindfckParserWS          = 7
+	mindfckParserBYTE        = 8
+	mindfckParserINT         = 9
+	mindfckParserPRINT       = 10
+	mindfckParserIF          = 11
+	mindfckParserELSE        = 12
+	mindfckParserWHILE       = 13
+	mindfckParserREAD        = 14
+	mindfckParserPLUS        = 15
+	mindfckParserMINUS       = 16
+	mindfckParserTIMES       = 17
+	mindfckParserDIVIDE      = 18
+	mindfckParserEQUALS      = 19
+	mindfckParserDEQUALS     = 20
+	mindfckParserAND         = 21
+	mindfckParserOR          = 22
+	mindfckParserNOT         = 23
+	mindfckParserGT          = 24
+	mindfckParserGE          = 25
+	mindfckParserLT          = 26
+	mindfckParserLE          = 27
+	mindfckParserNUMBER      = 28
+	mindfckParserIDENTIFIER  = 29
 )
 
 // mindfckParser rules.
@@ -307,7 +308,7 @@ func (p *mindfckParser) Statements() (localctx IStatementsContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&67115968) != 0 {
+	for (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&536899328) != 0 {
 		{
 			p.SetState(24)
 			p.Statement()
@@ -1700,7 +1701,7 @@ func (p *mindfckParser) Block() (localctx IBlockContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&67115968) != 0 {
+	for (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&536899328) != 0 {
 		{
 			p.SetState(73)
 			p.Statement()
@@ -1986,7 +1987,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 			p.Identifier()
 		}
 
-	case mindfckParserNUMBER, mindfckParserCHAR:
+	case mindfckParserCHAR, mindfckParserBYTE_NUMBER, mindfckParserNUMBER:
 		{
 			p.SetState(81)
 			p.Literal()
@@ -2073,7 +2074,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 
 					_la = p.GetTokenStream().LA(1)
 
-					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&622592) != 0) {
+					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&2490368) != 0) {
 						var _ri = p.GetErrorHandler().RecoverInline(p)
 
 						localctx.(*ExpressionContext).op = _ri
@@ -2105,7 +2106,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 
 					_la = p.GetTokenStream().LA(1)
 
-					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&1073152) != 0) {
+					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&4292608) != 0) {
 						var _ri = p.GetErrorHandler().RecoverInline(p)
 
 						localctx.(*ExpressionContext).op = _ri
@@ -2137,7 +2138,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 
 					_la = p.GetTokenStream().LA(1)
 
-					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&63307776) != 0) {
+					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&253231104) != 0) {
 						var _ri = p.GetErrorHandler().RecoverInline(p)
 
 						localctx.(*ExpressionContext).op = _ri
@@ -2296,6 +2297,7 @@ type ILiteralContext interface {
 	// Getter signatures
 	NUMBER() antlr.TerminalNode
 	CHAR() antlr.TerminalNode
+	BYTE_NUMBER() antlr.TerminalNode
 
 	// IsLiteralContext differentiates from other interfaces.
 	IsLiteralContext()
@@ -2341,6 +2343,10 @@ func (s *LiteralContext) CHAR() antlr.TerminalNode {
 	return s.GetToken(mindfckParserCHAR, 0)
 }
 
+func (s *LiteralContext) BYTE_NUMBER() antlr.TerminalNode {
+	return s.GetToken(mindfckParserBYTE_NUMBER, 0)
+}
+
 func (s *LiteralContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -2381,7 +2387,7 @@ func (p *mindfckParser) Literal() (localctx ILiteralContext) {
 		p.SetState(106)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(_la == mindfckParserNUMBER || _la == mindfckParserCHAR) {
+		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&268435552) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)

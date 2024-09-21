@@ -13,11 +13,11 @@ func TestWhileSimple(t *testing.T) {
 	input := `
 	byte a
 	a = 1
-    while (a==1) {
+    while (a==1b) {
         print a
-        a=a-1
+        a=a-1b
     }
-    print 0
+    print 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -35,11 +35,11 @@ func TestWhileSimpleGT(t *testing.T) {
 	input := `
 	byte a
 	a = 3
-    while (a>1) {
+    while (a>1b) {
         print a
-        a=a-1
+        a=a-1b
     }
-    print 0
+    print 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -57,11 +57,11 @@ func TestWhileGT(t *testing.T) {
 	input := `
 	byte a
 	a = 10
-    while (a>0) {
+    while (a>0b) {
         print a
-        a = a-1
+        a = a-1b
     }
-    print 0
+    print 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -79,11 +79,11 @@ func TestWhileLT(t *testing.T) {
 	input := `
 	byte a
 	a = 0
-    while (a<10) {
+    while (a<10b) {
         print a
-        a = a+1
+        a = a+1b
     }
-    print 0
+    print 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -104,13 +104,13 @@ func TestWhileNested(t *testing.T) {
 	byte i
 	i=0
 	byte j
-    while (i<10) {
+    while (i<10b) {
 		j=0
-        while(j<5) {
-			acc = acc+1
-			j=j+1
+        while(j<5b) {
+			acc = acc+1b
+			j=j+1b
 		}
-        i=i+1
+        i=i+1b
     }
     print acc
 	`

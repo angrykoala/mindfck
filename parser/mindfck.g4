@@ -36,7 +36,13 @@ expression:
 
 identifier: IDENTIFIER;
 
-literal: NUMBER | CHAR;
+literal: NUMBER | CHAR | BYTE_NUMBER;
+
+CHAR: '\'' EXT_ASCII_CHAR '\'';
+BYTE_NUMBER: NUMBER 'b';
+
+fragment EXT_ASCII_CHAR:
+	[\u0000-\u00FF]; // Matches characters in the range 0–255 (extended ASCII).
 
 WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
@@ -59,10 +65,5 @@ GT: '>';
 GE: '>=';
 LT: '<';
 LE: '<=';
-IDENTIFIER: [a-zA-Z]+;
 NUMBER: [0-9]+;
-
-CHAR: '\'' EXT_ASCII_CHAR '\'';
-
-fragment EXT_ASCII_CHAR:
-	[\u0000-\u00FF] ; // Matches characters in the range 0–255 (extended ASCII).
+IDENTIFIER: [a-zA-Z]+;

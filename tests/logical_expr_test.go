@@ -11,10 +11,10 @@ import (
 
 func TestLogicalExpressions(t *testing.T) {
 	input := `
-	print 1 == 1 and 1 == 0
-    print not 1
-    print !0
-    print 1 or 0
+	print 1b == 1b and 1b == 0b
+    print not 1b
+    print !0b
+    print 1b or 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -34,7 +34,7 @@ func TestLogicalExpressions(t *testing.T) {
 
 func TestLogicalExpressionsGrouping(t *testing.T) {
 	input := `
-	print !(1 == 1 and 1 == 0)
+	print !(1b == 1b and 1b == 0b)
 	`
 
 	ast, err := parser.Parse(input)

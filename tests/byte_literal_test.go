@@ -9,35 +9,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFibonacci10(t *testing.T) {
+func TestByteLiteral(t *testing.T) {
 	input := `
-	byte n
-	n = 10
-	byte i
-	i = 0
-
 	byte a
-	byte b
-	byte c
-	a=0
-	b=1
-
-    while (i<n) {
-        print a
-		c = b
-		b = a+b
-		a=c
-		i=i+1b
-    }
+	a = 10b
+	print a
+    print 20b
 	`
 
 	ast, err := parser.Parse(input)
-	assert.Nil(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	code, err := compiler.Compile(ast)
-	assert.Nil(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{0, 1, 1, 2, 3, 5, 8, 13, 21, 34}, interpreter.Output)
+	assert.Equal(t, []byte{10, 20}, interpreter.Output)
 }

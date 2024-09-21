@@ -13,13 +13,20 @@ type Expr interface {
 
 type Literal struct {
 	Value int
+	Type  env.VarType
 }
 
 func (lit *Literal) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
-	// res := cmd.Env().DeclareAnonByte()
-	res := cmd.Env().DeclareAnonVariable(env.INT)
-	cmd.SetInt(res, lit.Value)
-	// cmd.SetByte(res, lit.Value)
+	res := cmd.Env().DeclareAnonVariable(lit.Type)
+
+	switch lit.Type {
+	case env.BYTE:
+		cmd.SetByte(res, lit.Value)
+	case env.INT:
+		cmd.SetInt(res, lit.Value)
+
+	}
+
 	return res, nil
 }
 

@@ -97,17 +97,24 @@ func (v *AstGeneratorVisitor) VisitRead(ctx *mindfck.ReadContext) interface{} {
 
 func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) interface{} {
 	if ctx.Literal() != nil {
-		var value int
 		if ctx.Literal().NUMBER() != nil {
-			value = utils.ToInt(ctx.Literal().GetText())
+			return &mfast.Literal{
+				Value: utils.ToInt(ctx.Literal().GetText()),
+				Type:  env.INT,
+			}
 		} else if ctx.Literal().CHAR() != nil {
-			value = int(ctx.Literal().CHAR().GetText()[1])
+			return &mfast.Literal{
+				Value: int(ctx.Literal().CHAR().GetText()[1]),
+				Type:  env.BYTE,
+			}
+		} else if ctx.Literal().BYTE_NUMBER() != nil {
+			txt := ctx.Literal().BYTE_NUMBER().GetText()
+			return &mfast.Literal{
+				Value: utils.ToInt(txt[:len(txt)-1]),
+				Type:  env.BYTE,
+			}
 		} else {
 			panic(fmt.Sprintf("invalid literal %s", ctx.Literal().GetText()))
-		}
-
-		return &mfast.Literal{
-			Value: value,
 		}
 
 	} else if ctx.Identifier() != nil {
