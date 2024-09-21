@@ -29,6 +29,9 @@ type mindfckListener interface {
 	// EnterWhileLoop is called when entering the whileLoop production.
 	EnterWhileLoop(c *WhileLoopContext)
 
+	// EnterRead is called when entering the read production.
+	EnterRead(c *ReadContext)
+
 	// EnterBlock is called when entering the block production.
 	EnterBlock(c *BlockContext)
 
@@ -61,6 +64,9 @@ type mindfckListener interface {
 
 	// ExitWhileLoop is called when exiting the whileLoop production.
 	ExitWhileLoop(c *WhileLoopContext)
+
+	// ExitRead is called when exiting the read production.
+	ExitRead(c *ReadContext)
 
 	// ExitBlock is called when exiting the block production.
 	ExitBlock(c *BlockContext)

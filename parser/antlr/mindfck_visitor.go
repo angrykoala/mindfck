@@ -29,6 +29,9 @@ type mindfckVisitor interface {
 	// Visit a parse tree produced by mindfckParser#whileLoop.
 	VisitWhileLoop(ctx *WhileLoopContext) interface{}
 
+	// Visit a parse tree produced by mindfckParser#read.
+	VisitRead(ctx *ReadContext) interface{}
+
 	// Visit a parse tree produced by mindfckParser#block.
 	VisitBlock(ctx *BlockContext) interface{}
 

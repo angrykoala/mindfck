@@ -14,7 +14,7 @@ func New() *Interpreter {
 	}
 }
 
-func (interpreter *Interpreter) Run(code string) {
+func (interpreter *Interpreter) RunWithInput(code string, input []byte) {
 	for i := 0; i < len(code); i++ {
 		switch code[i] {
 		case '+':
@@ -61,11 +61,19 @@ func (interpreter *Interpreter) Run(code string) {
 		case '.':
 			var value = interpreter.Memory[interpreter.memPtr]
 			interpreter.Output = append(interpreter.Output, value)
+		case ',':
+			inByte := input[0]
+			input = input[1:]
+			interpreter.Memory[interpreter.memPtr] = inByte
 		case '#':
 			interpreter.Debug()
 			// return
 		}
 	}
+}
+
+func (interpreter *Interpreter) Run(code string) {
+	interpreter.RunWithInput(code, []byte{})
 }
 
 func (interpreter *Interpreter) Debug() {
