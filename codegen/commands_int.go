@@ -121,6 +121,27 @@ func (c *CommandHandler) DivInt(a env.Variable, b env.Variable, res env.Variable
 	})
 }
 
+func (c *CommandHandler) EqualsInt(x env.Variable, y env.Variable, res env.Variable) {
+	assertInt(x)
+	assertInt(y)
+	assertBool(res)
+
+	temp := c.env.DeclareAnonVariable(env.INT)
+	defer c.env.ReleaseVariable(temp)
+	isZero := c.env.DeclareAnonByte()
+	defer c.env.ReleaseVariable(isZero)
+
+	c.Copy(x, temp)
+	c.subToInt(y, temp)
+
+	c.SetByte(res, 0)
+
+	c.isZeroInt(temp, isZero)
+	c.If(isZero, func() {
+		c.SetByte(res, 1)
+	})
+}
+
 // Compares x+1 > b, cheap Gte
 func (c *CommandHandler) GteInt(x env.Variable, y env.Variable, res env.Variable) {
 	x2 := c.env.DeclareAnonVariable(env.INT)
@@ -186,12 +207,12 @@ func (c *CommandHandler) whileInt(condInt env.Variable, code func()) {
 	defer c.env.ReleaseVariable(isZero)
 	defer c.env.ReleaseVariable(isNotZero)
 	c.isZeroInt(condInt, isZero)
-	c.Not(isZero, isNotZero)
+	c.NotByte(isZero, isNotZero)
 
 	c.While(isNotZero, func() {
 		code()
 		c.isZeroInt(condInt, isZero)
-		c.Not(isZero, isNotZero)
+		c.NotByte(isZero, isNotZero)
 	})
 
 }
@@ -245,6 +266,21 @@ func (c *CommandHandler) isZeroInt(a env.Variable, res env.Variable) {
 	})
 	c.If(a.GetByte(1), func() {
 		c.SetByte(res, 0)
+	})
+}
+
+func (c *CommandHandler) NotInt(x env.Variable, res env.Variable) {
+	assertInt(x)
+	assertByte(res)
+	c.SetByte(res, 0)
+
+	temp := c.env.DeclareAnonByte()
+	defer c.env.ReleaseVariable(temp)
+
+	c.isZeroInt(x, temp)
+
+	c.If(temp, func() {
+		c.IncByte(res)
 	})
 }
 

@@ -30,9 +30,12 @@ expression:
 	| literal
 	| '(' expression ')'
 	| NOT expression
-	| expression op = (TIMES | DIVIDE | AND) expression
-	| expression op = (PLUS | MINUS | OR) expression
-	| expression op = (GT | GE | LT | LE | EQUALS | DEQUALS) expression;
+	| expression op = (TIMES | DIVIDE) expression
+	| expression op = (PLUS | MINUS) expression
+	| expression op = (GT | GE | LT | LE | EQUALS | DEQUALS) expression
+	| expression op = (AND | AND) expression
+	// AND | AND is just a hack to support op for convenience in visitor
+	| expression op = (OR | OR) expression;
 
 identifier: IDENTIFIER;
 

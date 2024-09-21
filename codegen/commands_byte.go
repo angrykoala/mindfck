@@ -135,7 +135,7 @@ func (c *CommandHandler) Or(x env.Variable, y env.Variable, res env.Variable) {
 	})
 }
 
-func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
+func (c *CommandHandler) NotByte(x env.Variable, res env.Variable) {
 	c.SetByte(res, 1)
 	c.If(x, func() {
 		c.DecByte(res)

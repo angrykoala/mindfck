@@ -88,20 +88,46 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 }
 
 func (expr *BinaryExpr) evalIntExpr(cmd *codegen.CommandHandler, v1 env.Variable, v2 env.Variable) (env.Variable, error) {
-	v3 := cmd.Env().DeclareAnonVariable(env.INT)
 	switch expr.Operator {
 	case PLUS:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
 		cmd.AddInt(v1, v2, v3)
+		return v3, nil
 	case MINUS:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
 		cmd.SubInt(v1, v2, v3)
+		return v3, nil
 	case MULTIPLY:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
 		cmd.MultInt(v1, v2, v3)
+		return v3, nil
 	case DIVIDE:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
 		cmd.DivInt(v1, v2, v3)
+		return v3, nil
+	case EQUALEQUAL:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.EqualsInt(v1, v2, v3)
+		return v3, nil
+	case GT:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GtInt(v1, v2, v3)
+		return v3, nil
+	case LT:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GtInt(v2, v1, v3)
+		return v3, nil
+	case GTE:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GteInt(v1, v2, v3)
+		return v3, nil
+	case LTE:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GteInt(v2, v1, v3)
+		return v3, nil
 	default:
-		return nil, fmt.Errorf("evalexpr: invalid operator %v", expr.Operator)
+		return nil, fmt.Errorf("evalexpr: invalid int operator %v", expr.Operator)
 	}
-	return v3, nil
 }
 
 func (expr *BinaryExpr) evalByteExpr(cmd *codegen.CommandHandler, v1 env.Variable, v2 env.Variable) (env.Variable, error) {
@@ -132,7 +158,7 @@ func (expr *BinaryExpr) evalByteExpr(cmd *codegen.CommandHandler, v1 env.Variabl
 		cmd.Or(v1, v2, v3)
 
 	default:
-		return nil, fmt.Errorf("evalexpr: invalid operator %v", expr.Operator)
+		return nil, fmt.Errorf("evalexpr: invalid byte operator %v", expr.Operator)
 	}
 	return v3, nil
 }
@@ -147,8 +173,15 @@ func (n *NotExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	res := cmd.Env().DeclareAnonByte()
-	cmd.Not(v, res)
+
+	switch v.Type() {
+	case env.BYTE:
+		cmd.NotByte(v, res)
+	case env.INT:
+		cmd.NotInt(v, res)
+	default:
+		panic(fmt.Errorf("invalid type %s for not", v.Type()))
+	}
 	return res, nil
 }

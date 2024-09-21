@@ -48,7 +48,7 @@ func mindfckParserInit() {
 	}
 	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 29, 109, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 29, 115, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
 		10, 2, 11, 7, 11, 1, 0, 5, 0, 26, 8, 0, 10, 0, 12, 0, 29, 9, 0, 1, 1, 1,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 37, 8, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 3,
@@ -56,42 +56,46 @@ func mindfckParserInit() {
 		1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 3, 5, 61, 8, 5, 1, 6, 1, 6, 1, 6, 1, 6, 1,
 		6, 1, 6, 1, 6, 1, 6, 1, 7, 1, 7, 1, 7, 1, 8, 5, 8, 75, 8, 8, 10, 8, 12,
 		8, 78, 9, 8, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 3, 9,
-		89, 8, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 5, 9, 100,
-		8, 9, 10, 9, 12, 9, 103, 9, 9, 1, 10, 1, 10, 1, 11, 1, 11, 1, 11, 0, 1,
-		18, 12, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 0, 5, 1, 0, 8, 9, 2,
-		0, 17, 18, 21, 21, 2, 0, 15, 16, 22, 22, 2, 0, 19, 20, 24, 27, 2, 0, 5,
-		6, 28, 28, 110, 0, 27, 1, 0, 0, 0, 2, 36, 1, 0, 0, 0, 4, 38, 1, 0, 0, 0,
-		6, 41, 1, 0, 0, 0, 8, 45, 1, 0, 0, 0, 10, 48, 1, 0, 0, 0, 12, 62, 1, 0,
-		0, 0, 14, 70, 1, 0, 0, 0, 16, 76, 1, 0, 0, 0, 18, 88, 1, 0, 0, 0, 20, 104,
-		1, 0, 0, 0, 22, 106, 1, 0, 0, 0, 24, 26, 3, 2, 1, 0, 25, 24, 1, 0, 0, 0,
-		26, 29, 1, 0, 0, 0, 27, 25, 1, 0, 0, 0, 27, 28, 1, 0, 0, 0, 28, 1, 1, 0,
-		0, 0, 29, 27, 1, 0, 0, 0, 30, 37, 3, 4, 2, 0, 31, 37, 3, 6, 3, 0, 32, 37,
-		3, 8, 4, 0, 33, 37, 3, 10, 5, 0, 34, 37, 3, 12, 6, 0, 35, 37, 3, 14, 7,
-		0, 36, 30, 1, 0, 0, 0, 36, 31, 1, 0, 0, 0, 36, 32, 1, 0, 0, 0, 36, 33,
-		1, 0, 0, 0, 36, 34, 1, 0, 0, 0, 36, 35, 1, 0, 0, 0, 37, 3, 1, 0, 0, 0,
-		38, 39, 7, 0, 0, 0, 39, 40, 3, 20, 10, 0, 40, 5, 1, 0, 0, 0, 41, 42, 3,
-		20, 10, 0, 42, 43, 5, 19, 0, 0, 43, 44, 3, 18, 9, 0, 44, 7, 1, 0, 0, 0,
-		45, 46, 5, 10, 0, 0, 46, 47, 3, 18, 9, 0, 47, 9, 1, 0, 0, 0, 48, 49, 5,
-		11, 0, 0, 49, 50, 5, 1, 0, 0, 50, 51, 3, 18, 9, 0, 51, 52, 5, 2, 0, 0,
-		52, 53, 5, 3, 0, 0, 53, 54, 3, 16, 8, 0, 54, 60, 5, 4, 0, 0, 55, 56, 5,
-		12, 0, 0, 56, 57, 5, 3, 0, 0, 57, 58, 3, 16, 8, 0, 58, 59, 5, 4, 0, 0,
-		59, 61, 1, 0, 0, 0, 60, 55, 1, 0, 0, 0, 60, 61, 1, 0, 0, 0, 61, 11, 1,
-		0, 0, 0, 62, 63, 5, 13, 0, 0, 63, 64, 5, 1, 0, 0, 64, 65, 3, 18, 9, 0,
-		65, 66, 5, 2, 0, 0, 66, 67, 5, 3, 0, 0, 67, 68, 3, 16, 8, 0, 68, 69, 5,
-		4, 0, 0, 69, 13, 1, 0, 0, 0, 70, 71, 5, 14, 0, 0, 71, 72, 3, 20, 10, 0,
-		72, 15, 1, 0, 0, 0, 73, 75, 3, 2, 1, 0, 74, 73, 1, 0, 0, 0, 75, 78, 1,
-		0, 0, 0, 76, 74, 1, 0, 0, 0, 76, 77, 1, 0, 0, 0, 77, 17, 1, 0, 0, 0, 78,
-		76, 1, 0, 0, 0, 79, 80, 6, 9, -1, 0, 80, 89, 3, 20, 10, 0, 81, 89, 3, 22,
-		11, 0, 82, 83, 5, 1, 0, 0, 83, 84, 3, 18, 9, 0, 84, 85, 5, 2, 0, 0, 85,
-		89, 1, 0, 0, 0, 86, 87, 5, 23, 0, 0, 87, 89, 3, 18, 9, 4, 88, 79, 1, 0,
-		0, 0, 88, 81, 1, 0, 0, 0, 88, 82, 1, 0, 0, 0, 88, 86, 1, 0, 0, 0, 89, 101,
-		1, 0, 0, 0, 90, 91, 10, 3, 0, 0, 91, 92, 7, 1, 0, 0, 92, 100, 3, 18, 9,
-		4, 93, 94, 10, 2, 0, 0, 94, 95, 7, 2, 0, 0, 95, 100, 3, 18, 9, 3, 96, 97,
-		10, 1, 0, 0, 97, 98, 7, 3, 0, 0, 98, 100, 3, 18, 9, 2, 99, 90, 1, 0, 0,
-		0, 99, 93, 1, 0, 0, 0, 99, 96, 1, 0, 0, 0, 100, 103, 1, 0, 0, 0, 101, 99,
-		1, 0, 0, 0, 101, 102, 1, 0, 0, 0, 102, 19, 1, 0, 0, 0, 103, 101, 1, 0,
-		0, 0, 104, 105, 5, 29, 0, 0, 105, 21, 1, 0, 0, 0, 106, 107, 7, 4, 0, 0,
-		107, 23, 1, 0, 0, 0, 7, 27, 36, 60, 76, 88, 99, 101,
+		89, 8, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1,
+		9, 1, 9, 1, 9, 1, 9, 1, 9, 5, 9, 106, 8, 9, 10, 9, 12, 9, 109, 9, 9, 1,
+		10, 1, 10, 1, 11, 1, 11, 1, 11, 0, 1, 18, 12, 0, 2, 4, 6, 8, 10, 12, 14,
+		16, 18, 20, 22, 0, 7, 1, 0, 8, 9, 1, 0, 17, 18, 1, 0, 15, 16, 2, 0, 19,
+		20, 24, 27, 1, 0, 21, 21, 1, 0, 22, 22, 2, 0, 5, 6, 28, 28, 118, 0, 27,
+		1, 0, 0, 0, 2, 36, 1, 0, 0, 0, 4, 38, 1, 0, 0, 0, 6, 41, 1, 0, 0, 0, 8,
+		45, 1, 0, 0, 0, 10, 48, 1, 0, 0, 0, 12, 62, 1, 0, 0, 0, 14, 70, 1, 0, 0,
+		0, 16, 76, 1, 0, 0, 0, 18, 88, 1, 0, 0, 0, 20, 110, 1, 0, 0, 0, 22, 112,
+		1, 0, 0, 0, 24, 26, 3, 2, 1, 0, 25, 24, 1, 0, 0, 0, 26, 29, 1, 0, 0, 0,
+		27, 25, 1, 0, 0, 0, 27, 28, 1, 0, 0, 0, 28, 1, 1, 0, 0, 0, 29, 27, 1, 0,
+		0, 0, 30, 37, 3, 4, 2, 0, 31, 37, 3, 6, 3, 0, 32, 37, 3, 8, 4, 0, 33, 37,
+		3, 10, 5, 0, 34, 37, 3, 12, 6, 0, 35, 37, 3, 14, 7, 0, 36, 30, 1, 0, 0,
+		0, 36, 31, 1, 0, 0, 0, 36, 32, 1, 0, 0, 0, 36, 33, 1, 0, 0, 0, 36, 34,
+		1, 0, 0, 0, 36, 35, 1, 0, 0, 0, 37, 3, 1, 0, 0, 0, 38, 39, 7, 0, 0, 0,
+		39, 40, 3, 20, 10, 0, 40, 5, 1, 0, 0, 0, 41, 42, 3, 20, 10, 0, 42, 43,
+		5, 19, 0, 0, 43, 44, 3, 18, 9, 0, 44, 7, 1, 0, 0, 0, 45, 46, 5, 10, 0,
+		0, 46, 47, 3, 18, 9, 0, 47, 9, 1, 0, 0, 0, 48, 49, 5, 11, 0, 0, 49, 50,
+		5, 1, 0, 0, 50, 51, 3, 18, 9, 0, 51, 52, 5, 2, 0, 0, 52, 53, 5, 3, 0, 0,
+		53, 54, 3, 16, 8, 0, 54, 60, 5, 4, 0, 0, 55, 56, 5, 12, 0, 0, 56, 57, 5,
+		3, 0, 0, 57, 58, 3, 16, 8, 0, 58, 59, 5, 4, 0, 0, 59, 61, 1, 0, 0, 0, 60,
+		55, 1, 0, 0, 0, 60, 61, 1, 0, 0, 0, 61, 11, 1, 0, 0, 0, 62, 63, 5, 13,
+		0, 0, 63, 64, 5, 1, 0, 0, 64, 65, 3, 18, 9, 0, 65, 66, 5, 2, 0, 0, 66,
+		67, 5, 3, 0, 0, 67, 68, 3, 16, 8, 0, 68, 69, 5, 4, 0, 0, 69, 13, 1, 0,
+		0, 0, 70, 71, 5, 14, 0, 0, 71, 72, 3, 20, 10, 0, 72, 15, 1, 0, 0, 0, 73,
+		75, 3, 2, 1, 0, 74, 73, 1, 0, 0, 0, 75, 78, 1, 0, 0, 0, 76, 74, 1, 0, 0,
+		0, 76, 77, 1, 0, 0, 0, 77, 17, 1, 0, 0, 0, 78, 76, 1, 0, 0, 0, 79, 80,
+		6, 9, -1, 0, 80, 89, 3, 20, 10, 0, 81, 89, 3, 22, 11, 0, 82, 83, 5, 1,
+		0, 0, 83, 84, 3, 18, 9, 0, 84, 85, 5, 2, 0, 0, 85, 89, 1, 0, 0, 0, 86,
+		87, 5, 23, 0, 0, 87, 89, 3, 18, 9, 6, 88, 79, 1, 0, 0, 0, 88, 81, 1, 0,
+		0, 0, 88, 82, 1, 0, 0, 0, 88, 86, 1, 0, 0, 0, 89, 107, 1, 0, 0, 0, 90,
+		91, 10, 5, 0, 0, 91, 92, 7, 1, 0, 0, 92, 106, 3, 18, 9, 6, 93, 94, 10,
+		4, 0, 0, 94, 95, 7, 2, 0, 0, 95, 106, 3, 18, 9, 5, 96, 97, 10, 3, 0, 0,
+		97, 98, 7, 3, 0, 0, 98, 106, 3, 18, 9, 4, 99, 100, 10, 2, 0, 0, 100, 101,
+		7, 4, 0, 0, 101, 106, 3, 18, 9, 3, 102, 103, 10, 1, 0, 0, 103, 104, 7,
+		5, 0, 0, 104, 106, 3, 18, 9, 2, 105, 90, 1, 0, 0, 0, 105, 93, 1, 0, 0,
+		0, 105, 96, 1, 0, 0, 0, 105, 99, 1, 0, 0, 0, 105, 102, 1, 0, 0, 0, 106,
+		109, 1, 0, 0, 0, 107, 105, 1, 0, 0, 0, 107, 108, 1, 0, 0, 0, 108, 19, 1,
+		0, 0, 0, 109, 107, 1, 0, 0, 0, 110, 111, 5, 29, 0, 0, 111, 21, 1, 0, 0,
+		0, 112, 113, 7, 6, 0, 0, 113, 23, 1, 0, 0, 0, 7, 27, 36, 60, 76, 88, 105,
+		107,
 	}
 	deserializer := antlr.NewATNDeserializer(nil)
 	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
@@ -1749,16 +1753,16 @@ type IExpressionContext interface {
 	NOT() antlr.TerminalNode
 	TIMES() antlr.TerminalNode
 	DIVIDE() antlr.TerminalNode
-	AND() antlr.TerminalNode
 	PLUS() antlr.TerminalNode
 	MINUS() antlr.TerminalNode
-	OR() antlr.TerminalNode
 	GT() antlr.TerminalNode
 	GE() antlr.TerminalNode
 	LT() antlr.TerminalNode
 	LE() antlr.TerminalNode
 	EQUALS() antlr.TerminalNode
 	DEQUALS() antlr.TerminalNode
+	AND() antlr.TerminalNode
+	OR() antlr.TerminalNode
 
 	// IsExpressionContext differentiates from other interfaces.
 	IsExpressionContext()
@@ -1886,20 +1890,12 @@ func (s *ExpressionContext) DIVIDE() antlr.TerminalNode {
 	return s.GetToken(mindfckParserDIVIDE, 0)
 }
 
-func (s *ExpressionContext) AND() antlr.TerminalNode {
-	return s.GetToken(mindfckParserAND, 0)
-}
-
 func (s *ExpressionContext) PLUS() antlr.TerminalNode {
 	return s.GetToken(mindfckParserPLUS, 0)
 }
 
 func (s *ExpressionContext) MINUS() antlr.TerminalNode {
 	return s.GetToken(mindfckParserMINUS, 0)
-}
-
-func (s *ExpressionContext) OR() antlr.TerminalNode {
-	return s.GetToken(mindfckParserOR, 0)
 }
 
 func (s *ExpressionContext) GT() antlr.TerminalNode {
@@ -1924,6 +1920,14 @@ func (s *ExpressionContext) EQUALS() antlr.TerminalNode {
 
 func (s *ExpressionContext) DEQUALS() antlr.TerminalNode {
 	return s.GetToken(mindfckParserDEQUALS, 0)
+}
+
+func (s *ExpressionContext) AND() antlr.TerminalNode {
+	return s.GetToken(mindfckParserAND, 0)
+}
+
+func (s *ExpressionContext) OR() antlr.TerminalNode {
+	return s.GetToken(mindfckParserOR, 0)
 }
 
 func (s *ExpressionContext) GetRuleContext() antlr.RuleContext {
@@ -2026,7 +2030,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 		}
 		{
 			p.SetState(87)
-			p.expression(4)
+			p.expression(6)
 		}
 
 	default:
@@ -2034,7 +2038,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 		goto errorExit
 	}
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
-	p.SetState(101)
+	p.SetState(107)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -2049,7 +2053,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 				p.TriggerExitRuleEvent()
 			}
 			_prevctx = localctx
-			p.SetState(99)
+			p.SetState(105)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 				goto errorExit
@@ -2061,8 +2065,8 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 				p.PushNewRecursionContext(localctx, _startState, mindfckParserRULE_expression)
 				p.SetState(90)
 
-				if !(p.Precpred(p.GetParserRuleContext(), 3)) {
-					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
+				if !(p.Precpred(p.GetParserRuleContext(), 5)) {
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 5)", ""))
 					goto errorExit
 				}
 				{
@@ -2074,7 +2078,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 
 					_la = p.GetTokenStream().LA(1)
 
-					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&2490368) != 0) {
+					if !(_la == mindfckParserTIMES || _la == mindfckParserDIVIDE) {
 						var _ri = p.GetErrorHandler().RecoverInline(p)
 
 						localctx.(*ExpressionContext).op = _ri
@@ -2085,7 +2089,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 				}
 				{
 					p.SetState(92)
-					p.expression(4)
+					p.expression(6)
 				}
 
 			case 2:
@@ -2093,8 +2097,8 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 				p.PushNewRecursionContext(localctx, _startState, mindfckParserRULE_expression)
 				p.SetState(93)
 
-				if !(p.Precpred(p.GetParserRuleContext(), 2)) {
-					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 2)", ""))
+				if !(p.Precpred(p.GetParserRuleContext(), 4)) {
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
 					goto errorExit
 				}
 				{
@@ -2106,7 +2110,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 
 					_la = p.GetTokenStream().LA(1)
 
-					if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&4292608) != 0) {
+					if !(_la == mindfckParserPLUS || _la == mindfckParserMINUS) {
 						var _ri = p.GetErrorHandler().RecoverInline(p)
 
 						localctx.(*ExpressionContext).op = _ri
@@ -2117,7 +2121,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 				}
 				{
 					p.SetState(95)
-					p.expression(3)
+					p.expression(5)
 				}
 
 			case 3:
@@ -2125,8 +2129,8 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 				p.PushNewRecursionContext(localctx, _startState, mindfckParserRULE_expression)
 				p.SetState(96)
 
-				if !(p.Precpred(p.GetParserRuleContext(), 1)) {
-					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 1)", ""))
+				if !(p.Precpred(p.GetParserRuleContext(), 3)) {
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 3)", ""))
 					goto errorExit
 				}
 				{
@@ -2149,6 +2153,70 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 				}
 				{
 					p.SetState(98)
+					p.expression(4)
+				}
+
+			case 4:
+				localctx = NewExpressionContext(p, _parentctx, _parentState)
+				p.PushNewRecursionContext(localctx, _startState, mindfckParserRULE_expression)
+				p.SetState(99)
+
+				if !(p.Precpred(p.GetParserRuleContext(), 2)) {
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 2)", ""))
+					goto errorExit
+				}
+				{
+					p.SetState(100)
+
+					var _lt = p.GetTokenStream().LT(1)
+
+					localctx.(*ExpressionContext).op = _lt
+
+					_la = p.GetTokenStream().LA(1)
+
+					if !(_la == mindfckParserAND) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
+
+						localctx.(*ExpressionContext).op = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
+				}
+				{
+					p.SetState(101)
+					p.expression(3)
+				}
+
+			case 5:
+				localctx = NewExpressionContext(p, _parentctx, _parentState)
+				p.PushNewRecursionContext(localctx, _startState, mindfckParserRULE_expression)
+				p.SetState(102)
+
+				if !(p.Precpred(p.GetParserRuleContext(), 1)) {
+					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 1)", ""))
+					goto errorExit
+				}
+				{
+					p.SetState(103)
+
+					var _lt = p.GetTokenStream().LT(1)
+
+					localctx.(*ExpressionContext).op = _lt
+
+					_la = p.GetTokenStream().LA(1)
+
+					if !(_la == mindfckParserOR) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
+
+						localctx.(*ExpressionContext).op = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
+				}
+				{
+					p.SetState(104)
 					p.expression(2)
 				}
 
@@ -2157,7 +2225,7 @@ func (p *mindfckParser) expression(_p int) (localctx IExpressionContext) {
 			}
 
 		}
-		p.SetState(103)
+		p.SetState(109)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -2266,7 +2334,7 @@ func (p *mindfckParser) Identifier() (localctx IIdentifierContext) {
 	p.EnterRule(localctx, 20, mindfckParserRULE_identifier)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(104)
+		p.SetState(110)
 		p.Match(mindfckParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -2384,7 +2452,7 @@ func (p *mindfckParser) Literal() (localctx ILiteralContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(106)
+		p.SetState(112)
 		_la = p.GetTokenStream().LA(1)
 
 		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&268435552) != 0) {
@@ -2425,12 +2493,18 @@ func (p *mindfckParser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex
 func (p *mindfckParser) Expression_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 0:
-		return p.Precpred(p.GetParserRuleContext(), 3)
+		return p.Precpred(p.GetParserRuleContext(), 5)
 
 	case 1:
-		return p.Precpred(p.GetParserRuleContext(), 2)
+		return p.Precpred(p.GetParserRuleContext(), 4)
 
 	case 2:
+		return p.Precpred(p.GetParserRuleContext(), 3)
+
+	case 3:
+		return p.Precpred(p.GetParserRuleContext(), 2)
+
+	case 4:
 		return p.Precpred(p.GetParserRuleContext(), 1)
 
 	default:
