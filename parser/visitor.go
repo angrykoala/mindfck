@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"mindfck/env"
 	"mindfck/mfast"
 	mindfck "mindfck/parser/antlr"
@@ -49,8 +50,11 @@ func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) inte
 	if ctx.WhileLoop() != nil {
 		return ctx.WhileLoop().Accept(v)
 	}
+	if ctx.Read() != nil {
+		return ctx.Read().Accept(v)
+	}
 
-	panic("Spanish Inquisition")
+	panic("Spanish Inquisition (unexpected)")
 }
 
 func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) interface{} {
@@ -85,10 +89,25 @@ func (v *AstGeneratorVisitor) VisitPrint(ctx *mindfck.PrintContext) interface{} 
 	}
 }
 
+func (v *AstGeneratorVisitor) VisitRead(ctx *mindfck.ReadContext) interface{} {
+	return &mfast.Read{
+		To: ctx.Identifier().GetText(),
+	}
+}
+
 func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) interface{} {
 	if ctx.Literal() != nil {
+		var value int
+		if ctx.Literal().NUMBER() != nil {
+			value = utils.ToInt(ctx.Literal().GetText())
+		} else if ctx.Literal().CHAR() != nil {
+			value = int(ctx.Literal().CHAR().GetText()[1])
+		} else {
+			panic(fmt.Sprintf("invalid literal %s", ctx.Literal().GetText()))
+		}
+
 		return &mfast.Literal{
-			Value: utils.ToInt(ctx.Literal().GetText()),
+			Value: value,
 		}
 
 	} else if ctx.Identifier() != nil {

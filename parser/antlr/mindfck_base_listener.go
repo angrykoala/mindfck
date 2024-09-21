@@ -63,6 +63,12 @@ func (s *BasemindfckListener) EnterWhileLoop(ctx *WhileLoopContext) {}
 // ExitWhileLoop is called when production whileLoop is exited.
 func (s *BasemindfckListener) ExitWhileLoop(ctx *WhileLoopContext) {}
 
+// EnterRead is called when production read is entered.
+func (s *BasemindfckListener) EnterRead(ctx *ReadContext) {}
+
+// ExitRead is called when production read is exited.
+func (s *BasemindfckListener) ExitRead(ctx *ReadContext) {}
+
 // EnterBlock is called when production block is entered.
 func (s *BasemindfckListener) EnterBlock(ctx *BlockContext) {}
 

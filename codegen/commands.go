@@ -36,6 +36,16 @@ func (c *CommandHandler) Release(v env.Variable) {
 	c.env.ReleaseVariable(v)
 }
 
+func (c *CommandHandler) Print(v env.Variable) {
+	c.goTo(v)
+	c.writer.command(BFOut)
+}
+
+func (c *CommandHandler) Read(v env.Variable) {
+	c.goTo(v)
+	c.writer.command(BFIn)
+}
+
 func (c *CommandHandler) DebugBreak() {
 	c.writer.command(BFDebug)
 }
