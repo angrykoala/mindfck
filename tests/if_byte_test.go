@@ -12,8 +12,10 @@ import (
 func TestIfTrue(t *testing.T) {
 	input := `
 	byte a
+	byte b
 	a = 2
-    if (a==2) {
+	b = 2
+    if (a==b) {
         print a
     }
     print 0
@@ -27,17 +29,17 @@ func TestIfTrue(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{2, 0}, interpreter.Output)
+	assert.Equal(t, []byte{2, 0, 0}, interpreter.Output)
 }
 
 func TestIfFalse(t *testing.T) {
 	input := `
 	byte a
 	a = 2
-    if (a==1) {
+    if (a==1b) {
         print a
     }
-    print 0
+    print 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -57,13 +59,13 @@ func TestNestedIf(t *testing.T) {
 	byte b
 	a = 2
 	b = 3
-    if (a==2) {
+    if (a==2b) {
         print a
-		if (a+b==5) {
-			print 6
+		if (a+b==5b) {
+			print 6b
 		}
     }
-    print 0
+    print 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -81,15 +83,15 @@ func TestIfGTZero(t *testing.T) {
 	input := `
 	byte a
 	byte b
-	a = 2
-	b = 0
-    if (a>0) {
+	a = 2b
+	b = 0b
+    if (a>0b) {
         print a
     }
-	if (b>0) {
+	if (b>0b) {
 		print b
 	}
-    print 0
+    print 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -107,18 +109,18 @@ func TestIfElse(t *testing.T) {
 	input := `
 	byte a
 	byte b
-	a = 2
-	b = 0
-    if (a>0) {
-        print 1
+	a = 2b
+	b = 0b
+    if (a>0b) {
+        print 1b
     } else {
-		print 2
+		print 2b
 	}
 
-	if (b>0) {
-		print 3
+	if (b>0b) {
+		print 3b
 	} else {
-		print 4 
+		print 4b
 	}
 	`
 

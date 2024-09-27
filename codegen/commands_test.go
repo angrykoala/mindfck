@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"mindfck/bfinterpreter"
+	"mindfck/env"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,43 +11,43 @@ import (
 func TestGeneratedAndRun(t *testing.T) {
 	cmd := New()
 
-	var1 := cmd.Declare("var1")
-	var2 := cmd.Declare("var2")
+	var1 := cmd.Declare("var1", env.BYTE)
+	var2 := cmd.Declare("var2", env.BYTE)
 
-	cmd.Set(var1, 20)
-	cmd.Set(var2, 50)
+	cmd.SetByte(var1, 20)
+	cmd.SetByte(var2, 50)
 
-	cmd.Add(var1, var2, var1)
-	var3 := cmd.Declare("var3")
+	cmd.AddByte(var1, var2, var1)
+	var3 := cmd.Declare("var3", env.BYTE)
 
-	cmd.Copy(var1, var3)
-	cmd.Print(var3)
+	cmd.CopyByte(var1, var3)
+	cmd.PrintByte(var3)
 
 	code := cmd.Compile()
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, string(interpreter.Output), "F")
-	assert.Equal(t, interpreter.Memory, []byte{70, 50, 0, 70, 0})
+	assert.Equal(t, "F", string(interpreter.Output))
+	assert.Equal(t, []byte{70, 50, 70, 0}, interpreter.Memory)
 }
 
 func TestIf(t *testing.T) {
 	cmd := New()
 
-	var1 := cmd.Declare("var1")
-	var2 := cmd.Declare("var2")
-	var3 := cmd.Declare("var3")
+	var1 := cmd.Declare("var1", env.BYTE)
+	var2 := cmd.Declare("var2", env.BYTE)
+	var3 := cmd.Declare("var3", env.BYTE)
 
-	cmd.Set(var1, 20)
-	cmd.Set(var2, 0)
-	cmd.Set(var3, 5)
+	cmd.SetByte(var1, 20)
+	cmd.SetByte(var2, 0)
+	cmd.SetByte(var3, 5)
 
 	cmd.If(var1, func() {
-		cmd.Print(var3)
+		cmd.PrintByte(var3)
 	})
 	cmd.If(var2, func() {
-		cmd.Print(var1)
+		cmd.PrintByte(var1)
 	})
 
 	code := cmd.Compile()
@@ -54,28 +55,28 @@ func TestIf(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, interpreter.Output, []byte{5})
-	assert.Equal(t, interpreter.Memory, []byte{20, 0, 5, 0, 0, 0})
+	assert.Equal(t, []byte{5}, interpreter.Output)
+	assert.Equal(t, []byte{20, 0, 5, 0, 0}, interpreter.Memory)
 }
 
 func TestBt(t *testing.T) {
 	cmd := New()
 
-	var1 := cmd.Declare("var1")
-	var2 := cmd.Declare("var2")
-	var3 := cmd.Declare("var3")
-	res := cmd.Declare("res")
+	var1 := cmd.Declare("var1", env.BYTE)
+	var2 := cmd.Declare("var2", env.BYTE)
+	var3 := cmd.Declare("var3", env.BYTE)
+	res := cmd.Declare("res", env.BYTE)
 
-	cmd.Set(var1, 20)
-	cmd.Set(var2, 5)
-	cmd.Set(var3, 5)
+	cmd.SetByte(var1, 20)
+	cmd.SetByte(var2, 5)
+	cmd.SetByte(var3, 5)
 
-	cmd.Gt(var1, var2, res)
-	cmd.Print(res)
-	cmd.Gt(var2, var1, res)
-	cmd.Print(res)
-	cmd.Gt(var2, var3, res)
-	cmd.Print(res)
+	cmd.GtByte(var1, var2, res)
+	cmd.PrintByte(res)
+	cmd.GtByte(var2, var1, res)
+	cmd.PrintByte(res)
+	cmd.GtByte(var2, var3, res)
+	cmd.PrintByte(res)
 
 	code := cmd.Compile()
 	interpreter := bfinterpreter.New()
@@ -87,20 +88,20 @@ func TestBt(t *testing.T) {
 func TestDiv(t *testing.T) {
 	cmd := New()
 
-	var1 := cmd.Declare("var1")
-	var2 := cmd.Declare("var2")
-	var3 := cmd.Declare("var3")
-	var4 := cmd.Declare("var4")
+	var1 := cmd.Declare("var1", env.BYTE)
+	var2 := cmd.Declare("var2", env.BYTE)
+	var3 := cmd.Declare("var3", env.BYTE)
+	var4 := cmd.Declare("var4", env.BYTE)
 
-	cmd.Set(var1, 20)
-	cmd.Set(var2, 5)
+	cmd.SetByte(var1, 20)
+	cmd.SetByte(var2, 5)
 
-	cmd.Div(var1, var2, var3)
-	cmd.Print(var3)
-	cmd.Div(var2, var3, var4)
-	cmd.Print(var4)
-	cmd.Div(var3, var2, var4)
-	cmd.Print(var4)
+	cmd.DivByte(var1, var2, var3)
+	cmd.PrintByte(var3)
+	cmd.DivByte(var2, var3, var4)
+	cmd.PrintByte(var4)
+	cmd.DivByte(var3, var2, var4)
+	cmd.PrintByte(var4)
 
 	code := cmd.Compile()
 

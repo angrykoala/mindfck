@@ -13,11 +13,20 @@ type Expr interface {
 
 type Literal struct {
 	Value int
+	Type  env.VarType
 }
 
 func (lit *Literal) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
-	res := cmd.Env().DeclareAnonVariable()
-	cmd.Set(res, lit.Value)
+	res := cmd.Env().DeclareAnonVariable(lit.Type)
+
+	switch lit.Type {
+	case env.BYTE:
+		cmd.SetByte(res, lit.Value)
+	case env.INT:
+		cmd.SetInt(res, lit.Value)
+
+	}
+
 	return res, nil
 }
 
@@ -27,9 +36,7 @@ type VariableExpr struct {
 
 func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	v1 := cmd.Env().ResolveLabel(lit.Label)
-	v2 := cmd.Env().DeclareAnonVariable()
-
-	cmd.Copy(v1, v2)
+	v2 := cmd.Clone(v1)
 
 	return v2, nil
 }
@@ -71,35 +78,87 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 		return nil, err
 	}
 	defer cmd.Release(v2)
+	codegen.AssertSameSize(v1, v2) //TODO: this should be in utils or something
+	if v1.Type() == env.INT && v2.Type() == env.INT {
+		return expr.evalIntExpr(cmd, v1, v2)
+	} else {
+		return expr.evalByteExpr(cmd, v1, v2)
+	}
 
-	v3 := cmd.Env().DeclareAnonVariable()
+}
+
+func (expr *BinaryExpr) evalIntExpr(cmd *codegen.CommandHandler, v1 env.Variable, v2 env.Variable) (env.Variable, error) {
+	switch expr.Operator {
+	case PLUS:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
+		cmd.AddInt(v1, v2, v3)
+		return v3, nil
+	case MINUS:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
+		cmd.SubInt(v1, v2, v3)
+		return v3, nil
+	case MULTIPLY:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
+		cmd.MultInt(v1, v2, v3)
+		return v3, nil
+	case DIVIDE:
+		v3 := cmd.Env().DeclareAnonVariable(env.INT)
+		cmd.DivInt(v1, v2, v3)
+		return v3, nil
+	case EQUALEQUAL:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.EqualsInt(v1, v2, v3)
+		return v3, nil
+	case GT:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GtInt(v1, v2, v3)
+		return v3, nil
+	case LT:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GtInt(v2, v1, v3)
+		return v3, nil
+	case GTE:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GteInt(v1, v2, v3)
+		return v3, nil
+	case LTE:
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.GteInt(v2, v1, v3)
+		return v3, nil
+	default:
+		return nil, fmt.Errorf("evalexpr: invalid int operator %v", expr.Operator)
+	}
+}
+
+func (expr *BinaryExpr) evalByteExpr(cmd *codegen.CommandHandler, v1 env.Variable, v2 env.Variable) (env.Variable, error) {
+	v3 := cmd.Env().DeclareAnonByte()
 
 	switch expr.Operator {
 	case PLUS:
-		cmd.Add(v1, v2, v3)
+		cmd.AddByte(v1, v2, v3)
 	case MINUS:
-		cmd.Sub(v1, v2, v3)
+		cmd.SubByte(v1, v2, v3)
 	case MULTIPLY:
-		cmd.Mult(v1, v2, v3)
+		cmd.MultByte(v1, v2, v3)
 	case DIVIDE:
-		cmd.Div(v1, v2, v3)
+		cmd.DivByte(v1, v2, v3)
 	case EQUALEQUAL:
-		cmd.Equals(v1, v2, v3)
-	case AND:
+		cmd.EqualsByte(v1, v2, v3)
+	case GT:
+		cmd.GtByte(v1, v2, v3)
+	case LT:
+		cmd.GtByte(v2, v1, v3)
+	case GTE:
+		cmd.GteByte(v1, v2, v3)
+	case LTE:
+		cmd.GteByte(v2, v1, v3)
+	case AND: // Boolean OPS
 		cmd.And(v1, v2, v3)
 	case OR:
 		cmd.Or(v1, v2, v3)
-	case GT:
-		cmd.Gt(v1, v2, v3)
-	case LT:
-		cmd.Gt(v2, v1, v3)
-	case GTE:
-		cmd.Gte(v1, v2, v3)
-	case LTE:
-		cmd.Gte(v2, v1, v3)
 
 	default:
-		return nil, fmt.Errorf("evalexpr: invalid operator %v", expr.Operator)
+		return nil, fmt.Errorf("evalexpr: invalid byte operator %v", expr.Operator)
 	}
 	return v3, nil
 }
@@ -114,8 +173,15 @@ func (n *NotExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	if err != nil {
 		return nil, err
 	}
+	res := cmd.Env().DeclareAnonByte()
 
-	res := cmd.Env().DeclareAnonVariable()
-	cmd.Not(v, res)
+	switch v.Type() {
+	case env.BYTE:
+		cmd.NotByte(v, res)
+	case env.INT:
+		cmd.NotInt(v, res)
+	default:
+		panic(fmt.Errorf("invalid type %s for not", v.Type()))
+	}
 	return res, nil
 }

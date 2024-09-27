@@ -13,12 +13,12 @@ func TestSimple(t *testing.T) {
 	input := `
 	byte a
 	byte b
-	a = 3
-	a = 33 + a
-	b = a + 2
+	a = 3b
+	a = 33b + a
+	b = a + 2b
 	print a
     print b
-    print 5
+    print 5b
 	`
 
 	ast, err := parser.Parse(input)
@@ -41,17 +41,17 @@ func TestComparison(t *testing.T) {
 	byte a
 	byte b
 	byte c
-    a = 3
-    b = 6
-    c = a < 6
+    a = 3b
+    b = 6b
+    c = a < 6b
     print c
     c = a < b
     print c
     c = a > b
     print c
-    c = a == 3
+    c = a == 3b
     print c
-    c = a == 4
+    c = a == 4b
     print c
 	`
 	ast, err := parser.Parse(input)
@@ -75,9 +75,9 @@ func TestLogical(t *testing.T) {
 	byte b
 	byte c
     byte d
-	a = 2 < 6
-    b = 1
-    c = 0
+	a = 2b < 6b
+    b = 1b
+    c = 0b
 	d = a and b
 	print d
 	d = b and c
@@ -108,11 +108,11 @@ func TestComplexExpressions(t *testing.T) {
 	byte c
     byte d
 	byte e
-	a = 0
-    b = 1
-    c = 0
-	d = 1
-	e = a + b + c + 8 + d + 3
+	a = 0b
+    b = 1b
+    c = 0b
+	d = 1b
+	e = a + b + c + 8b + d + 3b
 	print e
 	`
 
@@ -135,7 +135,7 @@ func TestDecrement(t *testing.T) {
 	input := `
 	byte a
 	a = 2
-	a = a - 1
+	a = a - 1b
 	print a
 	`
 
@@ -156,8 +156,8 @@ func TestDecrement(t *testing.T) {
 
 func TestGTZero(t *testing.T) {
 	input := `
-	print 3 > 0
-	print 0 > 0
+	print 3b > 0b
+	print 0b > 0b
 	`
 
 	ast, err := parser.Parse(input)
@@ -176,9 +176,9 @@ func TestGTZero(t *testing.T) {
 }
 func TestLT(t *testing.T) {
 	input := `
-	print 3 < 10
-	print 10 < 10
-	print 12 < 10
+	print 3b < 10b
+	print 10b < 10b
+	print 12b < 10b
 	`
 
 	ast, err := parser.Parse(input)
@@ -197,9 +197,9 @@ func TestLT(t *testing.T) {
 }
 func TestGTE(t *testing.T) {
 	input := `
-	print 3 >= 10
-	print 10 >= 10
-	print 12 >= 10
+	print 3b >= 10b
+	print 10b >= 10b
+	print 12b >= 10b
 	`
 
 	ast, err := parser.Parse(input)

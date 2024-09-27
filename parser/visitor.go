@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"mindfck/env"
 	"mindfck/mfast"
 	mindfck "mindfck/parser/antlr"
 	"mindfck/utils"
@@ -57,8 +58,18 @@ func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) inte
 }
 
 func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) interface{} {
+	var varType env.VarType
+	if ctx.INT() != nil {
+		varType = env.INT
+	} else if ctx.BYTE() != nil {
+		varType = env.BYTE
+	} else {
+		panic("invalid type in declaration")
+	}
+
 	return &mfast.Declare{
-		Label: ctx.Identifier().IDENTIFIER().GetText(),
+		Label:   ctx.Identifier().IDENTIFIER().GetText(),
+		VarType: varType,
 	}
 }
 
@@ -86,17 +97,24 @@ func (v *AstGeneratorVisitor) VisitRead(ctx *mindfck.ReadContext) interface{} {
 
 func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) interface{} {
 	if ctx.Literal() != nil {
-		var value int
 		if ctx.Literal().NUMBER() != nil {
-			value = utils.ToInt(ctx.Literal().GetText())
+			return &mfast.Literal{
+				Value: utils.ToInt(ctx.Literal().GetText()),
+				Type:  env.INT,
+			}
 		} else if ctx.Literal().CHAR() != nil {
-			value = int(ctx.Literal().CHAR().GetText()[1])
+			return &mfast.Literal{
+				Value: int(ctx.Literal().CHAR().GetText()[1]),
+				Type:  env.BYTE,
+			}
+		} else if ctx.Literal().BYTE_NUMBER() != nil {
+			txt := ctx.Literal().BYTE_NUMBER().GetText()
+			return &mfast.Literal{
+				Value: utils.ToInt(txt[:len(txt)-1]),
+				Type:  env.BYTE,
+			}
 		} else {
 			panic(fmt.Sprintf("invalid literal %s", ctx.Literal().GetText()))
-		}
-
-		return &mfast.Literal{
-			Value: value,
 		}
 
 	} else if ctx.Identifier() != nil {

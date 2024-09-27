@@ -24,8 +24,12 @@ func (c *CommandHandler) Env() *env.MindfuckEnv {
 	return c.env
 }
 
-func (c *CommandHandler) Declare(label string) env.Variable {
-	return c.env.DeclareVariable(label)
+func (c *CommandHandler) Compile() string {
+	return c.writer.print()
+}
+
+func (c *CommandHandler) Declare(label string, varType env.VarType) env.Variable {
+	return c.env.DeclareVariable(label, varType)
 }
 
 func (c *CommandHandler) Release(v env.Variable) {
@@ -46,224 +50,61 @@ func (c *CommandHandler) DebugBreak() {
 	c.writer.command(BFDebug)
 }
 
-// func (c *CommandHandler) PrintNumber(label string) {
-// 	c.goTo(label)
+// Global Ops
 
-// 	c.writer.write("x>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<")
-// }
-
-func (c *CommandHandler) Set(v env.Variable, value int) {
-	c.Reset(v)
-	c.add(v, value)
-}
-
-func (c *CommandHandler) Inc(v env.Variable) {
-	c.goTo(v)
-	c.writer.command(BFInc)
-}
-
-func (c *CommandHandler) Dec(v env.Variable) {
-	c.goTo(v)
-	c.writer.command(BFDec)
-}
-
-// Resets cell to 0
+// Resets variable
 func (c *CommandHandler) Reset(v env.Variable) {
-	c.While(v, func() {
-		c.writer.command(BFDec)
+	c.iterateBytes(v, func(b env.Variable, _ int) {
+		c.ResetByte(b)
 	})
 }
 
 // from -> to
 func (c *CommandHandler) Move(from env.Variable, to env.Variable) {
+	AssertSameSize(from, to)
 	c.Reset(to)
-	c.While(from, func() {
-		c.Inc(to)
-		c.Dec(from)
+	c.iterateBytes(from, func(fromByte env.Variable, i int) {
+		targetByte := to.GetByte(i)
+		c.MoveByte(fromByte, targetByte)
 	})
 }
 
 // Copy current cell into to, using temp cell, ends in origin and resets temp
 func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
-	temp0 := c.env.DeclareAnonVariable()
-	temp1 := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp0)
-	defer c.env.ReleaseVariable(temp1)
+	AssertSameSize(from, to)
 
-	// Reset temp and to
-	c.Reset(temp0)
-	c.Reset(to)
+	c.iterateBytes(from, func(fromByte env.Variable, i int) {
+		targetByte := to.GetByte(i)
+		c.CopyByte(fromByte, targetByte)
 
-	c.While(from, func() {
-		c.Inc(to)
-		c.Inc(temp0)
-		c.Dec(from)
-	})
-
-	c.Move(temp0, from)
-}
-
-// Compares x == y, result is a boolean in res
-func (c *CommandHandler) Equals(x env.Variable, y env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp)
-	c.Copy(x, temp)
-	c.subTo(y, temp)
-
-	c.Set(res, 1)
-
-	c.If(temp, func() {
-		c.Set(res, 0)
 	})
 }
 
-// Compares x > b, based on https://esolangs.org/wiki/Brainfuck_algorithms#z_=_x_%3E_y
-func (c *CommandHandler) Gt(x env.Variable, y env.Variable, z env.Variable) {
-	temp0 := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp0)
-	temp1 := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp1)
-
-	x2 := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(x2)
-	y2 := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(y2)
-	c.Copy(x, x2)
-	c.Copy(y, y2)
-
-	c.Set(temp0, 0)
-	c.Set(temp1, 0)
-	c.Set(z, 0)
-
-	c.While(x2, func() {
-		c.Inc(temp0)
-
-		c.While(y2, func() {
-			c.Dec(y2)
-			c.Set(temp0, 0)
-			c.Inc(temp1)
-		})
-
-		c.While(temp0, func() {
-			c.Dec(temp0)
-			c.Inc(z)
-		})
-		c.While(temp1, func() {
-			c.Dec(temp1)
-			c.Inc(y2)
-		})
-
-		c.Dec(y2)
-		c.Dec(x2)
-	})
+// Clone variable from into a new variable of the same type
+func (c *CommandHandler) Clone(from env.Variable) env.Variable {
+	newVar := c.env.DeclareAnonVariable(from.Type())
+	c.Copy(from, newVar)
+	return newVar
 }
 
-// Compares x+1 > b, cheap Gte
-func (c *CommandHandler) Gte(x env.Variable, y env.Variable, res env.Variable) {
-	x2 := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(x2)
-
-	// Because these are integers, we just compare GT with an x increased by 1
-	c.Copy(x, x2)
-	c.Inc(x2)
-	c.Gt(x2, y, res)
-}
-
-func (c *CommandHandler) And(x env.Variable, y env.Variable, res env.Variable) {
-	c.Reset(res)
-	c.If(x, func() {
-		c.If(y, func() {
-			c.Set(res, 1)
-		})
-	})
-}
-
-func (c *CommandHandler) Or(x env.Variable, y env.Variable, res env.Variable) {
-	c.Reset(res)
-	c.If(x, func() {
-		c.Set(res, 1)
-	})
-
-	c.If(y, func() {
-		c.Set(res, 1)
-	})
-}
-
-func (c *CommandHandler) Not(x env.Variable, res env.Variable) {
-	c.Set(res, 1)
-	c.If(x, func() {
-		c.Dec(res)
-	})
-}
-
-func (c *CommandHandler) Add(a env.Variable, b env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp)
-	c.Copy(a, temp)
-	c.addTo(b, temp)
-
-	c.Move(temp, res)
-}
-
-func (c *CommandHandler) Sub(a env.Variable, b env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp)
-	c.Copy(a, temp)
-	c.subTo(b, temp)
-
-	c.Move(temp, res)
-}
-
-// Multiply cell a and b
-func (c *CommandHandler) Mult(a env.Variable, b env.Variable, res env.Variable) {
-	temp := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp)
-	c.Copy(a, temp)
-	c.Reset(res)
-
-	c.While(temp, func() {
-		c.addTo(b, res)
-		c.Dec(temp)
-	})
-}
-
-// Divide cell a and b
-func (c *CommandHandler) Div(a env.Variable, b env.Variable, res env.Variable) {
-	remainder := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(remainder)
-	isRemainderBigger := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(isRemainderBigger)
-
-	c.Reset(res)
-	c.Copy(a, remainder)
-
-	c.Gte(remainder, b, isRemainderBigger)
-
-	c.While(isRemainderBigger, func() {
-		c.Inc(res)
-		c.subTo(b, remainder)
-
-		c.Gte(remainder, b, isRemainderBigger)
-	})
-}
-
+// Control Flow (Bool)
 func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func()) {
-	temp0 := c.env.DeclareAnonVariable()
-	temp1 := c.env.DeclareAnonVariable()
+	temp0 := c.env.DeclareAnonByte()
+	temp1 := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp0)
 	defer c.env.ReleaseVariable(temp1)
-	c.Copy(cond, temp0)
-	c.Set(temp1, 1)
+	c.CopyByte(cond, temp0)
+	c.SetByte(temp1, 1)
 
 	c.While(temp0, func() {
 		ifCode()
-		c.Set(temp0, 0)
-		c.Set(temp1, 0)
+		c.SetByte(temp0, 0)
+		c.SetByte(temp1, 0)
 	})
 
 	c.While(temp1, func() {
 		elseCode()
-		c.Set(temp1, 0)
+		c.SetByte(temp1, 0)
 	})
 
 }
@@ -272,12 +113,12 @@ func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func(
 // Accepts a code function using the command handler
 // The resulting function must end in the same position as it begins!
 func (c *CommandHandler) If(cond env.Variable, code func()) {
-	temp := c.env.DeclareAnonVariable()
+	temp := c.env.DeclareAnonByte()
 	defer c.env.ReleaseVariable(temp)
-	c.Copy(cond, temp)
+	c.CopyByte(cond, temp)
 	c.While(temp, func() {
 		code()
-		c.Set(temp, 0)
+		c.SetByte(temp, 0)
 	})
 
 }
@@ -291,15 +132,11 @@ func (c *CommandHandler) While(condCell env.Variable, code func()) {
 	c.endLoop()
 }
 
+// Core functionality
+
 func (c *CommandHandler) Comment(comment string) {
 	c.writer.comment(comment)
 }
-
-func (c *CommandHandler) Compile() string {
-	return c.writer.print()
-}
-
-// Core functionality
 
 func (c *CommandHandler) beginLoop() {
 	c.writer.command(BFLoopBegin)
@@ -309,8 +146,19 @@ func (c *CommandHandler) endLoop() {
 	c.writer.command(BFLoopEnd)
 }
 
+func (c *CommandHandler) out() {
+	c.writer.command(BFOut)
+}
+
+// Move pointer to first byte of variable
+func (c *CommandHandler) goTo(v env.Variable) {
+	cell := v.Position()
+	var diff = cell - c.pointer
+	c.shift(diff)
+}
+
 // Move pointer n positions, left or right
-func (c *CommandHandler) movePointer(pos int) {
+func (c *CommandHandler) shift(pos int) {
 	c.pointer += pos
 	if pos > 0 {
 		for i := 0; i < pos; i++ {
@@ -325,58 +173,28 @@ func (c *CommandHandler) movePointer(pos int) {
 	}
 }
 
-func (c *CommandHandler) getPos(v env.Variable) int {
-	return v.Position()
+func (c *CommandHandler) increment() {
+	c.writer.command(BFInc)
 }
 
-// Move pointer to position (static)
-func (c *CommandHandler) goTo(v env.Variable) {
-	cell := c.getPos(v)
-	var diff = cell - c.pointer
-	c.movePointer(diff)
+func (c *CommandHandler) decrement() {
+	c.writer.command(BFDec)
 }
 
-func (c *CommandHandler) add(v env.Variable, count int) {
+// Helpers
+
+func (c *CommandHandler) iterateBytes(v env.Variable, cb func(b env.Variable, i int)) {
 	c.goTo(v)
-	if count > 0 {
-		for i := 0; i < count; i++ {
-			c.writer.command(BFInc)
-		}
-	}
-
-	if count < 0 {
-		for i := 0; i > count; i-- {
-			c.writer.command(BFDec)
-		}
+	for i := 0; i < v.Size(); i++ {
+		cb(v.GetByte(i), i)
+		c.shift(1)
 	}
 }
 
-// Adds cell a to b, b is modified
-func (c *CommandHandler) addTo(a env.Variable, b env.Variable) {
-	temp0 := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp0)
-	c.Reset(temp0)
+// Assertions
 
-	c.While(a, func() {
-		c.Inc(temp0)
-		c.Inc(b)
-		c.Dec(a)
-	})
-
-	c.Move(temp0, a)
-}
-
-// Substracts cell a to b, b is modified
-func (c *CommandHandler) subTo(a env.Variable, b env.Variable) {
-	temp := c.env.DeclareAnonVariable()
-	defer c.env.ReleaseVariable(temp)
-	c.Reset(temp)
-
-	c.While(a, func() {
-		c.Inc(temp)
-		c.Dec(b)
-		c.Dec(a)
-	})
-
-	c.Move(temp, a)
+func AssertSameSize(a env.Variable, b env.Variable) {
+	if a.Size() != b.Size() {
+		panic("Incompatible size of variables")
+	}
 }
