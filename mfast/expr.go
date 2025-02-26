@@ -78,11 +78,19 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 		return nil, err
 	}
 	defer cmd.Release(v2)
-	codegen.AssertSameSize(v1, v2) //TODO: this should be in utils or something
-	if v1.Type() == env.INT && v2.Type() == env.INT {
-		return expr.evalIntExpr(cmd, v1, v2)
+
+	if v1.Type() == env.BYTE && v2.Type() == env.INT {
+		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
+		defer cmd.Env().ReleaseVariable(v3)
+		cmd.CastIntToByte(v2, v3)
+		return expr.evalByteExpr(cmd, v1, v3)
 	} else {
-		return expr.evalByteExpr(cmd, v1, v2)
+		codegen.AssertSameSize(v1, v2) //TODO: this should be in utils or something
+		if v1.Type() == env.INT && v2.Type() == env.INT {
+			return expr.evalIntExpr(cmd, v1, v2)
+		} else {
+			return expr.evalByteExpr(cmd, v1, v2)
+		}
 	}
 
 }
