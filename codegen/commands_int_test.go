@@ -20,7 +20,7 @@ func TestIncIntSingleByte(t *testing.T) {
 	interpreter.Run(code)
 
 	assert.Equal(t, []byte{0, 1, 0, 0, 0, 0, 0}, interpreter.Memory)
-	assert.Equal(t, []byte{0, 1}, interpreter.Output)
+	assert.Equal(t, []byte{'0', '0', '0', '0', '1'}, interpreter.Output)
 }
 
 func TestIncInt(t *testing.T) {
@@ -118,4 +118,19 @@ func TestGTInt(t *testing.T) {
 	interpreter.Run(code)
 
 	assert.Equal(t, []byte{1, 0}, interpreter.Output)
+}
+
+func TestPrintInt(t *testing.T) {
+	cmd := New()
+
+	var1 := cmd.Declare("var1", env.INT)
+	cmd.SetInt(var1, 45271)
+
+	cmd.PrintInt(var1)
+
+	code := cmd.Compile()
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+
+	assert.Equal(t, []byte{'4', '5', '2', '7', '1'}, interpreter.Output)
 }

@@ -6,7 +6,7 @@ import (
 )
 
 // TODO: Fix so it is proper print
-func (c *CommandHandler) PrintInt(v env.Variable) {
+func (c *CommandHandler) PrintIntOld(v env.Variable) {
 	// >++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-
 	// <+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++
 	// <]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]
@@ -282,6 +282,80 @@ func (c *CommandHandler) NotInt(x env.Variable, res env.Variable) {
 	c.If(temp, func() {
 		c.IncByte(res)
 	})
+}
+
+// TODO: Fix so it is proper print
+func (c *CommandHandler) PrintInt(v env.Variable) {
+	assertInt(v)
+
+	cond_result := c.env.DeclareAnonByte()
+	cond_value := c.env.DeclareAnonByte()
+	c.SetByte(cond_value, 10)
+
+	// Smallest character
+	v1 := c.env.DeclareAnonVariable(env.BYTE)
+	v2 := c.env.DeclareAnonVariable(env.BYTE)
+	v3 := c.env.DeclareAnonVariable(env.BYTE)
+	v4 := c.env.DeclareAnonVariable(env.BYTE)
+	v5 := c.env.DeclareAnonVariable(env.BYTE)
+	c.Reset(v1)
+	c.Reset(v2)
+	c.Reset(v3)
+	c.Reset(v4)
+	c.Reset(v5)
+	c.Reset(cond_result)
+	defer c.env.ReleaseVariable(v1)
+	defer c.env.ReleaseVariable(v2)
+	defer c.env.ReleaseVariable(v3)
+	defer c.env.ReleaseVariable(v4)
+	defer c.env.ReleaseVariable(v5)
+	defer c.env.ReleaseVariable(cond_result)
+	defer c.env.ReleaseVariable(cond_value)
+
+	c.whileInt(v, func() {
+		c.IncByte(v1)
+		c.EqualsByte(v1, cond_value, cond_result)
+
+		// If v1 == 10
+		c.If(cond_result, func() {
+			c.Reset(v1)
+			c.IncByte(v2)
+			c.EqualsByte(v2, cond_value, cond_result)
+			c.If(cond_result, func() {
+				c.Reset(v2)
+				c.IncByte(v3)
+				c.EqualsByte(v3, cond_value, cond_result)
+				c.If(cond_result, func() {
+					c.Reset(v3)
+					c.IncByte(v4)
+					c.EqualsByte(v4, cond_value, cond_result)
+					c.If(cond_result, func() {
+						c.Reset(v4)
+						c.IncByte(v5)
+						c.EqualsByte(v5, cond_value, cond_result)
+					})
+				})
+			})
+		})
+
+		c.DecInt(v)
+	})
+
+	char_diff := c.env.DeclareAnonByte()
+	c.SetByte(char_diff, 48)
+	defer c.env.ReleaseVariable(char_diff)
+
+	c.addToByte(char_diff, v1)
+	c.addToByte(char_diff, v2)
+	c.addToByte(char_diff, v3)
+	c.addToByte(char_diff, v4)
+	c.addToByte(char_diff, v5)
+
+	c.Print(v5)
+	c.Print(v4)
+	c.Print(v3)
+	c.Print(v2)
+	c.Print(v1)
 }
 
 // // // Substracts int a to b, b is modified
