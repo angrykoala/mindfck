@@ -31,7 +31,7 @@ func TestInt(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{0, 100, 10}, interpreter.Output)
+	assert.Equal(t, []byte{'1', '0', '0', 10}, interpreter.Output)
 }
 
 func TestIntAdd(t *testing.T) {
@@ -55,7 +55,7 @@ func TestIntAdd(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{2, 38}, interpreter.Output)
+	assert.Equal(t, []byte{'5', '5', '0'}, interpreter.Output)
 }
 
 func TestIntSub(t *testing.T) {
@@ -79,7 +79,7 @@ func TestIntSub(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{0, 50}, interpreter.Output)
+	assert.Equal(t, []byte{'5', '0'}, interpreter.Output)
 }
 func TestIntMult(t *testing.T) {
 	input := `
@@ -102,7 +102,7 @@ func TestIntMult(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{11, 184}, interpreter.Output)
+	assert.Equal(t, []byte{'3', '0', '0', '0'}, interpreter.Output)
 }
 
 func TestIntDiv(t *testing.T) {
@@ -124,5 +124,5 @@ func TestIntDiv(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{0, 50}, interpreter.Output)
+	assert.Equal(t, []byte{'5', '0'}, interpreter.Output)
 }
