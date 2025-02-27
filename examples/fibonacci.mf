@@ -1,5 +1,5 @@
 int n
-n = 30
+n = 22
 int i
 i = 0
 

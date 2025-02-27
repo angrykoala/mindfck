@@ -238,23 +238,6 @@ func (c *CommandHandler) CastIntToByte(from env.Variable, to env.Variable) {
 	c.Copy(lastByte, to)
 }
 
-// func (c *CommandHandler) EqualsInt(x env.Variable, y env.Variable, res env.Variable) {
-// 	assertInt(x)
-// 	assertInt(y)
-// 	assertBool(res)
-
-// 	temp := c.env.DeclareAnonByte()
-// 	defer c.env.ReleaseVariable(temp)
-// 	c.CopyByte(x, temp)
-// 	c.subTo(y, temp)
-
-// 	c.SetByte(res, 1)
-
-// 	c.If(temp, func() {
-// 		c.SetByte(res, 0)
-// 	})
-// }
-
 // Checks if variable is zero, result is written in res
 func (c *CommandHandler) isZeroInt(a env.Variable, res env.Variable) {
 	assertInt(a)
@@ -284,9 +267,12 @@ func (c *CommandHandler) NotInt(x env.Variable, res env.Variable) {
 	})
 }
 
-// TODO: Fix so it is proper print
 func (c *CommandHandler) PrintInt(v env.Variable) {
 	assertInt(v)
+
+	v_copy := c.env.DeclareAnonVariable(env.INT)
+	defer c.env.ReleaseVariable(v_copy)
+	c.Copy(v, v_copy)
 
 	cond_result := c.env.DeclareAnonByte()
 	cond_value := c.env.DeclareAnonByte()
@@ -312,7 +298,7 @@ func (c *CommandHandler) PrintInt(v env.Variable) {
 	defer c.env.ReleaseVariable(cond_result)
 	defer c.env.ReleaseVariable(cond_value)
 
-	c.whileInt(v, func() {
+	c.whileInt(v_copy, func() {
 		c.IncByte(v1)
 		c.EqualsByte(v1, cond_value, cond_result)
 
@@ -338,51 +324,53 @@ func (c *CommandHandler) PrintInt(v env.Variable) {
 			})
 		})
 
-		c.DecInt(v)
+		c.DecInt(v_copy)
 	})
 
 	char_diff := c.env.DeclareAnonByte()
 	c.SetByte(char_diff, 48)
 	defer c.env.ReleaseVariable(char_diff)
 
-	c.addToByte(char_diff, v1)
-	c.addToByte(char_diff, v2)
-	c.addToByte(char_diff, v3)
-	c.addToByte(char_diff, v4)
-	c.addToByte(char_diff, v5)
+	// IF 5th chracter is not 0, print it
+	c.If(v5, func() {
+		c.addToByte(char_diff, v5)
+		c.Print(v5)
+	})
 
-	c.Print(v5)
-	c.Print(v4)
-	c.Print(v3)
-	c.Print(v2)
+	cond_value_int := c.env.DeclareAnonVariable(env.INT)
+	defer c.env.ReleaseVariable(cond_value_int)
+
+	c.SetInt(cond_value_int, 999)
+	c.GtInt(v, cond_value_int, cond_result)
+	// IF number > 999, print 4th character
+	c.If(cond_result, func() {
+		c.addToByte(char_diff, v4)
+		c.Print(v4)
+	})
+
+	c.SetInt(cond_value_int, 99)
+	c.GtInt(v, cond_value_int, cond_result)
+	// IF number > 99, print 3rd character
+	c.If(cond_result, func() {
+		c.addToByte(char_diff, v3)
+		c.Print(v3)
+	})
+
+	c.SetInt(cond_value_int, 9)
+	c.GtInt(v, cond_value_int, cond_result)
+	// IF number > 9, print 2nd character
+	c.If(cond_result, func() {
+		c.addToByte(char_diff, v2)
+		c.Print(v2)
+	})
+
+	c.addToByte(char_diff, v1)
+
 	c.Print(v1)
 }
-
-// // // Substracts int a to b, b is modified
-// func (c *CommandHandler) subToInt(a env.Variable, b env.Variable) {
-// 	assertInt(a)
-// 	assertInt(b)
-// 	temp := c.env.DeclareAnonVariable(env.INT)
-// 	defer c.env.ReleaseVariable(temp)
-// 	c.Reset(temp)
-
-// 	c.While(a, func() {
-// 		c.IncByte(temp)
-// 		c.DecByte(b)
-// 		c.DecByte(a)
-// 	})
-
-// 	c.MoveByte(temp, a)
-// }
 
 func assertInt(v env.Variable) {
 	if v.Type() != env.INT {
 		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.INT))
 	}
 }
-
-// func (c *CommandHandler) PrintNumber(label string) {
-// 	c.goTo(label)
-
-// 	c.writer.write("x>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<")
-// }

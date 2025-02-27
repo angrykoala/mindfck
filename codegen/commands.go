@@ -69,7 +69,8 @@ func (c *CommandHandler) Move(from env.Variable, to env.Variable) {
 	})
 }
 
-// Copy current cell into to, using temp cell, ends in origin and resets temp
+// Copy current variable into to, using temp cell, ends in origin and resets temp
+// Works for multi bytes
 func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
 	AssertSameSize(from, to)
 

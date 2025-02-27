@@ -19,8 +19,7 @@ func TestIncIntSingleByte(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, []byte{0, 1, 0, 0, 0, 0, 0}, interpreter.Memory)
-	assert.Equal(t, []byte{'0', '0', '0', '0', '1'}, interpreter.Output)
+	assert.Equal(t, []byte{'1'}, interpreter.Output)
 }
 
 func TestIncInt(t *testing.T) {
@@ -38,7 +37,7 @@ func TestIncInt(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, []byte{3, 1}, interpreter.Output)
+	assert.Equal(t, []byte{'7', '6', '9'}, interpreter.Output)
 }
 
 func TestDecInt(t *testing.T) {
@@ -56,7 +55,7 @@ func TestDecInt(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, []byte{1, 254}, interpreter.Output)
+	assert.Equal(t, []byte{'5', '1', '0'}, interpreter.Output)
 }
 
 func TestSubInt(t *testing.T) {
@@ -76,7 +75,7 @@ func TestSubInt(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, []byte{1, 44, 0, 250, 0, 50}, interpreter.Output)
+	assert.Equal(t, []byte{'3', '0', '0', '2', '5', '0', '5', '0'}, interpreter.Output)
 }
 
 func TestIsZeroInt(t *testing.T) {
@@ -133,4 +132,19 @@ func TestPrintInt(t *testing.T) {
 	interpreter.Run(code)
 
 	assert.Equal(t, []byte{'4', '5', '2', '7', '1'}, interpreter.Output)
+}
+
+func TestPrintIntSmall(t *testing.T) {
+	cmd := New()
+
+	var1 := cmd.Declare("var1", env.INT)
+	cmd.SetInt(var1, 100)
+
+	cmd.PrintInt(var1)
+
+	code := cmd.Compile()
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+
+	assert.Equal(t, []byte{'1', '0', '0'}, interpreter.Output)
 }
