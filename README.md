@@ -115,7 +115,13 @@ To parse something manually in the command line:
 ```
 antlr4-parse parser/antlr/mindfck.g4 statements -gui
 ```
-
+Alternatively:
+```
+        curl https://www.antlr.org/download/antlr-4.13.0-complete.jar --output antlr4.jar
+        mkdir -p $HOME/.local/bin
+        echo -e "#bin/bash\njava -jar $PWD/antlr4.jar \$@" > $HOME/.local/bin/antlr4
+        chmod a+x $HOME/.local/bin/antlr4
+```
 ## Resources
 
 These resources where used as inspiration / tools for this project
