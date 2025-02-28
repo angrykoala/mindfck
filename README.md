@@ -61,7 +61,7 @@ A: Also no
 
 -   Variables
     -   Byte, can be assigned with numbers or char values
-    -   Int, 2 byte ints. I know, not real ints
+    -   Int, unsinged 16-bit ints.  
 -   Math operations
 -   Logical operations
 -   If ... Else
