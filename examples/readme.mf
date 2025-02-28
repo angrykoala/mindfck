@@ -1,0 +1,11 @@
+int a
+int b
+a = 3 + a
+a = 33 + a
+a = a + 2
+int c
+a = a + 21
+a = a + 2
+b = 10 + a
+c = a + b
+print c
