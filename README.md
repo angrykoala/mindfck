@@ -61,14 +61,99 @@ A: Also no
 
 -   Variables
     -   Byte, can be assigned with numbers or char values
-    -   Int, unsinged 16-bit ints.  
+    -   Int, unsinged 16-bit ints.
 -   Math operations
 -   Logical operations
 -   If ... Else
 -   While loops
 -   Print and read bytes
 
-## Development
+## Language Manual
+
+Mindfck is heavily C-inspired, with a familiar syntax.
+
+### Variables
+
+Mindfck supports 2 types of variables:
+
+**byte**
+Stores a single byte
+
+```mindfck
+byte x
+x = 'a'
+```
+
+Bytes can be assigned by passing a single character (`'a'`) which will save the ascii value of that character. Alternatively, the exact byte number can be passed as a decimal integer with `b`: `x = 10b`
+
+**int**
+Ints are unsigned 16bit integers
+
+```mindfck
+int a
+a = 10
+```
+
+### I/O
+
+`print` is supported for bytes and integers. bytes will be printed as a single character. ints will be printed as decimal numbers.
+
+```mindfck
+print 10
+print 'a'
+```
+
+`read` is only supported for bytes, allowing to store a byte in a variable.
+
+### Conditionals
+
+`If ... else` flows are supported:
+
+```mindfck
+if(x == 'a'){
+    print 'a'
+} else {
+    print 'b'
+}
+```
+
+### Loops
+
+`while` can be used with a simple condition to loop.
+
+```
+byte letter
+letter = 'a'
+while (letter < z) {
+    print letter
+    letter = letter + 1
+}
+```
+
+### Mathematical operators
+
+The following mathematical operators are supported for int operations:
+
+-   `+`
+-   `-`
+-   `/`
+-   `*`
+
+### Logical operators
+
+-   `and`
+-   `or`
+-   `!` or `not`
+
+### Comparison operators
+
+-   `==`
+-   `>`
+-   `>=`
+-   `<`
+-   `<=`
+
+## Development Instructions
 
 Mindfck is written in go.
 
@@ -115,13 +200,16 @@ To parse something manually in the command line:
 ```
 antlr4-parse parser/antlr/mindfck.g4 statements -gui
 ```
+
 Alternatively:
+
 ```
         curl https://www.antlr.org/download/antlr-4.13.0-complete.jar --output antlr4.jar
         mkdir -p $HOME/.local/bin
         echo -e "#bin/bash\njava -jar $PWD/antlr4.jar \$@" > $HOME/.local/bin/antlr4
         chmod a+x $HOME/.local/bin/antlr4
 ```
+
 ## Resources
 
 These resources where used as inspiration / tools for this project

@@ -1,0 +1,11 @@
+byte x
+
+read x
+
+if(x == 'a'){
+    print 'o'
+    print 'k'
+} else {
+    print 'n'
+    print 'o'
+}

@@ -29,5 +29,5 @@ func TestPrintInt(t *testing.T) {
 
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
-	assert.Equal(t, []byte{0, 11}, interpreter.Output)
+	assert.Equal(t, []byte{'1', '1'}, interpreter.Output)
 }
