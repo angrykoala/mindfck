@@ -5,20 +5,6 @@ import (
 	"mindfck/env"
 )
 
-// TODO: Fix so it is proper print
-func (c *CommandHandler) PrintIntOld(v env.Variable) {
-	// >++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-
-	// <+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++
-	// <]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]
-
-	// Print up to 65536 (5 characters)
-
-	assertInt(v)
-	c.goTo(v)
-	c.out()
-	c.shift(1)
-	c.out()
-}
 func (c *CommandHandler) SetInt(v env.Variable, value int) {
 	assertInt(v)
 
