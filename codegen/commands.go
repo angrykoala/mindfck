@@ -25,7 +25,8 @@ func (c *CommandHandler) Env() *env.MindfuckEnv {
 }
 
 func (c *CommandHandler) Compile() string {
-	return c.writer.print()
+	rawCode := c.writer.print()
+	return optimize(rawCode)
 }
 
 func (c *CommandHandler) Declare(label string, varType env.VarType) env.Variable {
