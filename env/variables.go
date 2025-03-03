@@ -27,6 +27,9 @@ type Variable interface {
 	Label() string
 	Type() VarType
 	GetByte(pos int) Variable
+	// If the variable has been used before. This is an optimization to avoid unused Resets
+	IsDirty() bool
+	SetDirty()
 }
 
 type variable struct {
@@ -34,14 +37,16 @@ type variable struct {
 	label    string
 	size     int
 	varType  VarType
+	dirty    bool
 }
 
-func NewVariable(position int, varType VarType, label string) Variable {
+func NewVariable(position int, varType VarType, label string, dirty bool) Variable {
 	return &variable{
 		position: position,
 		label:    label,
 		size:     getSize(varType),
 		varType:  varType,
+		dirty:    dirty,
 	}
 }
 
@@ -65,11 +70,19 @@ func (v *variable) Type() VarType {
 	return v.varType
 }
 
+func (v *variable) IsDirty() bool {
+	return v.dirty
+}
+
+func (v *variable) SetDirty() {
+	v.dirty = true
+}
+
 func (v *variable) GetByte(i int) Variable {
 	if i > v.size {
 		panic("invalid byte")
 	}
-	return NewVariable(v.position+i, BYTE, "")
+	return NewVariable(v.position+i, BYTE, "", true)
 }
 
 // type ByteVariable struct {
