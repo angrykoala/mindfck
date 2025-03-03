@@ -3,6 +3,8 @@ package codegen
 import "strings"
 
 func optimize(code string) string {
+	// These are naive (and, poorly implemented) optimisations on generated brainfuck
+	// It rooughly reduces the codebase ~3%, so not really useful
 	retry := true
 	previousOptimized := code
 
