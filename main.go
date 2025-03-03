@@ -15,6 +15,7 @@ func main() {
 	filename := os.Args[1]
 
 	run := slices.Contains(os.Args, "--run")
+	debug := slices.Contains(os.Args, "--debug")
 
 	input, err := os.ReadFile(filename)
 	if err != nil {
@@ -34,7 +35,13 @@ func main() {
 		interpreter := bfinterpreter.New()
 		interpreter.Run(code)
 		fmt.Println(string(interpreter.Output))
-		// fmt.Println(interpreter.Memory)
+
+		if debug {
+			fmt.Println("Code Size:", len(code), "characters")
+			fmt.Println("Memory:", interpreter.Memory)
+			fmt.Println("Memory Size:", len(interpreter.Memory), "bytes")
+			fmt.Println("Executed Instructions:", interpreter.ExecInstructions)
+		}
 	} else {
 		fmt.Println(code)
 	}

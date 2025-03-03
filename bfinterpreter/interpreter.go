@@ -6,6 +6,8 @@ type Interpreter struct {
 	Memory []byte
 	memPtr int
 	Output []byte
+
+	ExecInstructions int
 }
 
 func New() *Interpreter {
@@ -15,23 +17,29 @@ func New() *Interpreter {
 }
 
 func (interpreter *Interpreter) RunWithInput(code string, input []byte) {
+	interpreter.ExecInstructions = 0
 	for i := 0; i < len(code); i++ {
 		switch code[i] {
 		case '+':
+			interpreter.ExecInstructions += 1
 			interpreter.Memory[interpreter.memPtr] += 1
 		case '-':
+			interpreter.ExecInstructions += 1
 			interpreter.Memory[interpreter.memPtr] -= 1
 		case '>':
+			interpreter.ExecInstructions += 1
 			interpreter.memPtr += 1
 			if len(interpreter.Memory) <= interpreter.memPtr {
 				interpreter.Memory = append(interpreter.Memory, 0)
 			}
 		case '<':
+			interpreter.ExecInstructions += 1
 			interpreter.memPtr -= 1
 			if interpreter.memPtr < 0 {
 				panic("Kaboom")
 			}
 		case '[':
+			interpreter.ExecInstructions += 1
 			if interpreter.currentValue() == 0 {
 				var skips int = 1
 				for skips != 0 {
@@ -46,6 +54,7 @@ func (interpreter *Interpreter) RunWithInput(code string, input []byte) {
 			}
 
 		case ']':
+			interpreter.ExecInstructions += 1
 			if interpreter.currentValue() != 0 {
 				var skips int = 1
 				for skips != 0 {
@@ -59,9 +68,11 @@ func (interpreter *Interpreter) RunWithInput(code string, input []byte) {
 				}
 			}
 		case '.':
+			interpreter.ExecInstructions += 1
 			var value = interpreter.Memory[interpreter.memPtr]
 			interpreter.Output = append(interpreter.Output, value)
 		case ',':
+			interpreter.ExecInstructions += 1
 			inByte := input[0]
 			input = input[1:]
 			interpreter.Memory[interpreter.memPtr] = inByte
