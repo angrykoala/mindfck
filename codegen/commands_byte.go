@@ -217,19 +217,6 @@ func (c *CommandHandler) add(v env.Variable, count int) {
 	}
 }
 
-func assertByte(v env.Variable) {
-	if v.Type() != env.BYTE {
-		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.BYTE))
-	}
-}
-
-// Atm same as assertByte
-func assertBool(v env.Variable) {
-	if v.Type() != env.BYTE {
-		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.BYTE))
-	}
-}
-
 // Substracts cell a to b, b is modified
 func (c *CommandHandler) subToByte(a env.Variable, b env.Variable) {
 	temp := c.env.DeclareAnonByte()
@@ -270,4 +257,17 @@ func (c *CommandHandler) DecByte(v env.Variable) {
 	assertByte(v)
 	c.goTo(v)
 	c.decrement()
+}
+
+func assertByte(v env.Variable) {
+	if v.Type() != env.BYTE {
+		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.BYTE))
+	}
+}
+
+// Atm same as assertByte
+func assertBool(v env.Variable) {
+	if v.Type() != env.BYTE {
+		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.BYTE))
+	}
 }

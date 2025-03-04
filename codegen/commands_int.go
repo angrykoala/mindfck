@@ -20,15 +20,12 @@ func (c *CommandHandler) SetInt(v env.Variable, value int) {
 
 func (c *CommandHandler) IncInt(v env.Variable) {
 	assertInt(v)
-	zero := c.env.DeclareAnonByte()
 	temp := c.env.DeclareAnonByte()
-	defer c.Release(zero)
 	defer c.Release(temp)
-	c.Reset(zero)
 
 	secondByte := v.GetByte(1)
 	c.IncByte(secondByte)
-	c.EqualsByte(secondByte, zero, temp)
+	c.NotByte(secondByte, temp)
 	c.If(temp, func() {
 		firstByte := v.GetByte(0)
 		c.IncByte(firstByte)
@@ -37,14 +34,11 @@ func (c *CommandHandler) IncInt(v env.Variable) {
 
 func (c *CommandHandler) DecInt(v env.Variable) {
 	assertInt(v)
-	zero := c.env.DeclareAnonByte()
 	temp := c.env.DeclareAnonByte()
-	defer c.Release(zero)
 	defer c.Release(temp)
-	c.Reset(zero)
 
 	secondByte := v.GetByte(1)
-	c.EqualsByte(secondByte, zero, temp)
+	c.NotByte(secondByte, temp)
 	c.If(temp, func() {
 		firstByte := v.GetByte(0)
 		c.DecByte(firstByte)
@@ -176,13 +170,17 @@ func (c *CommandHandler) addToInt(a env.Variable, b env.Variable) {
 }
 
 func (c *CommandHandler) subToInt(a env.Variable, b env.Variable) {
-	aCopy := c.env.DeclareAnonVariable(env.INT)
-	defer c.env.ReleaseVariable(aCopy)
-	c.Copy(a, aCopy)
+	// Step 1, sub first byte
+	c.subToByte(a.GetByte(0), b.GetByte(0))
 
-	c.whileInt(aCopy, func() {
+	// Step 2, sub second byte with int sub
+	aCopy := c.env.DeclareAnonByte()
+	defer c.env.ReleaseVariable(aCopy)
+	c.CopyByte(a.GetByte(1), aCopy)
+
+	c.While(aCopy, func() {
 		c.DecInt(b)
-		c.DecInt(aCopy)
+		c.DecByte(aCopy)
 	})
 }
 
