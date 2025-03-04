@@ -23,9 +23,9 @@ func New(begin int) *MindfuckEnv {
 }
 
 func (env *MindfuckEnv) DeclareVariable(label string, varType VarType) Variable {
-	position, dirty := env.reserveMemory(getSize(varType))
+	position := env.reserveMemory(getSize(varType))
 
-	var newVar = NewVariable(position, varType, label, dirty)
+	var newVar = NewVariable(position, varType, label)
 	if newVar.HasLabel() {
 		_, hasLabel := env.labels[label]
 
@@ -77,30 +77,26 @@ func (env *MindfuckEnv) releaseLabel(label string) {
 	delete(env.labels, label)
 }
 
-func (env *MindfuckEnv) reserveMemory(size int) (int, bool) {
+func (env *MindfuckEnv) reserveMemory(size int) int {
 	if size < 1 {
 		panic("Invalid size in reserve Memory")
 	}
 	var varPos int
-	var reused bool
 
 	freePos, ok := findFirstConsecutiveSet(env.freedMemory, size)
 	if ok {
 		// Reuse position if possible
 		varPos = env.freedMemory[freePos]
 		env.freedMemory = append(env.freedMemory[0:freePos], env.freedMemory[freePos+size:]...)
-		reused = true
-
 	} else {
 		varPos = len(env.freedMemory) + env.reservedMemory.Size() + env.memoryBegin
-		reused = false
 	}
 
 	for i := 0; i < size; i++ {
 		env.reservedMemory.Add(varPos + i)
 	}
 
-	return varPos, reused
+	return varPos
 }
 
 func (env *MindfuckEnv) releaseMemory(pos int, size int) {

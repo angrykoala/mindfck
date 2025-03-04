@@ -55,13 +55,10 @@ func (c *CommandHandler) DebugBreak() {
 
 // Resets variable
 func (c *CommandHandler) Reset(v env.Variable) {
-	if v.IsDirty() {
-		c.iterateBytes(v, func(b env.Variable, _ int) {
-			c.ResetByte(b)
-		})
-	} else {
-		v.SetDirty()
-	}
+	c.iterateBytes(v, func(b env.Variable, _ int) {
+		c.ResetByte(b)
+	})
+
 }
 
 // from -> to
