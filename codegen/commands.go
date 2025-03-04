@@ -92,16 +92,11 @@ func (c *CommandHandler) Clone(from env.Variable) env.Variable {
 
 // Control Flow (Bool)
 func (c *CommandHandler) IfElse(cond env.Variable, ifCode func(), elseCode func()) {
-	temp0 := c.env.DeclareAnonByte()
 	temp1 := c.env.DeclareAnonByte()
-	defer c.env.ReleaseVariable(temp0)
 	defer c.env.ReleaseVariable(temp1)
-	c.CopyByte(cond, temp0)
 	c.SetByte(temp1, 1)
-
-	c.While(temp0, func() {
+	c.If(cond, func() {
 		ifCode()
-		c.SetByte(temp0, 0)
 		c.SetByte(temp1, 0)
 	})
 
