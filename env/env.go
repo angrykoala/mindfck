@@ -22,20 +22,18 @@ func New(begin int) *MindfuckEnv {
 	}
 }
 
+func (env *MindfuckEnv) DeclareArrayVariable(label string, size int) Variable {
+	position := env.reserveMemory(size)
+
+	var newVar = NewArrayVariable(position, label, size)
+	return env.reserveLabel(label, newVar)
+}
+
 func (env *MindfuckEnv) DeclareVariable(label string, varType VarType) Variable {
 	position := env.reserveMemory(getSize(varType))
 
 	var newVar = NewVariable(position, varType, label)
-	if newVar.HasLabel() {
-		_, hasLabel := env.labels[label]
-
-		if hasLabel {
-			panic(fmt.Sprintf("Cannot reserve label [%s], already reserved", label))
-		}
-
-		env.labels[label] = newVar
-	}
-	return newVar
+	return env.reserveLabel(label, newVar)
 }
 
 func (env *MindfuckEnv) DeclareAnonVariable(varType VarType) Variable {
@@ -66,6 +64,20 @@ func (env *MindfuckEnv) ResolveLabel(label string) Variable {
 	}
 
 	return variable
+}
+
+func (env *MindfuckEnv) reserveLabel(label string, newVar Variable) Variable {
+
+	if newVar.HasLabel() {
+		_, hasLabel := env.labels[label]
+
+		if hasLabel {
+			panic(fmt.Sprintf("Cannot reserve label [%s], already reserved", label))
+		}
+
+		env.labels[label] = newVar
+	}
+	return newVar
 }
 
 func (env *MindfuckEnv) releaseLabel(label string) {

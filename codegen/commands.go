@@ -30,16 +30,18 @@ func (c *CommandHandler) Compile() string {
 }
 
 func (c *CommandHandler) Declare(label string, varType env.VarType) env.Variable {
+	if varType == env.ARRAY {
+		panic("Invalid variable type ARRAY, did you mean DeclareArray?")
+	}
 	return c.env.DeclareVariable(label, varType)
+}
+
+func (c *CommandHandler) DeclareArray(label string, size int) env.Variable {
+	return c.env.DeclareArrayVariable(label, size)
 }
 
 func (c *CommandHandler) Release(v env.Variable) {
 	c.env.ReleaseVariable(v)
-}
-
-func (c *CommandHandler) Print(v env.Variable) {
-	c.goTo(v)
-	c.writer.command(BFOut)
 }
 
 func (c *CommandHandler) Read(v env.Variable) {

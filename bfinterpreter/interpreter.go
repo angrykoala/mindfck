@@ -78,7 +78,6 @@ func (interpreter *Interpreter) RunWithInput(code string, input []byte) {
 			interpreter.Memory[interpreter.memPtr] = inByte
 		case '#':
 			interpreter.Debug()
-			// return
 		}
 	}
 }

@@ -1,30 +1,42 @@
 package codegen
 
+import (
+	"fmt"
+	"mindfck/env"
+)
+
 // // Commands for multi byte variables
 
-// // Resets arr to 0
-// func (c *CommandHandler) ResetArr(v *env.ArrayVariable) {
-// 	c.iterateArr(v, func(i int) {
-// 		c.ResetByte(v.Get(i))
-// 	})
-// }
+func (c *CommandHandler) SetArray(v env.Variable, value []int) {
+	assertArrayOfSize(v, len(value))
+	c.Reset(v)
 
-// func (c *CommandHandler) SetArr(v *env.ArrayVariable, value []int) {
-// 	assertSize(v, len(value))
+	c.iterateBytes(v, func(b env.Variable, i int) {
+		c.SetByte(b, value[i])
+	})
+}
 
-// 	c.iterateArr(v, func(i int) {
-// 		c.SetByte(v.Get(i), value[i])
-// 	})
-// }
+func (c *CommandHandler) PrintArray(v env.Variable) {
+	assertArray(v)
 
-// func assertCompatible(var1 env.Variable, var2 env.Variable) {
-// 	if var1.Size() != var2.Size() {
-// 		panic("Variables are not compatible")
-// 	}
-// }
+	c.iterateBytes(v, func(b env.Variable, _ int) {
+		c.PrintByte(b)
+	})
+}
 
-// func assertSize(var1 env.Variable, size int) {
-// 	if var1.Size() != size {
-// 		panic("Variable has not correct size")
-// 	}
-// }
+func assertArrayOfSize(v env.Variable, size int) {
+	assertArray(v)
+	assertSize(v, size)
+}
+
+func assertSize(var1 env.Variable, size int) {
+	if var1.Size() != size {
+		panic("Variable has not correct size")
+	}
+}
+
+func assertArray(v env.Variable) {
+	if v.Type() != env.ARRAY {
+		panic(fmt.Sprintf("invalid type %s, %s expected", v.Type(), env.ARRAY))
+	}
+}

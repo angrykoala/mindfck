@@ -146,12 +146,18 @@ func (c *CommandHandler) AddByte(a env.Variable, b env.Variable, res env.Variabl
 	assertByte(a)
 	assertByte(b)
 	assertByte(res)
-	temp := c.env.DeclareAnonByte() // Do we need temp here?
-	defer c.env.ReleaseVariable(temp)
+
+	temp := res
+	// Temp is used to fix the case of a = a + b
+	if res == b || res == a {
+		temp = c.env.DeclareAnonByte()
+		defer c.env.ReleaseVariable(temp)
+	}
 	c.CopyByte(a, temp)
 	c.addToByte(b, temp)
-
-	c.MoveByte(temp, res)
+	if temp != res {
+		c.MoveByte(temp, res)
+	}
 }
 
 func (c *CommandHandler) SubByte(a env.Variable, b env.Variable, res env.Variable) {
@@ -197,6 +203,7 @@ func (c *CommandHandler) DivByte(a env.Variable, b env.Variable, res env.Variabl
 }
 
 func (c *CommandHandler) PrintByte(v env.Variable) {
+	assertByte(v)
 	c.goTo(v)
 	c.out()
 }

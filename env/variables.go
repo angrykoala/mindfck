@@ -5,8 +5,9 @@ import "fmt"
 type VarType string
 
 const (
-	BYTE VarType = "byte"
-	INT  VarType = "int"
+	BYTE  VarType = "byte"
+	INT   VarType = "int"
+	ARRAY VarType = "array"
 )
 
 func getSize(varType VarType) int {
@@ -27,7 +28,6 @@ type Variable interface {
 	Label() string
 	Type() VarType
 	GetByte(pos int) Variable
-	// If the variable has been used before. This is an optimization to avoid unused Resets
 }
 
 type variable struct {
@@ -43,6 +43,15 @@ func NewVariable(position int, varType VarType, label string) Variable {
 		label:    label,
 		size:     getSize(varType),
 		varType:  varType,
+	}
+}
+
+func NewArrayVariable(position int, label string, size int) Variable {
+	return &variable{
+		position: position,
+		label:    label,
+		size:     size,
+		varType:  ARRAY,
 	}
 }
 

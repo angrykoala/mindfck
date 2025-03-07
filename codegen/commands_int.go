@@ -318,7 +318,7 @@ func (c *CommandHandler) PrintInt(v env.Variable) {
 	// IF 5th chracter is not 0, print it
 	c.If(v5, func() {
 		c.addToByte(char_diff, v5)
-		c.Print(v5)
+		c.PrintByte(v5)
 	})
 
 	cond_value_int := c.env.DeclareAnonVariable(env.INT)
@@ -329,7 +329,7 @@ func (c *CommandHandler) PrintInt(v env.Variable) {
 	// IF number > 999, print 4th character
 	c.If(cond_result, func() {
 		c.addToByte(char_diff, v4)
-		c.Print(v4)
+		c.PrintByte(v4)
 	})
 
 	c.SetInt(cond_value_int, 99)
@@ -337,7 +337,7 @@ func (c *CommandHandler) PrintInt(v env.Variable) {
 	// IF number > 99, print 3rd character
 	c.If(cond_result, func() {
 		c.addToByte(char_diff, v3)
-		c.Print(v3)
+		c.PrintByte(v3)
 	})
 
 	c.SetInt(cond_value_int, 9)
@@ -345,12 +345,12 @@ func (c *CommandHandler) PrintInt(v env.Variable) {
 	// IF number > 9, print 2nd character
 	c.If(cond_result, func() {
 		c.addToByte(char_diff, v2)
-		c.Print(v2)
+		c.PrintByte(v2)
 	})
 
 	c.addToByte(char_diff, v1)
 
-	c.Print(v1)
+	c.PrintByte(v1)
 }
 
 func assertInt(v env.Variable) {
