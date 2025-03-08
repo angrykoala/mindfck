@@ -35,8 +35,8 @@ func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) inte
 	if ctx.Declaration() != nil {
 		return ctx.Declaration().Accept(v)
 	}
-	if ctx.Declaration() != nil {
-		return ctx.Declaration().Accept(v)
+	if ctx.ArrayDeclaration() != nil {
+		return ctx.ArrayDeclaration().Accept(v)
 	}
 	if ctx.Assignment() != nil {
 		return ctx.Assignment().Accept(v)
@@ -70,6 +70,14 @@ func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) 
 	return &mfast.Declare{
 		Label:   ctx.Identifier().IDENTIFIER().GetText(),
 		VarType: varType,
+	}
+}
+
+func (v *AstGeneratorVisitor) VisitArrayDeclaration(ctx *mindfck.ArrayDeclarationContext) interface{} {
+	return &mfast.Declare{
+		Label:   ctx.Identifier().IDENTIFIER().GetText(),
+		VarType: env.ARRAY,
+		Size:    utils.ToInt(ctx.ArraySize().GetText()),
 	}
 }
 
@@ -113,6 +121,20 @@ func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) in
 				Value: utils.ToInt(txt[:len(txt)-1]),
 				Type:  env.BYTE,
 			}
+		} else if ctx.Literal().ArrayLiteral() != nil {
+			items := ctx.Literal().ArrayLiteral().AllArrayItem()
+
+			parsedItems := []int{}
+			for _, s := range items {
+				parsedArrayItem := utils.ToInt(s.GetText())
+
+				parsedItems = append(parsedItems, parsedArrayItem)
+			}
+			return &mfast.ArrayLiteral{
+				Value: parsedItems,
+				Type:  env.ARRAY,
+			}
+
 		} else {
 			panic(fmt.Sprintf("invalid literal %s", ctx.Literal().GetText()))
 		}

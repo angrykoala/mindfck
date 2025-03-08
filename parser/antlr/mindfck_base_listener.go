@@ -39,6 +39,18 @@ func (s *BasemindfckListener) EnterDeclaration(ctx *DeclarationContext) {}
 // ExitDeclaration is called when production declaration is exited.
 func (s *BasemindfckListener) ExitDeclaration(ctx *DeclarationContext) {}
 
+// EnterArrayDeclaration is called when production arrayDeclaration is entered.
+func (s *BasemindfckListener) EnterArrayDeclaration(ctx *ArrayDeclarationContext) {}
+
+// ExitArrayDeclaration is called when production arrayDeclaration is exited.
+func (s *BasemindfckListener) ExitArrayDeclaration(ctx *ArrayDeclarationContext) {}
+
+// EnterArraySize is called when production arraySize is entered.
+func (s *BasemindfckListener) EnterArraySize(ctx *ArraySizeContext) {}
+
+// ExitArraySize is called when production arraySize is exited.
+func (s *BasemindfckListener) ExitArraySize(ctx *ArraySizeContext) {}
+
 // EnterAssignment is called when production assignment is entered.
 func (s *BasemindfckListener) EnterAssignment(ctx *AssignmentContext) {}
 
@@ -92,3 +104,15 @@ func (s *BasemindfckListener) EnterLiteral(ctx *LiteralContext) {}
 
 // ExitLiteral is called when production literal is exited.
 func (s *BasemindfckListener) ExitLiteral(ctx *LiteralContext) {}
+
+// EnterArrayLiteral is called when production arrayLiteral is entered.
+func (s *BasemindfckListener) EnterArrayLiteral(ctx *ArrayLiteralContext) {}
+
+// ExitArrayLiteral is called when production arrayLiteral is exited.
+func (s *BasemindfckListener) ExitArrayLiteral(ctx *ArrayLiteralContext) {}
+
+// EnterArrayItem is called when production arrayItem is entered.
+func (s *BasemindfckListener) EnterArrayItem(ctx *ArrayItemContext) {}
+
+// ExitArrayItem is called when production arrayItem is exited.
+func (s *BasemindfckListener) ExitArrayItem(ctx *ArrayItemContext) {}

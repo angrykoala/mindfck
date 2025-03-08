@@ -21,6 +21,8 @@ func (s *Print) EvalStmt(cmd *codegen.CommandHandler) error {
 		cmd.PrintByte(v)
 	case env.INT:
 		cmd.PrintInt(v)
+	case env.ARRAY:
+		cmd.PrintArray(v)
 	default:
 		panic(fmt.Errorf("cannot print variable of type %s", v.Type()))
 	}

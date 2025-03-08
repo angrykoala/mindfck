@@ -210,6 +210,8 @@ Alternatively:
         chmod a+x $HOME/.local/bin/antlr4
 ```
 
+To debug the gramar: [Antlr Lab](http://lab.antlr.org/)
+
 ## Resources
 
 These resources where used as inspiration / tools for this project

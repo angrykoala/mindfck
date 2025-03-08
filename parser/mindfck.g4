@@ -4,6 +4,7 @@ statements: statement*;
 
 statement:
 	declaration
+	| arrayDeclaration
 	| assignment
 	| print
 	| ifConditional
@@ -11,6 +12,11 @@ statement:
 	| read;
 
 declaration: type = (BYTE | INT) identifier;
+
+arrayDeclaration:
+	type = (BYTE | BYTE) identifier '[' arraySize ']';
+
+arraySize: NUMBER;
 
 assignment: identifier EQUALS expression;
 
@@ -39,7 +45,10 @@ expression:
 
 identifier: IDENTIFIER;
 
-literal: NUMBER | CHAR | BYTE_NUMBER;
+literal: NUMBER | CHAR | BYTE_NUMBER | arrayLiteral;
+
+arrayLiteral: '[' (arrayItem (',' arrayItem)*)? ']';
+arrayItem: NUMBER | BYTE_NUMBER;
 
 CHAR: '\'' EXT_ASCII_CHAR '\'';
 BYTE_NUMBER: NUMBER 'b';

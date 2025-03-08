@@ -44,6 +44,10 @@ func (env *MindfuckEnv) DeclareAnonByte() Variable {
 	return env.DeclareVariable("", BYTE)
 }
 
+func (env *MindfuckEnv) DeclareAnonArray(size int) Variable {
+	return env.DeclareArrayVariable("", size)
+}
+
 func (env *MindfuckEnv) ReleaseVariable(v Variable) {
 	if v.Position() < env.memoryBegin {
 		panic("release: out of bounds")
@@ -67,7 +71,6 @@ func (env *MindfuckEnv) ResolveLabel(label string) Variable {
 }
 
 func (env *MindfuckEnv) reserveLabel(label string, newVar Variable) Variable {
-
 	if newVar.HasLabel() {
 		_, hasLabel := env.labels[label]
 

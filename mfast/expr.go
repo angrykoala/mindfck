@@ -30,13 +30,25 @@ func (lit *Literal) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) 
 	return res, nil
 }
 
+type ArrayLiteral struct {
+	Value []int
+	Type  env.VarType
+}
+
+func (lit *ArrayLiteral) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
+	res := cmd.Env().DeclareAnonArray(len(lit.Value))
+	cmd.SetArray(res, lit.Value)
+
+	return res, nil
+}
+
 type VariableExpr struct {
 	Label string
 }
 
 func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	v1 := cmd.Env().ResolveLabel(lit.Label)
-	v2 := cmd.Clone(v1)
+	v2 := cmd.Clone(v1) // TODO: This probably can make a massive optimization
 
 	return v2, nil
 }

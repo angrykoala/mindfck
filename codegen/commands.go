@@ -87,7 +87,12 @@ func (c *CommandHandler) Copy(from env.Variable, to env.Variable) {
 
 // Clone variable from into a new variable of the same type
 func (c *CommandHandler) Clone(from env.Variable) env.Variable {
-	newVar := c.env.DeclareAnonVariable(from.Type())
+	var newVar env.Variable
+	if from.Type() == env.ARRAY {
+		newVar = c.env.DeclareAnonArray(from.Size())
+	} else {
+		newVar = c.env.DeclareAnonVariable(from.Type())
+	}
 	c.Copy(from, newVar)
 	return newVar
 }

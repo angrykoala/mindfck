@@ -17,6 +17,12 @@ type mindfckListener interface {
 	// EnterDeclaration is called when entering the declaration production.
 	EnterDeclaration(c *DeclarationContext)
 
+	// EnterArrayDeclaration is called when entering the arrayDeclaration production.
+	EnterArrayDeclaration(c *ArrayDeclarationContext)
+
+	// EnterArraySize is called when entering the arraySize production.
+	EnterArraySize(c *ArraySizeContext)
+
 	// EnterAssignment is called when entering the assignment production.
 	EnterAssignment(c *AssignmentContext)
 
@@ -44,6 +50,12 @@ type mindfckListener interface {
 	// EnterLiteral is called when entering the literal production.
 	EnterLiteral(c *LiteralContext)
 
+	// EnterArrayLiteral is called when entering the arrayLiteral production.
+	EnterArrayLiteral(c *ArrayLiteralContext)
+
+	// EnterArrayItem is called when entering the arrayItem production.
+	EnterArrayItem(c *ArrayItemContext)
+
 	// ExitStatements is called when exiting the statements production.
 	ExitStatements(c *StatementsContext)
 
@@ -52,6 +64,12 @@ type mindfckListener interface {
 
 	// ExitDeclaration is called when exiting the declaration production.
 	ExitDeclaration(c *DeclarationContext)
+
+	// ExitArrayDeclaration is called when exiting the arrayDeclaration production.
+	ExitArrayDeclaration(c *ArrayDeclarationContext)
+
+	// ExitArraySize is called when exiting the arraySize production.
+	ExitArraySize(c *ArraySizeContext)
 
 	// ExitAssignment is called when exiting the assignment production.
 	ExitAssignment(c *AssignmentContext)
@@ -79,4 +97,10 @@ type mindfckListener interface {
 
 	// ExitLiteral is called when exiting the literal production.
 	ExitLiteral(c *LiteralContext)
+
+	// ExitArrayLiteral is called when exiting the arrayLiteral production.
+	ExitArrayLiteral(c *ArrayLiteralContext)
+
+	// ExitArrayItem is called when exiting the arrayItem production.
+	ExitArrayItem(c *ArrayItemContext)
 }
