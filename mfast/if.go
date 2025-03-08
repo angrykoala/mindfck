@@ -27,7 +27,7 @@ func (s *If) EvalStmt(cmd *codegen.CommandHandler) error {
 	if err != nil {
 		return err
 	}
-	defer cmd.Release(v)
+	defer cmd.ReleaseIfAnonymous(v)
 
 	cmd.IfElse(v, func() { ProcessBlock(&s.Block, cmd) }, func() { ProcessBlock(&s.Else, cmd) })
 

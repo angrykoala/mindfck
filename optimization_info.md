@@ -43,3 +43,10 @@ Code Size: 10345 characters
 Memory: [0 22 0 22 69 47 111 241 69 47 0 22 0 22 0 0 1 0 0 0 0 0 0 0 9 0 0 0 0 214 0 0]
 Memory Size: 32 bytes
 Executed Instructions: 622235940
+
+// With Variable Expression optimisation
+
+Code Size: 9881 characters
+Memory: [0 22 0 22 69 47 111 241 69 47 0 0 1 0 0 0 0 0 0 49 48 0 9 0 0 0 0 214 0 0]
+Memory Size: 30 bytes
+Executed Instructions: 591807358

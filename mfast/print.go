@@ -15,7 +15,7 @@ func (s *Print) EvalStmt(cmd *codegen.CommandHandler) error {
 	if err != nil {
 		return err
 	}
-	defer cmd.Release(v)
+	defer cmd.ReleaseIfAnonymous(v)
 	switch v.Type() {
 	case env.BYTE:
 		cmd.PrintByte(v)

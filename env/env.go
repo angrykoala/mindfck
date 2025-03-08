@@ -22,30 +22,30 @@ func New(begin int) *MindfuckEnv {
 	}
 }
 
-func (env *MindfuckEnv) DeclareArrayVariable(label string, size int) Variable {
+func (env *MindfuckEnv) DeclareArrayVariable(label string, size int, anonymous bool) Variable {
 	position := env.reserveMemory(size)
 
-	var newVar = NewArrayVariable(position, label, size)
+	var newVar = NewArrayVariable(position, label, size, anonymous)
 	return env.reserveLabel(label, newVar)
 }
 
-func (env *MindfuckEnv) DeclareVariable(label string, varType VarType) Variable {
+func (env *MindfuckEnv) DeclareVariable(label string, varType VarType, anonymous bool) Variable {
 	position := env.reserveMemory(getSize(varType))
 
-	var newVar = NewVariable(position, varType, label)
+	var newVar = NewVariable(position, varType, label, anonymous)
 	return env.reserveLabel(label, newVar)
 }
 
 func (env *MindfuckEnv) DeclareAnonVariable(varType VarType) Variable {
-	return env.DeclareVariable("", varType)
+	return env.DeclareVariable("", varType, true)
 }
 
 func (env *MindfuckEnv) DeclareAnonByte() Variable {
-	return env.DeclareVariable("", BYTE)
+	return env.DeclareVariable("", BYTE, true)
 }
 
 func (env *MindfuckEnv) DeclareAnonArray(size int) Variable {
-	return env.DeclareArrayVariable("", size)
+	return env.DeclareArrayVariable("", size, true)
 }
 
 func (env *MindfuckEnv) ReleaseVariable(v Variable) {

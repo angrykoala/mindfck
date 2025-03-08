@@ -48,9 +48,9 @@ type VariableExpr struct {
 
 func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	v1 := cmd.Env().ResolveLabel(lit.Label)
-	v2 := cmd.Clone(v1) // TODO: This probably can make a massive optimization
+	// v2 := cmd.Clone(v1) // TODO: This probably can make a massive optimization
 
-	return v2, nil
+	return v1, nil
 }
 
 type Operand string
@@ -84,12 +84,13 @@ func (expr *BinaryExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, err
 	if err != nil {
 		return nil, err
 	}
-	defer cmd.Release(v1)
+	defer cmd.ReleaseIfAnonymous(v1)
+
 	v2, err := expr.Right.EvalExpr(cmd)
 	if err != nil {
 		return nil, err
 	}
-	defer cmd.Release(v2)
+	defer cmd.ReleaseIfAnonymous(v2)
 
 	if v1.Type() == env.BYTE && v2.Type() == env.INT {
 		v3 := cmd.Env().DeclareAnonVariable(env.BYTE)
@@ -189,7 +190,7 @@ type NotExpr struct {
 
 func (n *NotExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	v, err := n.Expr.EvalExpr(cmd)
-	defer cmd.Release(v)
+	defer cmd.ReleaseIfAnonymous(v)
 	if err != nil {
 		return nil, err
 	}

@@ -33,15 +33,22 @@ func (c *CommandHandler) Declare(label string, varType env.VarType) env.Variable
 	if varType == env.ARRAY {
 		panic("Invalid variable type ARRAY, did you mean DeclareArray?")
 	}
-	return c.env.DeclareVariable(label, varType)
+	return c.env.DeclareVariable(label, varType, false)
 }
 
 func (c *CommandHandler) DeclareArray(label string, size int) env.Variable {
-	return c.env.DeclareArrayVariable(label, size)
+	return c.env.DeclareArrayVariable(label, size, false)
 }
 
 func (c *CommandHandler) Release(v env.Variable) {
 	c.env.ReleaseVariable(v)
+}
+
+// Release variable only if anonymous. This is an optimisation to reduce copies of variables
+func (c *CommandHandler) ReleaseIfAnonymous(v env.Variable) {
+	if v.IsAnonymous() {
+		c.Release(v)
+	}
 }
 
 func (c *CommandHandler) Read(v env.Variable) {

@@ -15,7 +15,7 @@ func (s *While) EvalStmt(cmd *codegen.CommandHandler) error {
 	if err != nil {
 		return err
 	}
-	defer cmd.Release(v)
+	defer cmd.ReleaseIfAnonymous(v)
 
 	var v2 env.Variable
 	var nestedError error
@@ -39,6 +39,6 @@ func (s *While) EvalStmt(cmd *codegen.CommandHandler) error {
 		return err
 	}
 
-	cmd.Release(v2)
+	cmd.ReleaseIfAnonymous(v2)
 	return nil
 }

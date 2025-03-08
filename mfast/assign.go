@@ -17,7 +17,7 @@ func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 	if err != nil {
 		return err
 	}
-	defer cmd.Release(v2)
+	defer cmd.ReleaseIfAnonymous(v2)
 
 	// Implicit cast
 	if v1.Type() == env.INT && v2.Type() == env.BYTE {
@@ -25,7 +25,7 @@ func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 	} else if v1.Type() == env.BYTE && v2.Type() == env.INT {
 		cmd.CastIntToByte(v2, v1)
 	} else {
-		cmd.Move(v2, v1)
+		cmd.Copy(v2, v1)
 	}
 
 	return nil
