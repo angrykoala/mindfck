@@ -6,12 +6,16 @@ import (
 )
 
 type Assign struct {
-	To   string
-	From Expr
+	To    string
+	From  Expr
+	Index int
 }
 
 func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 	v1 := cmd.Env().ResolveLabel(s.To)
+	if s.Index > -1 {
+		v1 = v1.GetByte(s.Index)
+	}
 
 	v2, err := s.From.EvalExpr(cmd)
 	if err != nil {

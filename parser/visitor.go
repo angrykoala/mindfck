@@ -106,9 +106,15 @@ func (v *AstGeneratorVisitor) VisitArrayDeclaration(ctx *mindfck.ArrayDeclaratio
 func (v *AstGeneratorVisitor) VisitAssignment(ctx *mindfck.AssignmentContext) interface{} {
 	expr := ctx.Expression().Accept(v).(mfast.Expr)
 
+	arrayIndex := -1
+	if ctx.ArrayIndex() != nil {
+		arrayIndex = utils.ToInt(ctx.ArrayIndex().GetText())
+	}
+
 	return &mfast.Assign{
-		To:   ctx.Identifier().GetText(),
-		From: expr,
+		To:    ctx.Identifier().GetText(),
+		From:  expr,
+		Index: arrayIndex,
 	}
 }
 func (v *AstGeneratorVisitor) VisitPrint(ctx *mindfck.PrintContext) interface{} {

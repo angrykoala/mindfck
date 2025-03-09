@@ -2,6 +2,8 @@ byte test[10]
 test = [97,97,97,97,97,97,98,97,97,97]
 print test
 
-print test[1]+1+1
+print ' '
 
-print [100,100][1]
+test[2]=[100]
+
+print test
