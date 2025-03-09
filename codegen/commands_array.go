@@ -19,9 +19,19 @@ func (c *CommandHandler) SetArray(v env.Variable, value []int) {
 func (c *CommandHandler) PrintArray(v env.Variable) {
 	assertArray(v)
 
-	c.iterateBytes(v, func(b env.Variable, _ int) {
+	temp := c.env.DeclareAnonByte()
+	defer c.Release(temp)
+	c.SetByte(temp, 91) // [
+	c.PrintByte(temp)
+	c.SetByte(temp, 44) // ,
+	c.iterateBytes(v, func(b env.Variable, i int) {
 		c.PrintByte(b)
+		if i < v.Size()-1 {
+			c.PrintByte(temp)
+		}
 	})
+	c.SetByte(temp, 93) // ]
+	c.PrintByte(temp)
 }
 
 func assertArrayOfSize(v env.Variable, size int) {
