@@ -11,10 +11,13 @@ statement:
 	| whileLoop
 	| read;
 
-declaration: type = (BYTE | INT) identifier;
+declaration:
+	type = (BYTE | INT) identifier (EQUALS expression)?;
 
 arrayDeclaration:
-	type = (BYTE | BYTE) identifier '[' arraySize ']';
+	type = (BYTE | BYTE) identifier '[' arraySize ']' (
+		EQUALS expression
+	)?;
 
 arraySize: NUMBER;
 

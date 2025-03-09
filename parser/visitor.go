@@ -67,17 +67,39 @@ func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) 
 		panic("invalid type in declaration")
 	}
 
+	var assign *mfast.Assign
+	if ctx.EQUALS() != nil {
+		// Declaration with assignment
+		expr := ctx.Expression().Accept(v).(mfast.Expr)
+		assign = &mfast.Assign{
+			To:   ctx.Identifier().GetText(),
+			From: expr,
+		}
+	}
+
 	return &mfast.Declare{
 		Label:   ctx.Identifier().IDENTIFIER().GetText(),
 		VarType: varType,
+		Assign:  assign,
 	}
 }
 
 func (v *AstGeneratorVisitor) VisitArrayDeclaration(ctx *mindfck.ArrayDeclarationContext) interface{} {
+	var assign *mfast.Assign
+	if ctx.EQUALS() != nil {
+		// Declaration with assignment
+		expr := ctx.Expression().Accept(v).(mfast.Expr)
+		assign = &mfast.Assign{
+			To:   ctx.Identifier().GetText(),
+			From: expr,
+		}
+	}
+
 	return &mfast.Declare{
 		Label:   ctx.Identifier().IDENTIFIER().GetText(),
 		VarType: env.ARRAY,
 		Size:    utils.ToInt(ctx.ArraySize().GetText()),
+		Assign:  assign,
 	}
 }
 

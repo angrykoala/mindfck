@@ -1,11 +1,9 @@
-int a
-int b
-a = 3 + a
+int a = 3
+int b 
 a = 33 + a
 a = a + 2
-int c
 a = a + 21
 a = a + 2
 b = 10 + a
-c = a + b
+int c =  a + b
 print c

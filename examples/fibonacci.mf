@@ -1,13 +1,9 @@
-int n
-n = 22
-int i
-i = 0
+int n = 22
+int i = 0
 
-int a
-int b
+int a = 0
+int b = 1
 int c
-a=0
-b=1
 
 while (i<n) {
     print a
