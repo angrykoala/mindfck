@@ -20,9 +20,6 @@ type mindfckVisitor interface {
 	// Visit a parse tree produced by mindfckParser#arrayDeclaration.
 	VisitArrayDeclaration(ctx *ArrayDeclarationContext) interface{}
 
-	// Visit a parse tree produced by mindfckParser#arraySize.
-	VisitArraySize(ctx *ArraySizeContext) interface{}
-
 	// Visit a parse tree produced by mindfckParser#assignment.
 	VisitAssignment(ctx *AssignmentContext) interface{}
 
@@ -55,4 +52,7 @@ type mindfckVisitor interface {
 
 	// Visit a parse tree produced by mindfckParser#arrayItem.
 	VisitArrayItem(ctx *ArrayItemContext) interface{}
+
+	// Visit a parse tree produced by mindfckParser#arrayIndex.
+	VisitArrayIndex(ctx *ArrayIndexContext) interface{}
 }

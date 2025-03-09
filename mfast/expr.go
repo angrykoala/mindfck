@@ -42,13 +42,33 @@ func (lit *ArrayLiteral) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, er
 	return res, nil
 }
 
+type ArrayAccess struct {
+	Target Expr
+	Index  int
+}
+
+func (expr *ArrayAccess) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
+	v1, err := expr.Target.EvalExpr(cmd)
+	defer cmd.ReleaseIfAnonymous(v1)
+	if err != nil {
+		return nil, err
+	}
+
+	if v1.Type() != env.ARRAY {
+		panic("Cannot access array, invalid type. Must be an array")
+	}
+
+	byte := v1.GetByte(expr.Index)
+	res := cmd.Clone(byte)
+	return res, nil
+}
+
 type VariableExpr struct {
 	Label string
 }
 
 func (lit *VariableExpr) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
 	v1 := cmd.Env().ResolveLabel(lit.Label)
-	// v2 := cmd.Clone(v1) // TODO: This probably can make a massive optimization
 
 	return v1, nil
 }

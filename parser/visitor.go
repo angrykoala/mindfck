@@ -98,7 +98,7 @@ func (v *AstGeneratorVisitor) VisitArrayDeclaration(ctx *mindfck.ArrayDeclaratio
 	return &mfast.Declare{
 		Label:   ctx.Identifier().IDENTIFIER().GetText(),
 		VarType: env.ARRAY,
-		Size:    utils.ToInt(ctx.ArraySize().GetText()),
+		Size:    utils.ToInt(ctx.ArrayIndex().GetText()),
 		Assign:  assign,
 	}
 }
@@ -173,6 +173,11 @@ func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) in
 			Operator: mfast.Operand(ctx.GetOp().GetText()),
 			Left:     left,
 			Right:    right,
+		}
+	} else if ctx.ArrayIndex() != nil {
+		return &mfast.ArrayAccess{
+			Target: ctx.Expression(0).Accept(v).(mfast.Expr),
+			Index:  utils.ToInt(ctx.ArrayIndex().GetText()),
 		}
 	} else if ctx.Expression(0) != nil {
 		if ctx.NOT() != nil {

@@ -24,10 +24,6 @@ func (v *BasemindfckVisitor) VisitArrayDeclaration(ctx *ArrayDeclarationContext)
 	return v.VisitChildren(ctx)
 }
 
-func (v *BasemindfckVisitor) VisitArraySize(ctx *ArraySizeContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BasemindfckVisitor) VisitAssignment(ctx *AssignmentContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -69,5 +65,9 @@ func (v *BasemindfckVisitor) VisitArrayLiteral(ctx *ArrayLiteralContext) interfa
 }
 
 func (v *BasemindfckVisitor) VisitArrayItem(ctx *ArrayItemContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BasemindfckVisitor) VisitArrayIndex(ctx *ArrayIndexContext) interface{} {
 	return v.VisitChildren(ctx)
 }

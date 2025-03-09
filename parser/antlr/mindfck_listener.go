@@ -20,9 +20,6 @@ type mindfckListener interface {
 	// EnterArrayDeclaration is called when entering the arrayDeclaration production.
 	EnterArrayDeclaration(c *ArrayDeclarationContext)
 
-	// EnterArraySize is called when entering the arraySize production.
-	EnterArraySize(c *ArraySizeContext)
-
 	// EnterAssignment is called when entering the assignment production.
 	EnterAssignment(c *AssignmentContext)
 
@@ -56,6 +53,9 @@ type mindfckListener interface {
 	// EnterArrayItem is called when entering the arrayItem production.
 	EnterArrayItem(c *ArrayItemContext)
 
+	// EnterArrayIndex is called when entering the arrayIndex production.
+	EnterArrayIndex(c *ArrayIndexContext)
+
 	// ExitStatements is called when exiting the statements production.
 	ExitStatements(c *StatementsContext)
 
@@ -67,9 +67,6 @@ type mindfckListener interface {
 
 	// ExitArrayDeclaration is called when exiting the arrayDeclaration production.
 	ExitArrayDeclaration(c *ArrayDeclarationContext)
-
-	// ExitArraySize is called when exiting the arraySize production.
-	ExitArraySize(c *ArraySizeContext)
 
 	// ExitAssignment is called when exiting the assignment production.
 	ExitAssignment(c *AssignmentContext)
@@ -103,4 +100,7 @@ type mindfckListener interface {
 
 	// ExitArrayItem is called when exiting the arrayItem production.
 	ExitArrayItem(c *ArrayItemContext)
+
+	// ExitArrayIndex is called when exiting the arrayIndex production.
+	ExitArrayIndex(c *ArrayIndexContext)
 }

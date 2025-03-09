@@ -15,11 +15,9 @@ declaration:
 	type = (BYTE | INT) identifier (EQUALS expression)?;
 
 arrayDeclaration:
-	type = (BYTE | BYTE) identifier '[' arraySize ']' (
+	type = (BYTE | BYTE) identifier '[' arrayIndex ']' (
 		EQUALS expression
 	)?;
-
-arraySize: NUMBER;
 
 assignment: identifier EQUALS expression;
 
@@ -37,6 +35,7 @@ block: statement*;
 expression:
 	identifier
 	| literal
+	| expression '[' arrayIndex ']'
 	| '(' expression ')'
 	| NOT expression
 	| expression op = (TIMES | DIVIDE) expression
@@ -52,6 +51,8 @@ literal: NUMBER | CHAR | BYTE_NUMBER | arrayLiteral;
 
 arrayLiteral: '[' (arrayItem (',' arrayItem)*)? ']';
 arrayItem: NUMBER | BYTE_NUMBER;
+
+arrayIndex: NUMBER;
 
 CHAR: '\'' EXT_ASCII_CHAR '\'';
 BYTE_NUMBER: NUMBER 'b';
