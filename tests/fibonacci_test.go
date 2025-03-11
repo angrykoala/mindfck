@@ -41,3 +41,33 @@ func TestFibonacci10(t *testing.T) {
 	interpreter.Run(code)
 	assert.Equal(t, []byte{0, 1, 1, 2, 3, 5, 8, 13, 21, 34}, interpreter.Output)
 }
+
+func TestFibonacci10Int(t *testing.T) {
+	input := `
+	int n = 10
+	int i = 0
+	
+	int a = 0
+	int b = 1
+	int c
+	
+	while (i<n) {
+		print a
+		print ' '
+		c = b
+		b = a+b
+		a=c
+		i=i+1
+	}
+	`
+
+	ast, err := parser.Parse(input)
+	assert.Nil(t, err)
+
+	code, err := compiler.Compile(ast)
+	assert.Nil(t, err)
+
+	interpreter := bfinterpreter.New()
+	interpreter.Run(code)
+	assert.Equal(t, []byte("0 1 1 2 3 5 8 13 21 34 "), interpreter.Output)
+}

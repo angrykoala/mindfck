@@ -8,7 +8,7 @@ import (
 type Assign struct {
 	To    string
 	From  Expr
-	Index int
+	Index int // Assign value to given array index, -1 if no index needed
 }
 
 func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {

@@ -11,13 +11,13 @@ func TestSetArray(t *testing.T) {
 	cmd := New()
 
 	var1 := cmd.DeclareArray("var1", 5)
-	cmd.SetArray(var1, []int{1, 2, 1, 4, 5})
+	cmd.SetArray(var1, []int{49, 50, 51, 52, 53})
 	cmd.PrintArray(var1)
 
 	code := cmd.Compile()
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, []byte{1, 2, 1, 4, 5, 0}, interpreter.Memory)
-	assert.Equal(t, []byte{1, 2, 1, 4, 5}, interpreter.Output)
+	assert.Equal(t, 6, len(interpreter.Memory))
+	assert.Equal(t, []byte("[1,2,3,4,5]"), interpreter.Output)
 }

@@ -72,8 +72,9 @@ func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) 
 		// Declaration with assignment
 		expr := ctx.Expression().Accept(v).(mfast.Expr)
 		assign = &mfast.Assign{
-			To:   ctx.Identifier().GetText(),
-			From: expr,
+			To:    ctx.Identifier().GetText(),
+			From:  expr,
+			Index: -1,
 		}
 	}
 
@@ -89,9 +90,11 @@ func (v *AstGeneratorVisitor) VisitArrayDeclaration(ctx *mindfck.ArrayDeclaratio
 	if ctx.EQUALS() != nil {
 		// Declaration with assignment
 		expr := ctx.Expression().Accept(v).(mfast.Expr)
+
 		assign = &mfast.Assign{
-			To:   ctx.Identifier().GetText(),
-			From: expr,
+			To:    ctx.Identifier().GetText(),
+			From:  expr,
+			Index: -1,
 		}
 	}
 
@@ -117,6 +120,7 @@ func (v *AstGeneratorVisitor) VisitAssignment(ctx *mindfck.AssignmentContext) in
 		Index: arrayIndex,
 	}
 }
+
 func (v *AstGeneratorVisitor) VisitPrint(ctx *mindfck.PrintContext) interface{} {
 	expr := ctx.Expression().Accept(v).(mfast.Expr)
 
