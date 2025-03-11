@@ -212,11 +212,19 @@ Alternatively:
 
 To debug the gramar: [Antlr Lab](http://lab.antlr.org/)
 
-## Resources
 
-These resources where used as inspiration / tools for this project
+## Previous Work
+
+Similar projects to Mindfck:
 
 -   https://github.com/LucasMW/Headache
+-   https://esolangs.org/wiki/Asm2bf
+-   https://esolangs.org/wiki/BFasm
+
+## Resources
+
+Used as inspiration or tools for this project:
+
 -   https://esolangs.org/wiki/Brainfuck_algorithms
 -   https://www.nayuki.io/page/brainfuck-interpreter-javascript
 -   https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
