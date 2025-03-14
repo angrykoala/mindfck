@@ -184,10 +184,13 @@ func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) in
 			Left:     left,
 			Right:    right,
 		}
-	} else if ctx.ArrayIndex() != nil {
+	} else if ctx.ArrayAccess() != nil {
+		indexExpr := ctx.ArrayAccess().Expression().Accept(v).(mfast.Expr)
+
+		// TODO: optimise if index is literal
 		return &mfast.ArrayAccess{
 			Target: ctx.Expression(0).Accept(v).(mfast.Expr),
-			Index:  utils.ToInt(ctx.ArrayIndex().GetText()),
+			Index:  indexExpr,
 		}
 	} else if ctx.Expression(0) != nil {
 		if ctx.NOT() != nil {

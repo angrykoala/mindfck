@@ -50,6 +50,9 @@ type mindfckListener interface {
 	// EnterArrayLiteral is called when entering the arrayLiteral production.
 	EnterArrayLiteral(c *ArrayLiteralContext)
 
+	// EnterArrayAccess is called when entering the arrayAccess production.
+	EnterArrayAccess(c *ArrayAccessContext)
+
 	// EnterArrayItem is called when entering the arrayItem production.
 	EnterArrayItem(c *ArrayItemContext)
 
@@ -97,6 +100,9 @@ type mindfckListener interface {
 
 	// ExitArrayLiteral is called when exiting the arrayLiteral production.
 	ExitArrayLiteral(c *ArrayLiteralContext)
+
+	// ExitArrayAccess is called when exiting the arrayAccess production.
+	ExitArrayAccess(c *ArrayAccessContext)
 
 	// ExitArrayItem is called when exiting the arrayItem production.
 	ExitArrayItem(c *ArrayItemContext)

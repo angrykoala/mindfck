@@ -64,6 +64,10 @@ func (v *BasemindfckVisitor) VisitArrayLiteral(ctx *ArrayLiteralContext) interfa
 	return v.VisitChildren(ctx)
 }
 
+func (v *BasemindfckVisitor) VisitArrayAccess(ctx *ArrayAccessContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BasemindfckVisitor) VisitArrayItem(ctx *ArrayItemContext) interface{} {
 	return v.VisitChildren(ctx)
 }

@@ -50,6 +50,9 @@ type mindfckVisitor interface {
 	// Visit a parse tree produced by mindfckParser#arrayLiteral.
 	VisitArrayLiteral(ctx *ArrayLiteralContext) interface{}
 
+	// Visit a parse tree produced by mindfckParser#arrayAccess.
+	VisitArrayAccess(ctx *ArrayAccessContext) interface{}
+
 	// Visit a parse tree produced by mindfckParser#arrayItem.
 	VisitArrayItem(ctx *ArrayItemContext) interface{}
 

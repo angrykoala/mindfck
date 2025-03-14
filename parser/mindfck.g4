@@ -35,7 +35,7 @@ block: statement*;
 expression:
 	identifier
 	| literal
-	| expression '[' arrayIndex ']'
+	| expression arrayAccess
 	| '(' expression ')'
 	| NOT expression
 	| expression op = (TIMES | DIVIDE) expression
@@ -50,6 +50,8 @@ identifier: IDENTIFIER;
 literal: NUMBER | CHAR | BYTE_NUMBER | arrayLiteral;
 
 arrayLiteral: '[' (arrayItem (',' arrayItem)*)? ']';
+arrayAccess: '[' expression ']';
+
 arrayItem: NUMBER | BYTE_NUMBER;
 
 arrayIndex: NUMBER;

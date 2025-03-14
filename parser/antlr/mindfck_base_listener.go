@@ -105,6 +105,12 @@ func (s *BasemindfckListener) EnterArrayLiteral(ctx *ArrayLiteralContext) {}
 // ExitArrayLiteral is called when production arrayLiteral is exited.
 func (s *BasemindfckListener) ExitArrayLiteral(ctx *ArrayLiteralContext) {}
 
+// EnterArrayAccess is called when production arrayAccess is entered.
+func (s *BasemindfckListener) EnterArrayAccess(ctx *ArrayAccessContext) {}
+
+// ExitArrayAccess is called when production arrayAccess is exited.
+func (s *BasemindfckListener) ExitArrayAccess(ctx *ArrayAccessContext) {}
+
 // EnterArrayItem is called when production arrayItem is entered.
 func (s *BasemindfckListener) EnterArrayItem(ctx *ArrayItemContext) {}
 
