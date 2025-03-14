@@ -49,6 +49,8 @@ func NewVariable(position int, varType VarType, label string, anonymous bool) Va
 	}
 }
 
+const ARRAY_HEAD_SIZE = 4
+
 func NewArrayVariable(position int, label string, size int, anonymous bool) Variable {
 	return &variable{
 		position:    position,

@@ -18,6 +18,6 @@ func TestSetArray(t *testing.T) {
 	interpreter := bfinterpreter.New()
 	interpreter.Run(code)
 
-	assert.Equal(t, 6, len(interpreter.Memory))
+	assert.Equal(t, 10, len(interpreter.Memory))
 	assert.Equal(t, []byte("[1,2,3,4,5]"), interpreter.Output)
 }

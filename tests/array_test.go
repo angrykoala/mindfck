@@ -17,7 +17,7 @@ func TestArray(t *testing.T) {
     
     print ' '
     
-    test[2]=[100]
+    test[2]=100
     
     print test
 	`

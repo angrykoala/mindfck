@@ -14,7 +14,7 @@ type Assign struct {
 func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 	v1 := cmd.Env().ResolveLabel(s.To)
 	if s.Index > -1 {
-		v1 = v1.GetByte(s.Index)
+		v1 = v1.GetByte(s.Index + env.ARRAY_HEAD_SIZE)
 	}
 
 	v2, err := s.From.EvalExpr(cmd)
