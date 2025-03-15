@@ -4,8 +4,8 @@ import (
 	"testing"
 )
 
-func populateSet(count int, start int) *ItemSet {
-	set := ItemSet{}
+func populateSet(count int, start int) *IntSet {
+	set := IntSet{}
 	for i := start; i < (start + count); i++ {
 		set.Add(i)
 	}

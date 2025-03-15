@@ -8,7 +8,7 @@ import (
 
 type MindfuckEnv struct {
 	labels         map[string]Variable
-	reservedMemory utils.ItemSet
+	reservedMemory utils.IntSet
 	freedMemory    []int
 	memoryBegin    int
 }
@@ -16,7 +16,7 @@ type MindfuckEnv struct {
 func New(begin int) *MindfuckEnv {
 	return &MindfuckEnv{
 		labels:         make(map[string]Variable),
-		reservedMemory: utils.ItemSet{},
+		reservedMemory: utils.IntSet{},
 		freedMemory:    []int{},
 		memoryBegin:    begin + GlobalsCount,
 	}
