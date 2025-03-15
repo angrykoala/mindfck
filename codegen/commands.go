@@ -25,6 +25,10 @@ func (c *CommandHandler) Env() *env.MindfuckEnv {
 }
 
 func (c *CommandHandler) Compile() string {
+	if c.env.HasAnonymousVariables() {
+		panic("Error: Anonymous variables in memory. Possible memory leak")
+	}
+
 	rawCode := c.writer.print()
 	return optimize(rawCode)
 }

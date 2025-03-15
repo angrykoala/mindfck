@@ -51,3 +51,53 @@ func (s *IntSet) Items() []int {
 func (s *IntSet) Size() int {
 	return len(s.items)
 }
+
+// IntSet the set of Items
+type AnySet struct {
+	items map[any]bool
+}
+
+// Add adds a new element to the Set. Returns a pointer to the Set.
+func (s *AnySet) Add(t any) {
+	if s.items == nil {
+		s.items = make(map[any]bool)
+	}
+	_, ok := s.items[t]
+	if !ok {
+		s.items[t] = true
+	}
+}
+
+// Clear removes all elements from the Set
+func (s *AnySet) Clear() {
+	s.items = make(map[any]bool)
+}
+
+// Delete removes the Item from the Set and returns Has(Item)
+func (s *AnySet) Delete(item any) bool {
+	_, ok := s.items[item]
+	if ok {
+		delete(s.items, item)
+	}
+	return ok
+}
+
+// Has returns true if the Set contains the Item
+func (s *AnySet) Has(item any) bool {
+	_, ok := s.items[item]
+	return ok
+}
+
+// Items returns the Item(s) stored
+func (s *AnySet) Items() []any {
+	items := []any{}
+	for i := range s.items {
+		items = append(items, i)
+	}
+	return items
+}
+
+// Size returns the size of the set
+func (s *AnySet) Size() int {
+	return len(s.items)
+}

@@ -18,10 +18,11 @@ func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 	if err != nil {
 		return err
 	}
+	defer cmd.ReleaseIfAnonymous(v1)
 	defer cmd.ReleaseIfAnonymous(v2)
 
 	if s.Index != nil {
-		// Array assigment
+		// Array assignment
 
 		if v1.Type() != env.ARRAY {
 			return fmt.Errorf("cannot do index assign to non-array variable")
@@ -34,6 +35,7 @@ func (s *Assign) EvalStmt(cmd *codegen.CommandHandler) error {
 		if err != nil {
 			return err
 		}
+		defer cmd.ReleaseIfAnonymous(index)
 
 		if v2.Type() == env.INT {
 			castValue := cmd.Env().DeclareAnonByte()

@@ -11,6 +11,7 @@ type MindfuckEnv struct {
 	reservedMemory utils.IntSet
 	freedMemory    []int
 	memoryBegin    int
+	variables      utils.AnySet
 }
 
 func New(begin int) *MindfuckEnv {
@@ -19,6 +20,7 @@ func New(begin int) *MindfuckEnv {
 		reservedMemory: utils.IntSet{},
 		freedMemory:    []int{},
 		memoryBegin:    begin + GlobalsCount,
+		variables:      utils.AnySet{},
 	}
 }
 
@@ -54,6 +56,11 @@ func (env *MindfuckEnv) ReleaseVariable(v Variable) {
 		panic("release: out of bounds")
 	}
 
+	hasVariable := env.variables.Delete(v)
+	if !hasVariable {
+		panic("Variable not found on release")
+	}
+
 	env.releaseMemory(v.Position(), v.Size())
 
 	if v.HasLabel() {
@@ -71,6 +78,18 @@ func (env *MindfuckEnv) ResolveLabel(label string) Variable {
 	return variable
 }
 
+// Check if there are anonymous variables
+func (env *MindfuckEnv) HasAnonymousVariables() bool {
+	variableItems := env.variables.Items()
+
+	for _, v := range variableItems {
+		if v.(Variable).IsAnonymous() {
+			return true
+		}
+	}
+	return false
+}
+
 func (env *MindfuckEnv) reserveLabel(label string, newVar Variable) Variable {
 	if newVar.HasLabel() {
 		_, hasLabel := env.labels[label]
@@ -81,6 +100,11 @@ func (env *MindfuckEnv) reserveLabel(label string, newVar Variable) Variable {
 
 		env.labels[label] = newVar
 	}
+
+	if env.variables.Has(newVar) {
+		panic("Variable Already Reseved")
+	}
+	env.variables.Add(newVar)
 	return newVar
 }
 
