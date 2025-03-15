@@ -1,6 +1,3 @@
 byte test[10]
 test = [97,97,105,97,97,97,98,97,97,97]
-print test
-print 10b
-test[2] = 90+20
-print test
+print test[2]

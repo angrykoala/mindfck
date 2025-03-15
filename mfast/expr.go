@@ -58,15 +58,22 @@ func (expr *ArrayAccess) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, er
 		panic("Cannot access array, invalid type. Must be an array")
 	}
 
-	index, err := expr.evaluateIndex(cmd)
-	if err != nil {
-		return nil, err
-	}
-	cmd.ReleaseIfAnonymous(index)
+	if w, ok := expr.Index.(*Literal); ok {
+		res := cmd.Env().DeclareAnonByte()
+		cmd.Copy(v1.GetByte(w.Value+env.ARRAY_HEAD_SIZE), res)
+		return res, nil
 
-	res := cmd.Env().DeclareAnonByte()
-	cmd.ReadIndex(v1, index, res)
-	return res, nil
+	} else {
+		index, err := expr.evaluateIndex(cmd)
+		if err != nil {
+			return nil, err
+		}
+		cmd.ReleaseIfAnonymous(index)
+
+		res := cmd.Env().DeclareAnonByte()
+		cmd.ReadIndex(v1, index, res)
+		return res, nil
+	}
 }
 
 func (expr *ArrayAccess) evaluateIndex(cmd *codegen.CommandHandler) (env.Variable, error) {
