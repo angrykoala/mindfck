@@ -75,6 +75,12 @@ func (s *BasemindfckListener) EnterRead(ctx *ReadContext) {}
 // ExitRead is called when production read is exited.
 func (s *BasemindfckListener) ExitRead(ctx *ReadContext) {}
 
+// EnterDebug is called when production debug is entered.
+func (s *BasemindfckListener) EnterDebug(ctx *DebugContext) {}
+
+// ExitDebug is called when production debug is exited.
+func (s *BasemindfckListener) ExitDebug(ctx *DebugContext) {}
+
 // EnterBlock is called when production block is entered.
 func (s *BasemindfckListener) EnterBlock(ctx *BlockContext) {}
 

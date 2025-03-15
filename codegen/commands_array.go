@@ -49,6 +49,8 @@ func (c *CommandHandler) ReadIndex(v env.Variable, index env.Variable, to env.Va
 	c.shift(-2) // Return to original position
 
 	c.CopyByte(head.Data, to)
+	head.resetHead(c)
+
 }
 
 func (c *CommandHandler) WriteIndex(v env.Variable, index env.Variable, value env.Variable) {
@@ -84,6 +86,7 @@ func (c *CommandHandler) WriteIndex(v env.Variable, index env.Variable, value en
 	c.endLoop()
 
 	c.shift(-2) // Return to original position
+	head.resetHead(c)
 }
 
 // Iterate array data, skipping the head
@@ -135,6 +138,10 @@ type arrayHead struct {
 	Index       env.Variable
 	ReturnIndex env.Variable
 	Data        env.Variable
+}
+
+func (head *arrayHead) resetHead(cmd *CommandHandler) {
+	cmd.Reset(head.Data)
 }
 
 func (c *CommandHandler) initializeArrayHead(arr env.Variable, index env.Variable) *arrayHead {

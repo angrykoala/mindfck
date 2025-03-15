@@ -44,6 +44,10 @@ func (v *BasemindfckVisitor) VisitRead(ctx *ReadContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BasemindfckVisitor) VisitDebug(ctx *DebugContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BasemindfckVisitor) VisitBlock(ctx *BlockContext) interface{} {
 	return v.VisitChildren(ctx)
 }

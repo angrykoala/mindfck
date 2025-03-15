@@ -53,6 +53,9 @@ func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) inte
 	if ctx.Read() != nil {
 		return ctx.Read().Accept(v)
 	}
+	if ctx.Debug() != nil {
+		return ctx.Debug().Accept(v)
+	}
 
 	panic("Spanish Inquisition (unexpected)")
 }
@@ -132,6 +135,10 @@ func (v *AstGeneratorVisitor) VisitRead(ctx *mindfck.ReadContext) interface{} {
 	return &mfast.Read{
 		To: ctx.Identifier().GetText(),
 	}
+}
+
+func (v *AstGeneratorVisitor) VisitDebug(ctx *mindfck.DebugContext) interface{} {
+	return &mfast.Debug{}
 }
 
 func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) interface{} {

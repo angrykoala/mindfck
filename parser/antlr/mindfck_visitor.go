@@ -35,6 +35,9 @@ type mindfckVisitor interface {
 	// Visit a parse tree produced by mindfckParser#read.
 	VisitRead(ctx *ReadContext) interface{}
 
+	// Visit a parse tree produced by mindfckParser#debug.
+	VisitDebug(ctx *DebugContext) interface{}
+
 	// Visit a parse tree produced by mindfckParser#block.
 	VisitBlock(ctx *BlockContext) interface{}
 

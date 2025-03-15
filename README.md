@@ -175,6 +175,12 @@ go run .
 go test ./...
 ```
 
+Run single test with verbose mode:
+
+```
+go test ./... --run TestArrayAccess -v
+```
+
 ### Grammar
 
 Grammar is written in antlr4 (`parser/mindfck.g4`). If it is updated, files need to be regenerated.

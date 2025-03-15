@@ -9,6 +9,7 @@ statement:
 	| print
 	| ifConditional
 	| whileLoop
+	| debug
 	| read;
 
 declaration:
@@ -29,6 +30,8 @@ ifConditional:
 whileLoop: WHILE '(' expression ')' '{' block '}';
 
 read: READ identifier;
+
+debug: DEBUG;
 
 block: statement*;
 
@@ -64,6 +67,7 @@ fragment EXT_ASCII_CHAR:
 
 WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
+DEBUG: 'debug';
 INT: 'int';
 PRINT: 'print';
 IF: 'if';

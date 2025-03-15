@@ -92,6 +92,7 @@ func (interpreter *Interpreter) Debug() {
 	fmt.Println("Memory:", interpreter.Memory)
 	fmt.Println("Output:", interpreter.Output)
 	fmt.Println("Pointer:", interpreter.memPtr)
+	fmt.Println("")
 }
 
 func (interpreter *Interpreter) currentValue() byte {
