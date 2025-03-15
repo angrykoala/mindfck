@@ -1,9 +1,16 @@
 byte length=10
-byte original[10] = [1,10,5,8,8,9,4,55,2,15]
+byte original[10] = [
+  52, 50, 68, 121, 49,
+  50, 50, 50,  48, 55
+]
+
+print original
+print 10b
+
 byte i=0
 
 while(i < length) {
-    var j = 0
+    byte j = 0
     while(j<length-i-1){
         if (original[j] > original[j + 1]) {
             byte temp = original[j]
@@ -17,5 +24,5 @@ while(i < length) {
     i = i+1
 }
 
-
+print original
 

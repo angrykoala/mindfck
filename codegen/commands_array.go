@@ -51,6 +51,41 @@ func (c *CommandHandler) ReadIndex(v env.Variable, index env.Variable, to env.Va
 	c.CopyByte(head.Data, to)
 }
 
+func (c *CommandHandler) WriteIndex(v env.Variable, index env.Variable, value env.Variable) {
+	assertArray(v)
+	assertByte(value)
+	assertByte(index)
+
+	// "Zipper Alg"
+	head := c.initializeArrayHead(v, index)
+	c.Copy(value, head.Data)
+	c.goTo(head.Buffer)
+
+	// Move head to index
+
+	c.shift(1) // Go to index
+	c.beginLoop()
+	c.shift(-1) // Go to buffer
+	c.moveHeadRight()
+	c.shift(1) // Move to index
+	c.endLoop()
+
+	// Copy array[0] to data
+	c.shift(2)                // Move to Data
+	c.rawCopyWithReset(1, -3) // Copy to arr[0], using Buffer as buffer
+	c.rawResetByte()          // Reset Data byte
+
+	// Move head back
+	c.shift(-1) // Go to returnIndex
+	c.beginLoop()
+	c.shift(-2) // Go to buffer
+	c.moveHeadLeft()
+	c.shift(2) // Go to new returnIndex
+	c.endLoop()
+
+	c.shift(-2) // Return to original position
+}
+
 // Iterate array data, skipping the head
 func (c *CommandHandler) iterateArray(v env.Variable, cb func(b env.Variable, i int, total_index int)) {
 	c.iterateBytes(v, func(b env.Variable, i int) {
@@ -162,12 +197,7 @@ func (c *CommandHandler) rawMoveByteWithReset(relativeIndex int) {
 	c.shift(relativeIndex)
 	c.rawResetByte()
 	c.shift(-relativeIndex)
-	c.beginLoop()
-	c.shift(relativeIndex)
-	c.increment()
-	c.shift(-relativeIndex)
-	c.decrement()
-	c.writer.command(BFLoopEnd)
+	c.rawMoveByte(relativeIndex)
 }
 
 // Move current position to relative index
@@ -185,6 +215,16 @@ func (c *CommandHandler) rawCopy(toRelativeIndex int, bufferRelativeIndex int) {
 	c.shift(bufferRelativeIndex)
 	c.rawMoveByte(-bufferRelativeIndex)
 	c.shift(-bufferRelativeIndex)
+}
+
+// Move current position to relative index
+// Ends in same position
+// Resets target byte first
+func (c *CommandHandler) rawCopyWithReset(toRelativeIndex int, bufferRelativeIndex int) {
+	c.shift(toRelativeIndex)
+	c.rawResetByte()
+	c.shift(-toRelativeIndex)
+	c.rawCopy(toRelativeIndex, bufferRelativeIndex)
 }
 
 func (c *CommandHandler) rawResetByte() {

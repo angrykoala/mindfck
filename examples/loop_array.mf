@@ -1,0 +1,17 @@
+byte test[10]
+test = [97,97,105,97,97,97,98,97,97,97]
+print test
+print test[0]
+print test[1]
+print test[2]
+print test[4]
+print 10b
+print test 
+print 10b
+
+byte i = 0
+
+while (i<10) {
+    print test[i]
+    i = i+1
+}

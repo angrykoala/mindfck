@@ -19,7 +19,7 @@ arrayDeclaration:
 		EQUALS expression
 	)?;
 
-assignment: identifier ('[' arrayIndex ']')? EQUALS expression;
+assignment: identifier arrayAccess? EQUALS expression;
 
 print: PRINT expression;
 

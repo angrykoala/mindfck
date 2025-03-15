@@ -1,0 +1,7 @@
+byte i = 0
+byte max = 10
+
+while (i<max) {
+    print i+48
+    i = i+1
+}
