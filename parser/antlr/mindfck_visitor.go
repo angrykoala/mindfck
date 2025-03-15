@@ -35,6 +35,9 @@ type mindfckVisitor interface {
 	// Visit a parse tree produced by mindfckParser#read.
 	VisitRead(ctx *ReadContext) interface{}
 
+	// Visit a parse tree produced by mindfckParser#debug.
+	VisitDebug(ctx *DebugContext) interface{}
+
 	// Visit a parse tree produced by mindfckParser#block.
 	VisitBlock(ctx *BlockContext) interface{}
 
@@ -49,6 +52,9 @@ type mindfckVisitor interface {
 
 	// Visit a parse tree produced by mindfckParser#arrayLiteral.
 	VisitArrayLiteral(ctx *ArrayLiteralContext) interface{}
+
+	// Visit a parse tree produced by mindfckParser#arrayAccess.
+	VisitArrayAccess(ctx *ArrayAccessContext) interface{}
 
 	// Visit a parse tree produced by mindfckParser#arrayItem.
 	VisitArrayItem(ctx *ArrayItemContext) interface{}

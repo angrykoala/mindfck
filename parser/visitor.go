@@ -53,6 +53,9 @@ func (v *AstGeneratorVisitor) VisitStatement(ctx *mindfck.StatementContext) inte
 	if ctx.Read() != nil {
 		return ctx.Read().Accept(v)
 	}
+	if ctx.Debug() != nil {
+		return ctx.Debug().Accept(v)
+	}
 
 	panic("Spanish Inquisition (unexpected)")
 }
@@ -72,9 +75,8 @@ func (v *AstGeneratorVisitor) VisitDeclaration(ctx *mindfck.DeclarationContext) 
 		// Declaration with assignment
 		expr := ctx.Expression().Accept(v).(mfast.Expr)
 		assign = &mfast.Assign{
-			To:    ctx.Identifier().GetText(),
-			From:  expr,
-			Index: -1,
+			To:   ctx.Identifier().GetText(),
+			From: expr,
 		}
 	}
 
@@ -92,9 +94,8 @@ func (v *AstGeneratorVisitor) VisitArrayDeclaration(ctx *mindfck.ArrayDeclaratio
 		expr := ctx.Expression().Accept(v).(mfast.Expr)
 
 		assign = &mfast.Assign{
-			To:    ctx.Identifier().GetText(),
-			From:  expr,
-			Index: -1,
+			To:   ctx.Identifier().GetText(),
+			From: expr,
 		}
 	}
 
@@ -109,9 +110,10 @@ func (v *AstGeneratorVisitor) VisitArrayDeclaration(ctx *mindfck.ArrayDeclaratio
 func (v *AstGeneratorVisitor) VisitAssignment(ctx *mindfck.AssignmentContext) interface{} {
 	expr := ctx.Expression().Accept(v).(mfast.Expr)
 
-	arrayIndex := -1
-	if ctx.ArrayIndex() != nil {
-		arrayIndex = utils.ToInt(ctx.ArrayIndex().GetText())
+	var arrayIndex mfast.Expr
+	if ctx.ArrayAccess() != nil {
+		indexExpr := ctx.ArrayAccess().Expression().Accept(v).(mfast.Expr)
+		arrayIndex = indexExpr
 	}
 
 	return &mfast.Assign{
@@ -133,6 +135,10 @@ func (v *AstGeneratorVisitor) VisitRead(ctx *mindfck.ReadContext) interface{} {
 	return &mfast.Read{
 		To: ctx.Identifier().GetText(),
 	}
+}
+
+func (v *AstGeneratorVisitor) VisitDebug(ctx *mindfck.DebugContext) interface{} {
+	return &mfast.Debug{}
 }
 
 func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) interface{} {
@@ -184,10 +190,13 @@ func (v *AstGeneratorVisitor) VisitExpression(ctx *mindfck.ExpressionContext) in
 			Left:     left,
 			Right:    right,
 		}
-	} else if ctx.ArrayIndex() != nil {
+	} else if ctx.ArrayAccess() != nil {
+		indexExpr := ctx.ArrayAccess().Expression().Accept(v).(mfast.Expr)
+
+		// TODO: optimise if index is literal
 		return &mfast.ArrayAccess{
 			Target: ctx.Expression(0).Accept(v).(mfast.Expr),
-			Index:  utils.ToInt(ctx.ArrayIndex().GetText()),
+			Index:  indexExpr,
 		}
 	} else if ctx.Expression(0) != nil {
 		if ctx.NOT() != nil {

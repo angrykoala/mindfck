@@ -44,7 +44,7 @@ func (lit *ArrayLiteral) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, er
 
 type ArrayAccess struct {
 	Target Expr
-	Index  int
+	Index  Expr
 }
 
 func (expr *ArrayAccess) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, error) {
@@ -58,9 +58,36 @@ func (expr *ArrayAccess) EvalExpr(cmd *codegen.CommandHandler) (env.Variable, er
 		panic("Cannot access array, invalid type. Must be an array")
 	}
 
-	byte := v1.GetByte(expr.Index)
-	res := cmd.Clone(byte)
+	index, err := expr.evaluateIndex(cmd)
+	if err != nil {
+		return nil, err
+	}
+	cmd.ReleaseIfAnonymous(index)
+
+	res := cmd.Env().DeclareAnonByte()
+	cmd.ReadIndex(v1, index, res)
 	return res, nil
+}
+
+func (expr *ArrayAccess) evaluateIndex(cmd *codegen.CommandHandler) (env.Variable, error) {
+	index, err := expr.Index.EvalExpr(cmd)
+	if err != nil {
+		return nil, err
+	}
+
+	if index.Type() == env.INT {
+		indexByte := cmd.Env().DeclareAnonVariable(env.BYTE)
+		cmd.CastIntToByte(index, indexByte)
+		cmd.ReleaseIfAnonymous(index) // Release because the returned variable is not index
+		return indexByte, nil
+	}
+
+	if index.Type() == env.BYTE {
+		return index, nil
+	} else {
+		return nil, fmt.Errorf("Invalid index variable, must be byte or int")
+	}
+
 }
 
 type VariableExpr struct {

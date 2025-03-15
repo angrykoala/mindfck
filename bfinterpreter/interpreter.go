@@ -82,14 +82,17 @@ func (interpreter *Interpreter) RunWithInput(code string, input []byte) {
 	}
 }
 
+// Run
 func (interpreter *Interpreter) Run(code string) {
 	interpreter.RunWithInput(code, []byte{})
 }
 
+// Output debug data, use after run
 func (interpreter *Interpreter) Debug() {
 	fmt.Println("Memory:", interpreter.Memory)
 	fmt.Println("Output:", interpreter.Output)
 	fmt.Println("Pointer:", interpreter.memPtr)
+	fmt.Println("")
 }
 
 func (interpreter *Interpreter) currentValue() byte {

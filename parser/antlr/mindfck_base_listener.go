@@ -75,6 +75,12 @@ func (s *BasemindfckListener) EnterRead(ctx *ReadContext) {}
 // ExitRead is called when production read is exited.
 func (s *BasemindfckListener) ExitRead(ctx *ReadContext) {}
 
+// EnterDebug is called when production debug is entered.
+func (s *BasemindfckListener) EnterDebug(ctx *DebugContext) {}
+
+// ExitDebug is called when production debug is exited.
+func (s *BasemindfckListener) ExitDebug(ctx *DebugContext) {}
+
 // EnterBlock is called when production block is entered.
 func (s *BasemindfckListener) EnterBlock(ctx *BlockContext) {}
 
@@ -104,6 +110,12 @@ func (s *BasemindfckListener) EnterArrayLiteral(ctx *ArrayLiteralContext) {}
 
 // ExitArrayLiteral is called when production arrayLiteral is exited.
 func (s *BasemindfckListener) ExitArrayLiteral(ctx *ArrayLiteralContext) {}
+
+// EnterArrayAccess is called when production arrayAccess is entered.
+func (s *BasemindfckListener) EnterArrayAccess(ctx *ArrayAccessContext) {}
+
+// ExitArrayAccess is called when production arrayAccess is exited.
+func (s *BasemindfckListener) ExitArrayAccess(ctx *ArrayAccessContext) {}
 
 // EnterArrayItem is called when production arrayItem is entered.
 func (s *BasemindfckListener) EnterArrayItem(ctx *ArrayItemContext) {}

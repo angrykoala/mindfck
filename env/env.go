@@ -23,9 +23,10 @@ func New(begin int) *MindfuckEnv {
 }
 
 func (env *MindfuckEnv) DeclareArrayVariable(label string, size int, anonymous bool) Variable {
-	position := env.reserveMemory(size)
+	total_size := size + ARRAY_HEAD_SIZE
+	position := env.reserveMemory(total_size)
 
-	var newVar = NewArrayVariable(position, label, size, anonymous)
+	var newVar = NewArrayVariable(position, label, total_size, anonymous)
 	return env.reserveLabel(label, newVar)
 }
 

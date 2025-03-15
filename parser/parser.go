@@ -31,7 +31,6 @@ func (c *CustomErrorListener) SyntaxError(recognizer antlr.Recognizer, offending
 }
 
 func Parse(input string) ([]mfast.Stmt, error) {
-
 	inputStream := antlr.NewInputStream(input)
 
 	lexerErrors := &CustomErrorListener{}

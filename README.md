@@ -175,6 +175,12 @@ go run .
 go test ./...
 ```
 
+Run single test with verbose mode:
+
+```
+go test ./... --run TestArrayAccess -v
+```
+
 ### Grammar
 
 Grammar is written in antlr4 (`parser/mindfck.g4`). If it is updated, files need to be regenerated.
@@ -212,7 +218,6 @@ Alternatively:
 
 To debug the gramar: [Antlr Lab](http://lab.antlr.org/)
 
-
 ## Previous Work
 
 Similar projects to Mindfck:
@@ -228,3 +233,4 @@ Used as inspiration or tools for this project:
 -   https://esolangs.org/wiki/Brainfuck_algorithms
 -   https://www.nayuki.io/page/brainfuck-interpreter-javascript
 -   https://gist.github.com/roachhd/dce54bec8ba55fb17d3a
+-   https://www.inshame.com/2008/02/efficient-brainfuck-tables.html

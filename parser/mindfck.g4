@@ -9,6 +9,7 @@ statement:
 	| print
 	| ifConditional
 	| whileLoop
+	| debug
 	| read;
 
 declaration:
@@ -19,7 +20,7 @@ arrayDeclaration:
 		EQUALS expression
 	)?;
 
-assignment: identifier ('[' arrayIndex ']')? EQUALS expression;
+assignment: identifier arrayAccess? EQUALS expression;
 
 print: PRINT expression;
 
@@ -30,12 +31,14 @@ whileLoop: WHILE '(' expression ')' '{' block '}';
 
 read: READ identifier;
 
+debug: DEBUG;
+
 block: statement*;
 
 expression:
 	identifier
 	| literal
-	| expression '[' arrayIndex ']'
+	| expression arrayAccess
 	| '(' expression ')'
 	| NOT expression
 	| expression op = (TIMES | DIVIDE) expression
@@ -50,6 +53,8 @@ identifier: IDENTIFIER;
 literal: NUMBER | CHAR | BYTE_NUMBER | arrayLiteral;
 
 arrayLiteral: '[' (arrayItem (',' arrayItem)*)? ']';
+arrayAccess: '[' expression ']';
+
 arrayItem: NUMBER | BYTE_NUMBER;
 
 arrayIndex: NUMBER;
@@ -62,6 +67,7 @@ fragment EXT_ASCII_CHAR:
 
 WS: [ \n\t\r]+ -> channel(HIDDEN);
 BYTE: 'byte';
+DEBUG: 'debug';
 INT: 'int';
 PRINT: 'print';
 IF: 'if';
