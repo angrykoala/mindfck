@@ -13,7 +13,7 @@ func (c *CommandHandler) SetByte(v env.Variable, value int) {
 // Resets cell to 0
 func (c *CommandHandler) ResetByte(v env.Variable) {
 	c.While(v, func() {
-		c.writer.command(BFDec)
+		c.dec()
 	})
 }
 
@@ -213,13 +213,13 @@ func (c *CommandHandler) add(v env.Variable, count int) {
 	c.goTo(v)
 	if count > 0 {
 		for i := 0; i < count; i++ {
-			c.writer.command(BFInc)
+			c.inc()
 		}
 	}
 
 	if count < 0 {
 		for i := 0; i > count; i-- {
-			c.writer.command(BFDec)
+			c.dec()
 		}
 	}
 }
@@ -257,13 +257,13 @@ func (c *CommandHandler) addToByte(a env.Variable, b env.Variable) {
 func (c *CommandHandler) IncByte(v env.Variable) {
 	assertByte(v)
 	c.goTo(v)
-	c.increment()
+	c.inc()
 }
 
 func (c *CommandHandler) DecByte(v env.Variable) {
 	assertByte(v)
 	c.goTo(v)
-	c.decrement()
+	c.dec()
 }
 
 func assertByte(v env.Variable) {

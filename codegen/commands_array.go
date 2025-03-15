@@ -165,10 +165,10 @@ func (c *CommandHandler) moveHeadRight() {
 	c.shift(-1)               // move to Data
 	c.rawMoveByteWithReset(1) // Move dataP
 	c.shift(-1)
-	c.increment()             // Increment returnIndexP
+	c.inc()                   // Increment returnIndexP
 	c.rawMoveByteWithReset(1) // Move returnIndexP
 	c.shift(-1)
-	c.decrement()             // Decrement indexP
+	c.dec()                   // Decrement indexP
 	c.rawMoveByteWithReset(1) // Move indexP
 	c.rawResetByte()          // Reset indexP
 }
@@ -177,7 +177,7 @@ func (c *CommandHandler) moveHeadRight() {
 // Ends in new buffer
 func (c *CommandHandler) moveHeadLeft() {
 	c.shift(2) // Move to returnIndex
-	c.decrement()
+	c.dec()
 	c.rawMoveByte(-1) // Move returnIndex
 	c.shift(1)        // Move to data
 	c.rawMoveByte(-1) // Move Data
@@ -191,10 +191,10 @@ func (c *CommandHandler) moveHeadLeft() {
 func (c *CommandHandler) rawMoveByte(relativeIndex int) {
 	c.beginLoop()
 	c.shift(relativeIndex)
-	c.increment()
+	c.inc()
 	c.shift(-relativeIndex)
-	c.decrement()
-	c.writer.command(BFLoopEnd)
+	c.dec()
+	c.endLoop()
 }
 
 // Move current position to relative index
@@ -212,12 +212,12 @@ func (c *CommandHandler) rawMoveByteWithReset(relativeIndex int) {
 func (c *CommandHandler) rawCopy(toRelativeIndex int, bufferRelativeIndex int) {
 	c.beginLoop()
 	c.shift(toRelativeIndex)
-	c.increment()
+	c.inc()
 	c.shift(-toRelativeIndex + bufferRelativeIndex)
-	c.increment()
+	c.inc()
 	c.shift(-bufferRelativeIndex)
-	c.decrement()
-	c.writer.command(BFLoopEnd)
+	c.dec()
+	c.endLoop()
 
 	c.shift(bufferRelativeIndex)
 	c.rawMoveByte(-bufferRelativeIndex)
@@ -236,6 +236,6 @@ func (c *CommandHandler) rawCopyWithReset(toRelativeIndex int, bufferRelativeInd
 
 func (c *CommandHandler) rawResetByte() {
 	c.beginLoop()
-	c.decrement()
+	c.dec()
 	c.endLoop()
 }

@@ -57,21 +57,14 @@ func (c *CommandHandler) ReleaseIfAnonymous(v env.Variable) {
 
 func (c *CommandHandler) Read(v env.Variable) {
 	c.goTo(v)
-	c.writer.command(BFIn)
+	c.in()
 }
-
-func (c *CommandHandler) DebugBreak() {
-	c.writer.command(BFDebug)
-}
-
-// Global Ops
 
 // Resets variable
 func (c *CommandHandler) Reset(v env.Variable) {
 	c.iterateBytes(v, func(b env.Variable, _ int) {
 		c.ResetByte(b)
 	})
-
 }
 
 // from -> to
@@ -150,22 +143,6 @@ func (c *CommandHandler) While(condCell env.Variable, code func()) {
 
 // Core functionality
 
-func (c *CommandHandler) Comment(comment string) {
-	c.writer.comment(comment)
-}
-
-func (c *CommandHandler) beginLoop() {
-	c.writer.command(BFLoopBegin)
-}
-
-func (c *CommandHandler) endLoop() {
-	c.writer.command(BFLoopEnd)
-}
-
-func (c *CommandHandler) out() {
-	c.writer.command(BFOut)
-}
-
 // Move pointer to first byte of variable
 func (c *CommandHandler) goTo(v env.Variable) {
 	cell := v.Position()
@@ -178,23 +155,15 @@ func (c *CommandHandler) shift(pos int) {
 	c.pointer += pos
 	if pos > 0 {
 		for i := 0; i < pos; i++ {
-			c.writer.command(BFIncPointer)
+			c.moveR()
 		}
 	}
 
 	if pos < 0 {
 		for i := 0; i > pos; i-- {
-			c.writer.command(BFDecPointer)
+			c.moveL()
 		}
 	}
-}
-
-func (c *CommandHandler) increment() {
-	c.writer.command(BFInc)
-}
-
-func (c *CommandHandler) decrement() {
-	c.writer.command(BFDec)
 }
 
 // Helpers
