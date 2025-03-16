@@ -8,7 +8,19 @@ type If struct {
 	Else      []Stmt
 }
 
-func ProcessBlock(block *[]Stmt, cmd *codegen.CommandHandler) error {
+func (s *If) EvalStmt(cmd *codegen.CommandHandler) error {
+	v, err := s.Condition.EvalExpr(cmd)
+	if err != nil {
+		return err
+	}
+	defer cmd.ReleaseIfAnonymous(v)
+
+	cmd.IfElse(v, func() { processBlock(&s.Block, cmd) }, func() { processBlock(&s.Else, cmd) })
+
+	return err
+}
+
+func processBlock(block *[]Stmt, cmd *codegen.CommandHandler) error {
 	var err error = nil
 
 	for _, stmt := range *block {
@@ -18,18 +30,6 @@ func ProcessBlock(block *[]Stmt, cmd *codegen.CommandHandler) error {
 			return err
 		}
 	}
-
-	return err
-}
-
-func (s *If) EvalStmt(cmd *codegen.CommandHandler) error {
-	v, err := s.Condition.EvalExpr(cmd)
-	if err != nil {
-		return err
-	}
-	defer cmd.ReleaseIfAnonymous(v)
-
-	cmd.IfElse(v, func() { ProcessBlock(&s.Block, cmd) }, func() { ProcessBlock(&s.Else, cmd) })
 
 	return err
 }

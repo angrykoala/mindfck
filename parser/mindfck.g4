@@ -52,8 +52,8 @@ identifier: IDENTIFIER;
 
 literal: NUMBER | CHAR | BYTE_NUMBER | arrayLiteral;
 
-arrayLiteral: '[' (arrayItem (',' arrayItem)*)? ']';
-arrayAccess: '[' expression ']';
+arrayLiteral: LBRACKET (arrayItem (',' arrayItem)*)? RBRACKET;
+arrayAccess: LBRACKET expression RBRACKET;
 
 arrayItem: NUMBER | BYTE_NUMBER;
 
@@ -89,3 +89,5 @@ LT: '<';
 LE: '<=';
 NUMBER: [0-9]+;
 IDENTIFIER: [a-zA-Z]+;
+LBRACKET: '[';
+RBRACKET: ']';
