@@ -69,6 +69,7 @@ A: Also no
 -   If ... Else
 -   While loops
 -   Print and read bytes
+-   Arrays
 
 ## Language Manual
 
