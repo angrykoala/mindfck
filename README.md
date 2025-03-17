@@ -47,8 +47,10 @@ minfck examples/abc.mf
 To compile and execute the brainfuck code directly:
 
 ```
-minfck example.mf --run
+minfck examples/abc.mf --run
 ```
+
+Check some [examples](https://github.com/angrykoala/mindfck/tree/master/examples)
 
 ## FAQ
 
@@ -92,6 +94,21 @@ Ints are unsigned 16bit integers
 ```mindfck
 int a
 a = 10
+```
+
+**array**
+
+Arrays of bytes are supported, they may get wonky if larger than 255 bytes. You can iterate, access, modify and print arrays
+
+```mindfck
+byte test[10]
+test = [97,97,105,97,97,97,98,97,97,97]
+byte i = 0
+
+while (i<10) {
+    print test[i]
+    i = i+1
+}
 ```
 
 ### I/O
